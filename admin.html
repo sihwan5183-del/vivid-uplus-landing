@@ -1,0 +1,1331 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VIVID Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#126BFF;--ink:#111827;--muted:#667085;--line:#E6EAF0;
+  --soft:#F7F9FF;--red:#ef4444;--green:#22c55e;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:#f1f5f9;color:var(--ink);font-size:14px;}
+
+/* 로그인 */
+.login-wrap{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(135deg,#e0ecff 0%,#f7f9ff 100%);z-index:999;}
+.login-box{background:#fff;border-radius:20px;padding:36px 32px;width:min(90vw,380px);box-shadow:0 20px 60px rgba(15,23,42,.12);}
+.login-box h2{font-size:22px;font-weight:800;margin-bottom:6px;}
+.login-box p{color:var(--muted);font-size:13px;margin-bottom:24px;}
+.login-field{margin-bottom:14px;}
+.login-field label{display:block;font-size:12px;font-weight:700;margin-bottom:5px;color:var(--muted);}
+.login-field input{width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;}
+.login-field input:focus{outline:none;border-color:var(--blue);}
+#loginError{color:var(--red);font-size:12px;margin-bottom:10px;display:none;}
+#loginBtn{width:100%;height:44px;background:var(--blue);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;}
+
+/* 레이아웃 */
+.admin-wrap{display:none;min-height:100vh;}
+.admin-wrap.show{display:flex;}
+.sidebar{width:220px;min-height:100vh;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;flex-shrink:0;}
+.sidebar-logo{padding:20px 18px 14px;border-bottom:1px solid var(--line);}
+.sidebar-logo h1{font-size:17px;font-weight:800;color:var(--blue);}
+.sidebar-logo span{font-size:11px;color:var(--muted);}
+.sidebar-nav{flex:1;padding:10px 8px;}
+.sidebar-nav button{display:flex;align-items:center;gap:8px;width:100%;height:38px;border:0;background:transparent;border-radius:9px;padding:0 10px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;text-align:left;margin-bottom:2px;}
+.sidebar-nav button:hover,.sidebar-nav button.active{background:var(--soft);color:var(--blue);}
+.sidebar-footer{padding:12px 8px;}
+.sidebar-footer button{width:100%;height:36px;border:1px solid var(--line);background:#fff;border-radius:9px;font-size:13px;color:var(--muted);cursor:pointer;}
+.main{flex:1;padding:28px 32px;overflow-y:auto;}
+.page{display:none;}
+.page.active{display:block;}
+.page-title{font-size:20px;font-weight:800;margin-bottom:4px;}
+.page-desc{font-size:13px;color:var(--muted);margin-bottom:20px;}
+
+/* 공통 UI */
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px;}
+.btn{height:36px;border-radius:8px;border:0;padding:0 14px;font-size:13px;font-weight:700;cursor:pointer;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-gray{background:var(--soft);color:var(--ink);border:1px solid var(--line);}
+.btn-sm{height:28px;padding:0 10px;font-size:12px;}
+input[type=text],input[type=number],select,textarea{height:36px;border:1.5px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px;width:100%;}
+textarea{height:auto;padding:8px 10px;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);}
+label.field-label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;margin-top:10px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.toggle{position:relative;display:inline-block;width:40px;height:22px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:#cbd5e1;border-radius:999px;cursor:pointer;transition:.2s;}
+.toggle-slider:before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
+.toggle input:checked+.toggle-slider{background:var(--blue);}
+.toggle input:checked+.toggle-slider:before{transform:translateX(18px);}
+.row{display:flex;align-items:center;gap:10px;}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;}
+.tag-blue{background:#dbeafe;color:#1d4ed8;}
+.tag-green{background:#dcfce7;color:#15803d;}
+.tag-red{background:#fee2e2;color:#b91c1c;}
+.divider{border:0;border-top:1px solid var(--line);margin:14px 0;}
+.empty{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+
+/* 기기 목록 */
+.device-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.device-item:hover{border-color:var(--blue);}
+.device-thumb{width:44px;height:44px;border-radius:8px;background:var(--soft);object-fit:contain;flex-shrink:0;}
+.device-info{flex:1;}
+.device-name{font-size:14px;font-weight:700;}
+.device-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+
+/* 모달 */
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:200;display:none;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:#fff;border-radius:18px;width:min(96vw,600px);max-height:90vh;overflow-y:auto;padding:24px;}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:16px;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--line);}
+
+/* 정책 */
+.policy-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:8px;}
+.policy-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.policy-body{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);}
+.policy-body.open{display:block;}
+.override-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;table-layout:fixed;}
+.override-table th{background:var(--soft);padding:10px 8px;text-align:center;font-weight:700;border:1px solid var(--line);font-size:11px;white-space:nowrap;}
+.override-table td{padding:6px 8px;border:1px solid var(--line);vertical-align:middle;}
+.override-table td:first-child{width:32px;text-align:center;}
+.override-table td:nth-child(2){width:120px;font-weight:600;font-size:12px;}
+.override-table input{height:34px;font-size:13px;width:100%;text-align:right;font-weight:600;
+  color:var(--ink);border:1.5px solid var(--line);border-radius:6px;padding:0 8px;box-sizing:border-box;}
+.override-table input:focus{border-color:var(--blue);outline:none;}
+.override-table input::placeholder{font-size:10px;color:#adb5bd;font-weight:400;}
+
+/* 시뮬레이터 */
+.sim-result{background:var(--soft);border-radius:12px;padding:16px;margin-top:16px;}
+.sim-result h3{font-size:15px;font-weight:800;margin-bottom:10px;}
+.sim-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line);}
+.sim-row:last-child{border:0;font-weight:800;font-size:15px;color:var(--blue);}
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div style="font-size:32px;margin-bottom:12px">🔐</div>
+    <h2>VIVID Admin</h2>
+    <p>관리자 계정으로 로그인하세요</p>
+    <div class="login-field"><label>이메일</label><input type="email" id="loginEmail" placeholder="이메일 입력"></div>
+    <div class="login-field"><label>비밀번호</label><input type="password" id="loginPassword" placeholder="비밀번호 입력"></div>
+    <p id="loginError">이메일 또는 비밀번호가 올바르지 않습니다.</p>
+    <button id="loginBtn">로그인</button>
+  </div>
+</div>
+
+<!-- 어드민 -->
+<div class="admin-wrap" id="adminWrap">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><h1>VIVID Admin</h1><span>LG U+ 랜딩 관리</span></div>
+    <nav class="sidebar-nav">
+      <button onclick="goPage('page-devices')" class="active" data-page="page-devices">📱 기기 관리</button>
+      <button onclick="goPage('page-plans')" data-page="page-plans">📋 요금제 관리</button>
+      <button onclick="goPage('page-categories')" data-page="page-categories">🏷 카테고리 관리</button>
+      <button onclick="goPage('page-policy')" data-page="page-policy">🗂 정책 묶음</button>
+      <button onclick="goPage('page-carriers')" data-page="page-carriers">📡 통신사 노출</button>
+      <button onclick="goPage('page-jointypes')" data-page="page-jointypes">🔑 가입유형 노출</button>
+      <button onclick="goPage('page-discount')" data-page="page-discount">💳 할인방식 노출</button>
+      <button onclick="goPage('page-uitexts')" data-page="page-uitexts">✏️ 화면 문구 관리</button>
+      <button onclick="goPage('page-simulator')" data-page="page-simulator">🧮 가격 시뮬레이터</button>
+      <button onclick="goPage('page-faq')" data-page="page-faq">❓ FAQ 관리</button>
+    </nav>
+    <div class="sidebar-footer"><button onclick="doSignOut()">🚪 로그아웃</button></div>
+  </aside>
+  <div class="main">
+
+    <!-- 기기 관리 -->
+    <div class="page active" id="page-devices">
+      <div class="page-title">기기 관리</div>
+      <div class="page-desc">출고가, 이미지, 용량, 컬러를 관리합니다.</div>
+      <button class="btn btn-blue" onclick="openDeviceModal()">+ 기기 추가</button>
+      <div id="deviceList" style="margin-top:14px"></div>
+    </div>
+
+    <!-- 요금제 관리 -->
+    <div class="page" id="page-plans">
+      <div class="page-title">요금제 관리</div>
+      <div class="page-desc">요금제 추가/삭제 및 노출 ON·OFF를 설정합니다.</div>
+      <button class="btn btn-blue" onclick="openPlanModal()">+ 요금제 추가</button>
+      <div id="planList" style="margin-top:14px"></div>
+    </div>
+
+    <!-- 카테고리 관리 -->
+    <div class="page" id="page-categories">
+      <div class="page-title">카테고리 관리</div>
+      <div class="page-desc">랜딩 필터용 카테고리를 관리합니다.</div>
+      <button class="btn btn-blue" onclick="openCatModal()">+ 카테고리 추가</button>
+      <div id="catList" style="margin-top:14px"></div>
+    </div>
+
+    <!-- 정책 묶음 -->
+    <div class="page" id="page-policy">
+      <div class="page-title">정책 묶음</div>
+      <div class="page-desc">가입유형×통신사×요금제 조합별 공시지원금·할인을 설정합니다.</div>
+      <button class="btn btn-blue" onclick="openPolicyModal()">+ 정책 추가</button>
+      <div id="policyList" style="margin-top:14px"></div>
+    </div>
+
+    <!-- 통신사 노출 -->
+    <div class="page" id="page-carriers">
+      <div class="page-title">통신사 노출</div>
+      <div class="page-desc">랜딩에 표시할 통신사를 ON·OFF합니다.</div>
+      <div id="carrierList" style="margin-top:14px"></div>
+    </div>
+
+    <!-- 가입유형 노출 -->
+    <div class="page" id="page-jointypes">
+      <div class="page-title">가입유형 노출</div>
+      <div class="page-desc">랜딩에 표시할 가입유형을 ON·OFF합니다.</div>
+      <div id="joinTypeList" style="margin-top:14px"></div>
+    </div>
+
+    <!-- 할인방식 노출 -->
+    <div class="page" id="page-discount">
+      <div class="page-title">할인방식 노출</div>
+      <div class="page-desc">랜딩 혜택 페이지에 표시할 할인 방식을 ON·OFF합니다.</div>
+      <div class="card row-between">
+        <div>
+          <b>📦 공시지원금</b>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">기기값 할인 방식</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="dt_subsidy" checked onchange="saveDiscountType('subsidy',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="card row-between">
+        <div>
+          <b>📋 선택약정</b>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">요금제 25% 할인 방식</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="dt_contract" checked onchange="saveDiscountType('contract',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+
+    <!-- 화면 문구 관리 -->
+    <div class="page" id="page-uitexts">
+      <div class="page-title">화면 문구 관리</div>
+      <div class="page-desc">랜딩 화면에 표시되는 텍스트를 수정합니다.</div>
+      <div class="card" id="uitextForm"></div>
+    </div>
+
+    <!-- 가격 시뮬레이터 -->
+    <div class="page" id="page-simulator">
+      <div class="page-title">가격 시뮬레이터</div>
+      <div class="page-desc">기기·통신사·요금제를 선택해 예상 금액을 계산합니다.</div>
+      <div class="card">
+        <div class="grid2">
+          <div><label class="field-label">기기</label><select id="simDevice" onchange="simCalc()"></select></div>
+          <div><label class="field-label">통신사</label><select id="simCarrier" onchange="simCalc()"></select></div>
+        </div>
+        <div class="grid2" style="margin-top:10px">
+          <div><label class="field-label">가입유형</label><select id="simJoinType" onchange="simCalc()"></select></div>
+          <div><label class="field-label">요금제</label><select id="simPlan" onchange="simCalc()"></select></div>
+        </div>
+        <div id="simResult"></div>
+      </div>
+    </div>
+
+
+    <!-- FAQ 관리 -->
+    <div class="page" id="page-faq">
+      <div class="page-title">FAQ 관리</div>
+      <div class="page-desc">궁금해요 페이지에 표시될 FAQ를 카테고리별로 관리합니다.</div>
+      <div class="card" style="background:#FFF7ED;border-color:#FED7AA;margin-bottom:16px;padding:14px 16px" id="faqUploadBanner">
+        <div class="row-between">
+          <div>
+            <b style="font-size:13px;color:#92400E">⚠️ 기존 FAQ 데이터를 Firebase에 업로드하면 어드민에서 관리할 수 있어요</b>
+            <div style="font-size:12px;color:#B45309;margin-top:2px">최초 1회만 하면 돼요. 이미 업로드했다면 이 안내는 무시해주세요.</div>
+          </div>
+          <button class="btn btn-blue" onclick="uploadDefaultFaqs()" style="white-space:nowrap;flex-shrink:0;margin-left:16px">📤 기존 데이터 업로드</button>
+        </div>
+      </div>
+      <div class="row-between" style="margin-bottom:12px">
+        <select id="faqCatSelect" onchange="renderFaqList()" style="width:180px;height:36px">
+          <option value="요금제">요금제</option>
+          <option value="공시지원금">공시지원금</option>
+          <option value="선택약정">선택약정</option>
+          <option value="기기변경">기기변경</option>
+          <option value="번호이동">번호이동</option>
+          <option value="유심">유심</option>
+          <option value="부모님요금제">부모님요금제</option>
+          <option value="인터넷결합">인터넷결합</option>
+        </select>
+        <button class="btn btn-blue" onclick="openFaqModal()">+ FAQ 추가</button>
+      </div>
+      <div id="faqList" style="margin-top:4px"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 기기 모달 -->
+<div class="modal-bg" id="deviceModal">
+  <div class="modal">
+    <div class="modal-title" id="deviceModalTitle">기기 추가</div>
+    <label class="field-label">기기명</label><input type="text" id="d_name" placeholder="예: 갤럭시 S25 울트라">
+    <label class="field-label">출고가 (원)</label><input type="number" id="d_price" placeholder="1254000">
+    <label class="field-label">이미지 URL</label><input type="text" id="d_img" placeholder="https://...">
+    <label class="field-label">카테고리</label><select id="d_category"></select>
+    <label class="field-label">노출</label>
+    <label class="toggle"><input type="checkbox" id="d_visible" checked><span class="toggle-slider"></span></label>
+    <hr class="divider">
+    <div class="row-between"><b style="font-size:13px">용량 옵션</b><button class="btn btn-gray btn-sm" onclick="addStorage()">+ 추가</button></div>
+    <div id="storageList" style="margin-top:8px"></div>
+    <hr class="divider">
+    <div class="row-between"><b style="font-size:13px">컬러 옵션</b><button class="btn btn-gray btn-sm" onclick="addColor()">+ 추가</button></div>
+    <div id="colorList" style="margin-top:8px"></div>
+    <div class="modal-footer">
+      <button class="btn btn-gray" onclick="closeModal('deviceModal')">취소</button>
+      <button class="btn btn-blue" onclick="saveDevice()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 요금제 모달 -->
+<div class="modal-bg" id="planModal">
+  <div class="modal">
+    <div class="modal-title" id="planModalTitle">요금제 추가/편집</div>
+    <label class="field-label">요금제명</label><input type="text" id="p_name" placeholder="예: 5G 프리미어 에센셜">
+    <label class="field-label">월 요금 (원)</label><input type="number" id="p_price" placeholder="85000">
+    <label class="field-label">소개 문구 <span style="font-weight:400;color:var(--muted);font-size:12px">— 혜택 페이지 요금제 목록에 표시 (선택)</span></label>
+    <input type="text" id="p_desc" placeholder="예: 공시지원금 조건 확인 가능">
+    <label class="field-label">노출</label>
+    <label class="toggle" style="margin-top:6px"><input type="checkbox" id="p_visible" checked><span class="toggle-slider"></span></label>
+    <div class="modal-footer">
+      <button class="btn btn-gray" onclick="closeModal('planModal')">취소</button>
+      <button class="btn btn-blue" onclick="savePlan()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 카테고리 모달 -->
+<div class="modal-bg" id="catModal">
+  <div class="modal">
+    <div class="modal-title">카테고리 추가/편집</div>
+    <label class="field-label">카테고리명</label><input type="text" id="c_name" placeholder="예: 갤럭시S시리즈">
+    <label class="field-label">순서 (숫자)</label><input type="number" id="c_order" placeholder="1">
+    <label class="field-label">노출</label>
+    <label class="toggle" style="margin-top:6px"><input type="checkbox" id="c_visible" checked><span class="toggle-slider"></span></label>
+    <div class="modal-footer">
+      <button class="btn btn-gray" onclick="closeModal('catModal')">취소</button>
+      <button class="btn btn-blue" onclick="saveCat()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 정책 모달 -->
+<div class="modal-bg" id="policyModal">
+  <div class="modal">
+    <div class="modal-title">정책 추가/편집</div>
+    <div>
+      <label class="field-label">가입유형</label>
+      <select id="pol_jointype">
+        <option value="all">전체(all)</option>
+        <option value="기기변경">기기변경</option>
+        <option value="번호이동">번호이동</option>
+        <option value="신규가입">신규가입</option>
+      </select>
+    </div>
+    <div style="margin-top:10px">
+      <label class="field-label">통신사 (중복 선택 가능)</label>
+      <div id="pol_carrier_checks" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px">
+          <input type="checkbox" value="all" id="pol_carrier_all" onchange="handleCarrierAll(this)"> 전체
+        </label>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px">
+          <input type="checkbox" value="LG U+" class="pol_carrier_cb" onchange="handleCarrierCb()"> LG U+
+        </label>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px">
+          <input type="checkbox" value="SKT" class="pol_carrier_cb" onchange="handleCarrierCb()"> SKT
+        </label>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px">
+          <input type="checkbox" value="KT" class="pol_carrier_cb" onchange="handleCarrierCb()"> KT
+        </label>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px">
+          <input type="checkbox" value="알뜰폰" class="pol_carrier_cb" onchange="handleCarrierCb()"> 알뜰폰
+        </label>
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <label class="field-label">요금제 선택 (중복 선택 가능)</label>
+      <div id="pol_plan_checks" style="margin-top:6px;max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:8px"></div>
+    </div>
+    <input type="hidden" id="pol_plangroup">
+    <div class="grid2" style="margin-top:4px">
+      <div><label class="field-label">공시지원금 (원)</label><input type="number" id="pol_pub" placeholder="0"></div>
+      <div><label class="field-label">리베이트 (원)</label><input type="number" id="pol_rebate" placeholder="0"></div>
+    </div>
+    <div class="grid2">
+      <div><label class="field-label">유통망 (원)</label><input type="number" id="pol_dist" placeholder="0"></div>
+      <div><label class="field-label">구조 (원)</label><input type="number" id="pol_struct" placeholder="0"></div>
+    </div>
+    <div class="grid2">
+      <div><label class="field-label">추가정책 (원)</label><input type="number" id="pol_extra" placeholder="0"></div>
+      <div><label class="field-label">노출</label><br><label class="toggle" style="margin-top:6px"><input type="checkbox" id="pol_visible" checked><span class="toggle-slider"></span></label></div>
+    </div>
+    <hr class="divider">
+    <b style="font-size:13px">기기별 공시지원금 개별 설정</b>
+    <p style="font-size:12px;color:var(--muted);margin-top:4px">비워두면 위 공통 공시지원금 적용</p>
+    <div id="overrideTable" style="margin-top:8px"></div>
+    <div class="modal-footer">
+      <button class="btn btn-gray" onclick="closeModal('policyModal')">취소</button>
+      <button class="btn btn-blue" onclick="savePolicy()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ 모달 -->
+<div class="modal-bg" id="faqModal">
+  <div class="modal">
+    <div class="modal-title" id="faqModalTitle">FAQ 추가</div>
+    <label class="field-label">카테고리</label>
+    <select id="faq_cat">
+      <option value="요금제">요금제</option>
+      <option value="공시지원금">공시지원금</option>
+      <option value="선택약정">선택약정</option>
+      <option value="기기변경">기기변경</option>
+      <option value="번호이동">번호이동</option>
+      <option value="유심">유심</option>
+      <option value="부모님요금제">부모님요금제</option>
+      <option value="인터넷결합">인터넷결합</option>
+    </select>
+    <label class="field-label">질문</label>
+    <input type="text" id="faq_q" placeholder="예: 요금제 변경 시 위약금이 발생하나요?">
+    <label class="field-label">답변</label>
+    <textarea id="faq_a" rows="4" placeholder="답변 내용을 입력하세요." style="height:100px;resize:vertical"></textarea>
+    <label class="field-label">노출</label>
+    <label class="toggle"><input type="checkbox" id="faq_visible" checked><span class="toggle-slider"></span></label>
+    <div class="modal-footer">
+      <button class="btn btn-gray" onclick="closeModal('faqModal')">취소</button>
+      <button class="btn btn-blue" onclick="saveFaq()">저장</button>
+    </div>
+  </div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, onValue, set, push, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBCaJiSuWRHMySOXfBPg2JB7UoE1XKQEqw",
+  authDomain: "vivid-admin-1a34d.firebaseapp.com",
+  databaseURL: "https://vivid-admin-1a34d-default-rtdb.firebaseio.com",
+  projectId: "vivid-admin-1a34d",
+  storageBucket: "vivid-admin-1a34d.firebasestorage.app",
+  messagingSenderId: "560602626704",
+  appId: "1:560602626704:web:070534ced93a5f86247615"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+// 상태
+let devices={}, plans={}, categories={}, policies={}, carriers={}, joinTypes={}, uiTexts={}, faqs={};
+let editFaqKey=null;
+let editDeviceKey=null, editPlanKey=null, editCatKey=null, editPolicyKey=null;
+let storageItems=[], colorItems=[];
+
+// 로그인
+onAuthStateChanged(auth, user => {
+  if(user){
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('adminWrap').classList.add('show');
+    loadAll();
+  } else {
+    document.getElementById('loginWrap').style.display='';
+    document.getElementById('adminWrap').classList.remove('show');
+  }
+});
+
+document.getElementById('loginBtn').onclick = () => {
+  const email = document.getElementById('loginEmail').value;
+  const pw = document.getElementById('loginPassword').value;
+  signInWithEmailAndPassword(auth, email, pw).catch(() => {
+    document.getElementById('loginError').style.display='block';
+  });
+};
+
+window.doSignOut = () => signOut(auth);
+window.saveDiscountType = (type, value) => {
+  set(ref(db, 'discountTypes/'+type), value);
+};
+
+// 페이지 전환
+window.goPage = (id) => {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelector(`[data-page="${id}"]`).classList.add('active');
+};
+
+// 모달
+window.openModal = (id) => document.getElementById(id).classList.add('open');
+window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+
+// 데이터 로드
+function loadAll(){
+  onValue(ref(db,'devices'), s=>{ devices=s.val()||{}; renderDevices(); renderSimDevices(); renderOverrideTable(); });
+  onValue(ref(db,'plans'), s=>{ plans=s.val()||{}; renderPlans(); renderSimPlans(); });
+  onValue(ref(db,'categories'), s=>{ categories=s.val()||{}; renderCategories(); renderCategorySelects(); });
+  onValue(ref(db,'policy2'), s=>{ policies=s.val()||{}; renderPolicies(); });
+  onValue(ref(db,'carriers'), s=>{ carriers=s.val()||{}; renderCarriers(); renderSimCarriers(); });
+  onValue(ref(db,'joinTypes'), s=>{ joinTypes=s.val()||{}; renderJoinTypes(); renderSimJoinTypes(); });
+  onValue(ref(db,'uiTexts'), s=>{ uiTexts=s.val()||{}; renderUiTexts(); });
+  onValue(ref(db,'faq'), s=>{
+    faqs=s.val()||{};
+    renderFaqList();
+    const banner=document.getElementById('faqUploadBanner');
+    if(banner) banner.style.display=Object.keys(faqs).length>0?'none':'';
+  });
+  onValue(ref(db,'discountTypes'), s=>{
+    const d=s.val()||{};
+    const sub=document.getElementById('dt_subsidy');
+    const con=document.getElementById('dt_contract');
+    if(sub) sub.checked=d.subsidy!==false;
+    if(con) con.checked=d.contract!==false;
+  });
+}
+
+// ── 기기 ──
+function renderDevices(){
+  const el=document.getElementById('deviceList');
+  const keys=Object.keys(devices);
+  if(!keys.length){el.innerHTML='<div class="empty">등록된 기기가 없습니다</div>';return;}
+  el.innerHTML=keys.map(k=>{
+    const d=devices[k];
+    const cat=categories[d.categoryId]?.name||'';
+    return `<div class="device-item" onclick="openDeviceEdit('${k}')">
+      <img class="device-thumb" src="${d.img||''}" onerror="this.src=''">
+      <div class="device-info">
+        <div class="device-name">${d.name||''}</div>
+        <div class="device-meta">${(d.launchPrice||0).toLocaleString()}원 ${cat?'· '+cat:''}</div>
+      </div>
+      <span class="tag ${d.visible?'tag-green':'tag-red'}">${d.visible?'ON':'OFF'}</span>
+      <button class="btn btn-red btn-sm" onclick="event.stopPropagation();deleteDevice('${k}')">삭제</button>
+    </div>`;
+  }).join('');
+}
+
+window.openDeviceModal = () => {
+  editDeviceKey=null; storageItems=[]; colorItems=[];
+  document.getElementById('deviceModalTitle').textContent='기기 추가';
+  ['d_name','d_img'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('d_price').value='';
+  document.getElementById('d_visible').checked=true;
+  renderStorageList(); renderColorList();
+  openModal('deviceModal');
+};
+
+window.openDeviceEdit = (k) => {
+  editDeviceKey=k;
+  const d=devices[k];
+  document.getElementById('deviceModalTitle').textContent='기기 편집';
+  document.getElementById('d_name').value=d.name||'';
+  document.getElementById('d_price').value=d.launchPrice||'';
+  document.getElementById('d_img').value=d.img||'';
+  document.getElementById('d_visible').checked=!!d.visible;
+  document.getElementById('d_category').value=d.categoryId||'';
+  storageItems=JSON.parse(JSON.stringify(d.storage||[]));
+  colorItems=JSON.parse(JSON.stringify(d.colors||[]));
+  renderStorageList(); renderColorList();
+  openModal('deviceModal');
+};
+
+window.saveDevice = () => {
+  // 저장 전 hex|label 형식으로 name 정리
+  colorItems.forEach((c,i)=>{
+    const hexEl=document.getElementById('hex_'+i);
+    const labelEl=document.getElementById('label_'+i);
+    if(hexEl&&labelEl){
+      const hex=hexEl.value.trim();
+      const label=labelEl.value.trim();
+      c.name=hex+(label?'|'+label:'');
+    }
+  });
+  const data={
+    name:document.getElementById('d_name').value.trim(),
+    launchPrice:Number(document.getElementById('d_price').value)||0,
+    img:document.getElementById('d_img').value.trim(),
+    categoryId:document.getElementById('d_category').value,
+    visible:document.getElementById('d_visible').checked,
+    storage:storageItems,
+    colors:colorItems
+  };
+  const r=editDeviceKey?ref(db,`devices/${editDeviceKey}`):push(ref(db,'devices'));
+  (editDeviceKey?set(r,data):set(r,data)).then(()=>closeModal('deviceModal'));
+};
+
+window.deleteDevice = (k) => { if(confirm('삭제?')) remove(ref(db,`devices/${k}`)); };
+
+// 용량
+window.addStorage = () => { storageItems.push({id:'s'+Date.now(),name:'',visible:true}); renderStorageList(); };
+function renderStorageList(){
+  document.getElementById('storageList').innerHTML=storageItems.map((s,i)=>`
+    <div class="row" style="margin-bottom:6px">
+      <input type="text" value="${s.name}" oninput="storageItems[${i}].name=this.value" placeholder="예: 256GB" style="flex:1">
+      <label class="toggle"><input type="checkbox" ${s.visible?'checked':''} onchange="storageItems[${i}].visible=this.checked"><span class="toggle-slider"></span></label>
+      <button class="btn btn-red btn-sm" onclick="storageItems.splice(${i},1);renderStorageList()">삭제</button>
+    </div>`).join('');
+}
+window.renderStorageList=renderStorageList;
+
+// 컬러
+window.addColor = () => { colorItems.push({id:'c'+Date.now(),name:'',visible:true,img:''}); renderColorList(); };
+function parseColorName(raw){
+  const s=String(raw||'').trim();
+  if(s.includes('|')){const[h,l]=s.split('|').map(v=>v.trim());return{hex:h,label:l};}
+  return{hex:/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(s)?s:'',label:/^#/.test(s)?'':s};
+}
+function renderColorList(){
+  document.getElementById('colorList').innerHTML=colorItems.map((c,i)=>{
+    const parsed=parseColorName(c.name);
+    return `
+    <div style="border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:8px">
+      <div class="grid2">
+        <div>
+          <label class="field-label">HEX 색상 코드</label>
+          <div class="row" style="gap:8px">
+            <span id="preview_${i}" style="width:28px;height:28px;border-radius:50%;flex-shrink:0;border:1px solid var(--line);background:${parsed.hex||'#ccc'}"></span>
+            <input type="text" id="hex_${i}" value="${parsed.hex}" placeholder="#1a1a1a"
+              oninput="
+                colorItems[${i}]._hex=this.value;
+                document.getElementById('preview_${i}').style.background=this.value||'#ccc';
+                colorItems[${i}].name=(this.value||'')+(colorItems[${i}]._label?'|'+colorItems[${i}]._label:'');
+              ">
+          </div>
+        </div>
+        <div>
+          <label class="field-label">한글 색상명</label>
+          <input type="text" id="label_${i}" value="${parsed.label}" placeholder="예: 블랙, 아이스블루"
+            oninput="
+              colorItems[${i}]._label=this.value;
+              colorItems[${i}].name=(colorItems[${i}]._hex||'${parsed.hex}')+(this.value?'|'+this.value:'');
+            ">
+        </div>
+      </div>
+      <div style="margin-top:8px">
+        <label class="field-label">이미지 URL</label>
+        <input type="text" value="${c.img||''}" oninput="colorItems[${i}].img=this.value" placeholder="https://...">
+      </div>
+      <div class="row" style="margin-top:10px;justify-content:space-between">
+        <label class="toggle"><input type="checkbox" ${c.visible?'checked':''} onchange="colorItems[${i}].visible=this.checked"><span class="toggle-slider"></span></label>
+        <button class="btn btn-red btn-sm" onclick="colorItems.splice(${i},1);renderColorList()">삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+  // _hex, _label 초기화
+  colorItems.forEach((c,i)=>{
+    const p=parseColorName(c.name);
+    c._hex=p.hex; c._label=p.label;
+  });
+}
+window.renderColorList=renderColorList;
+
+function renderCategorySelects(){
+  const opts='<option value="">카테고리 없음</option>'+Object.keys(categories).map(k=>`<option value="${k}">${categories[k].name}</option>`).join('');
+  document.getElementById('d_category').innerHTML=opts;
+}
+
+// ── 요금제 ──
+function renderPlans(){
+  const el=document.getElementById('planList');
+  const keys=Object.keys(plans);
+  if(!keys.length){el.innerHTML='<div class="empty">등록된 요금제가 없습니다</div>';return;}
+  el.innerHTML=keys.map(k=>{
+    const p=plans[k];
+    const over=p.monthlyPrice>=85000;
+    return `<div class="card row-between">
+      <div>
+        <b>${p.name||''}</b>
+        <span class="tag ${over?'tag-blue':'tag-red'}" style="margin-left:6px">${over?'공시가능':'85미만'}</span>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">${(p.monthlyPrice||0).toLocaleString()}원/월${p.description?` · <span style="color:#2563eb">${p.description}</span>`:''}</div>
+      </div>
+      <div class="row">
+        <label class="toggle"><input type="checkbox" ${p.visible?'checked':''} onchange="togglePlan('${k}',this.checked)"><span class="toggle-slider"></span></label>
+        <button class="btn btn-blue btn-sm" onclick="editPlan('${k}')">수정</button>
+        <button class="btn btn-red btn-sm" onclick="deletePlan('${k}')">삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.openPlanModal = () => {
+  editPlanKey=null;
+  document.getElementById('p_name').value='';
+  document.getElementById('p_price').value='';
+  document.getElementById('p_desc').value='';
+  document.getElementById('p_visible').checked=true;
+  document.getElementById('planModalTitle').textContent='요금제 추가';
+  openModal('planModal');
+};
+
+window.editPlan = (k) => {
+  const p=plans[k];
+  if(!p)return;
+  editPlanKey=k;
+  document.getElementById('p_name').value=p.name||'';
+  document.getElementById('p_price').value=p.monthlyPrice||'';
+  document.getElementById('p_desc').value=p.description||'';
+  document.getElementById('p_visible').checked=p.visible!==false;
+  document.getElementById('planModalTitle').textContent='요금제 수정';
+  openModal('planModal');
+};
+
+window.savePlan = () => {
+  const descVal=document.getElementById('p_desc').value.trim();
+  const data={name:document.getElementById('p_name').value.trim(),monthlyPrice:Number(document.getElementById('p_price').value)||0,visible:document.getElementById('p_visible').checked,...(descVal?{description:descVal}:{})};
+  const r=editPlanKey?ref(db,`plans/${editPlanKey}`):push(ref(db,'plans'));
+  set(r,data).then(()=>closeModal('planModal'));
+};
+
+window.togglePlan = (k,v) => update(ref(db,`plans/${k}`),{visible:v});
+window.deletePlan = (k) => { if(confirm('삭제?')) remove(ref(db,`plans/${k}`)); };
+
+// ── 카테고리 ──
+function renderCategories(){
+  const el=document.getElementById('catList');
+  const keys=Object.keys(categories).sort((a,b)=>(categories[a].order||0)-(categories[b].order||0));
+  if(!keys.length){el.innerHTML='<div class="empty">등록된 카테고리가 없습니다</div>';return;}
+  el.innerHTML=keys.map(k=>{
+    const c=categories[k];
+    return `<div class="card row-between">
+      <b>${c.name||''}</b>
+      <div class="row">
+        <label class="toggle"><input type="checkbox" ${c.visible?'checked':''} onchange="toggleCat('${k}',this.checked)"><span class="toggle-slider"></span></label>
+        <button class="btn btn-red btn-sm" onclick="deleteCat('${k}')">삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.openCatModal = () => {
+  editCatKey=null;
+  document.getElementById('c_name').value='';
+  document.getElementById('c_order').value='';
+  document.getElementById('c_visible').checked=true;
+  openModal('catModal');
+};
+
+window.saveCat = () => {
+  const data={name:document.getElementById('c_name').value.trim(),order:Number(document.getElementById('c_order').value)||0,visible:document.getElementById('c_visible').checked};
+  const r=editCatKey?ref(db,`categories/${editCatKey}`):push(ref(db,'categories'));
+  set(r,data).then(()=>closeModal('catModal'));
+};
+
+window.toggleCat = (k,v) => update(ref(db,`categories/${k}`),{visible:v});
+window.deleteCat = (k) => { if(confirm('삭제?')) remove(ref(db,`categories/${k}`)); };
+
+// ── 정책 ──
+function renderPolicies(){
+  const el=document.getElementById('policyList');
+  const keys=Object.keys(policies);
+  if(!keys.length){el.innerHTML='<div class="empty">등록된 정책이 없습니다</div>';return;}
+  el.innerHTML=keys.map(k=>{
+    const p=policies[k];
+    const selfDiscount=(p.rebate||0)+(p.distribution||0)+(p.structure||0)+(p.extraPolicy||0);
+    return `<div class="policy-item">
+      <div class="policy-head" onclick="togglePolicy('${k}')">
+        <div>
+          <b>${p.jointype||'all'} · ${p.carrier||'all'} · ${p.plangroup||'all'}구간</b>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">공시 ${(p.pubSupport||0).toLocaleString()}원 / 자체할인 ${selfDiscount.toLocaleString()}원</div>
+        </div>
+        <div class="row">
+          <span class="tag ${p.visible?'tag-green':'tag-red'}">${p.visible?'ON':'OFF'}</span>
+          <button class="btn btn-gray btn-sm" onclick="event.stopPropagation();openPolicyEdit('${k}')">편집</button>
+          <button class="btn btn-red btn-sm" onclick="event.stopPropagation();deletePolicy('${k}')">삭제</button>
+        </div>
+      </div>
+      <div class="policy-body" id="pb_${k}">
+        <b style="font-size:12px">기기별 공시지원금 오버라이드</b>
+        <table class="override-table">
+          <thead><tr><th>기기명</th><th>공시지원금</th><th>저장</th></tr></thead>
+          <tbody>${Object.keys(devices).map(dk=>{
+            const ov=p.deviceOverrides?.[dk]?.pubSupport??'';
+            return `<tr><td>${devices[dk].name||dk}</td><td><input type="number" id="ov_${k}_${dk}" value="${ov}" placeholder="공통값 적용"></td><td><button class="btn btn-blue btn-sm" onclick="saveOverride('${k}','${dk}')">저장</button></td></tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.togglePolicy = (k) => {
+  const el=document.getElementById('pb_'+k);
+  el.classList.toggle('open');
+};
+
+window.saveOverride = (pk,dk) => {
+  const val=document.getElementById(`ov_${pk}_${dk}`).value;
+  const r=ref(db,`policy2/${pk}/deviceOverrides/${dk}`);
+  val===''?remove(r):set(r,{pubSupport:Number(val)});
+};
+
+window.openPolicyModal = () => {
+  editPolicyKey=null;
+  ['pol_pub','pol_rebate','pol_dist','pol_struct','pol_extra'].forEach(id=>document.getElementById(id).value='0');
+  document.getElementById('pol_jointype').value='all';
+  document.getElementById('pol_visible').checked=true;
+  document.getElementById('pol_carrier_all').checked=true;
+  document.querySelectorAll('.pol_carrier_cb').forEach(cb=>cb.checked=false);
+  renderPlanChecks([]);
+  renderOverrideTable();
+  openModal('policyModal');
+  setTimeout(()=>renderPlanChecks([]),50);
+};
+
+window.openPolicyEdit = (k) => {
+  editPolicyKey=k;
+  const p=policies[k];
+  document.getElementById('pol_jointype').value=p.jointype||'all';
+  document.getElementById('pol_pub').value=p.pubSupport||0;
+  document.getElementById('pol_rebate').value=p.rebate||0;
+  document.getElementById('pol_dist').value=p.distribution||0;
+  document.getElementById('pol_struct').value=p.structure||0;
+  document.getElementById('pol_extra').value=p.extraPolicy||0;
+  document.getElementById('pol_visible').checked=!!p.visible;
+  const carriers=(p.carrier||'all').split(',').map(c=>c.trim());
+  document.getElementById('pol_carrier_all').checked=carriers.includes('all');
+  document.querySelectorAll('.pol_carrier_cb').forEach(cb=>{cb.checked=carriers.includes(cb.value);});
+  const plangroups=(p.plangroup||'all').split(',').map(g=>g.trim());
+  renderPlanChecks(plangroups);
+  renderOverrideTable(p.deviceOverrides||{});
+  openModal('policyModal');
+  setTimeout(()=>initPreviewRows(p.deviceOverrides||{}), 50);
+};
+
+// 숫자 → 원 단위 포맷
+function fmtWon(v){ return v===''||v===undefined||v===null?'': Number(v).toLocaleString('ko-KR')+'원'; }
+
+function renderOverrideTable(overrides={}){
+  const dks = Object.keys(devices);
+  let rows = '';
+  dks.forEach(dk=>{
+    const ov = overrides[dk]||{};
+    const checked = '';
+    rows += '<tr>';
+    rows += '<td><input type="checkbox" class="ov_device_cb" data-dk="'+dk+'" onchange="updateCheckAll()"></td>';
+    rows += '<td style="font-weight:700;font-size:12px;word-break:keep-all">'+( devices[dk].name||dk)+'</td>';
+    rows += '<td><input type="number" id="modal_ov_'+dk+'_pub" value="'+(ov.pubSupport??'')+'" placeholder="공통값" oninput="showPreview(this)"></td>';
+    rows += '<td><input type="number" id="modal_ov_'+dk+'_reb" value="'+(ov.rebate??'')+'" placeholder="공통값" oninput="showPreview(this)"></td>';
+    rows += '<td><input type="number" id="modal_ov_'+dk+'_dis" value="'+(ov.distribution??'')+'" placeholder="공통값" oninput="showPreview(this)"></td>';
+    rows += '<td><input type="number" id="modal_ov_'+dk+'_str" value="'+(ov.structure??'')+'" placeholder="공통값" oninput="showPreview(this)"></td>';
+    rows += '<td><input type="number" id="modal_ov_'+dk+'_ext" value="'+(ov.extraPolicy??'')+'" placeholder="공통값" oninput="showPreview(this)"></td>';
+    rows += '</tr>';
+    rows += '<tr id="preview_'+dk+'" style="background:#f0f6ff"><td></td>';
+    rows += '<td colspan="6" id="preview_td_'+dk+'" style="font-size:11px;padding:5px 8px;color:#667085"></td></tr>';
+  });
+
+  document.getElementById('overrideTable').innerHTML =
+    '<div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+      '<label style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px;cursor:pointer">' +
+        '<input type="checkbox" id="ov_check_all" onchange="toggleAllDevices(this)"> 전체 선택' +
+      '</label>' +
+      '<button class="btn btn-blue btn-sm" type="button" onclick="openBulkEdit()" style="margin-left:auto">✏️ 선택 기기 일괄 입력</button>' +
+    '</div>' +
+    '<div style="overflow-x:auto">' +
+      '<table class="override-table" style="min-width:700px">' +
+        '<thead><tr>' +
+          '<th style="width:36px"></th>' +
+          '<th style="width:120px;text-align:left">기기명</th>' +
+          '<th>공시지원금</th><th>리베이트</th><th>유통망</th><th>구조</th><th>추가정책</th>' +
+        '</tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table>' +
+    '</div>' +
+    '<div id="bulkEditPanel" style="display:none;margin-top:12px;padding:14px;background:#f7faff;border-radius:10px;border:1px solid var(--blue)">' +
+      '<div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--blue)">✏️ 선택 기기 일괄 입력</div>' +
+      '<div class="grid3" style="gap:8px">' +
+        '<div><label class="field-label">공시지원금</label><input type="number" id="bulk_pub" placeholder="입력 안하면 유지"></div>' +
+        '<div><label class="field-label">리베이트</label><input type="number" id="bulk_reb" placeholder="입력 안하면 유지"></div>' +
+        '<div><label class="field-label">유통망</label><input type="number" id="bulk_dis" placeholder="입력 안하면 유지"></div>' +
+      '</div>' +
+      '<div class="grid3" style="gap:8px;margin-top:8px">' +
+        '<div><label class="field-label">구조</label><input type="number" id="bulk_str" placeholder="입력 안하면 유지"></div>' +
+        '<div><label class="field-label">추가정책</label><input type="number" id="bulk_ext" placeholder="입력 안하면 유지"></div>' +
+        '<div style="display:flex;align-items:flex-end"><button class="btn btn-blue" type="button" onclick="applyBulkEdit()" style="width:100%">적용</button></div>' +
+      '</div>' +
+    '</div>';
+}
+window.renderOverrideTable=renderOverrideTable;
+
+// 기존 저장값 미리보기 초기화
+function initPreviewRows(overrides){
+  Object.keys(devices).forEach(dk=>{
+    const ov=overrides[dk]||{};
+    const lp=Number(devices[dk]?.launchPrice||0);
+    const pub=Number(ov.pubSupport||0);
+    const reb=Number(ov.rebate||0);
+    const dis=Number(ov.distribution||0);
+    const str=Number(ov.structure||0);
+    const ext=Number(ov.extraPolicy||0);
+    const total=pub+reb+dis+str+ext;
+    const result=lp-total;
+    const monthly=Math.round(result/24);
+    const td=document.getElementById('preview_td_'+dk);
+    if(!td) return;
+    if(total===0){td.textContent='';return;}
+    td.innerHTML=`출고가 ${lp.toLocaleString()} - 공시 ${pub.toLocaleString()} - 리베이트 ${reb.toLocaleString()} - 유통망 ${dis.toLocaleString()} - 구조 ${str.toLocaleString()} - 추가 ${ext.toLocaleString()}
+    = <strong style="color:${result<=0?'#ef4444':'#2563EB'};font-size:13px">${result.toLocaleString()}원</strong>
+    <span style="font-size:11px">&nbsp;(월 ${monthly.toLocaleString()}원)</span>`;
+  });
+}
+
+// 입력 시 아래 미리보기 행 업데이트
+window.showPreview = (el) => {
+  const match = el.id.match(/^modal_ov_(.+)_(pub|reb|dis|str|ext)$/);
+  if(!match) return;
+  const dk = match[1];
+  const row = document.getElementById('preview_'+dk);
+  if(!row) return;
+  const launchPrice = Number(devices[dk]?.launchPrice||0);
+  const pub  = Number(document.getElementById('modal_ov_'+dk+'_pub')?.value||0);
+  const reb  = Number(document.getElementById('modal_ov_'+dk+'_reb')?.value||0);
+  const dis  = Number(document.getElementById('modal_ov_'+dk+'_dis')?.value||0);
+  const str  = Number(document.getElementById('modal_ov_'+dk+'_str')?.value||0);
+  const ext  = Number(document.getElementById('modal_ov_'+dk+'_ext')?.value||0);
+  const total = pub+reb+dis+str+ext;
+  const result = launchPrice - total;
+  const monthly = Math.round(result/24);
+  row.style.display='';
+  const td = document.getElementById('preview_td_'+dk);
+  if(td) td.innerHTML = `출고가 ${launchPrice.toLocaleString()} - 공시 ${pub.toLocaleString()} - 리베이트 ${reb.toLocaleString()} - 유통망 ${dis.toLocaleString()} - 구조 ${str.toLocaleString()} - 추가 ${ext.toLocaleString()}
+    = <strong style="color:${result<=0?'#ef4444':'#2563EB'};font-size:13px">${result.toLocaleString()}원</strong>
+    <span style="font-size:11px">&nbsp;(월 ${monthly.toLocaleString()}원)</span>`;
+};
+
+window.toggleAllDevices = (el) => {
+  document.querySelectorAll('.ov_device_cb').forEach(cb=>cb.checked=el.checked);
+};
+window.updateCheckAll = () => {
+  const all=[...document.querySelectorAll('.ov_device_cb')];
+  document.getElementById('ov_check_all').checked=all.every(cb=>cb.checked);
+};
+window.openBulkEdit = () => {
+  const checked=[...document.querySelectorAll('.ov_device_cb:checked')];
+  if(!checked.length){alert('기기를 먼저 선택해주세요.');return;}
+  const panel=document.getElementById('bulkEditPanel');
+  panel.style.display=panel.style.display==='none'?'block':'none';
+  ['bulk_pub','bulk_reb','bulk_dis','bulk_str','bulk_ext'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+};
+window.applyBulkEdit = () => {
+  const checked=[...document.querySelectorAll('.ov_device_cb:checked')];
+  const fields=[['bulk_pub','_pub'],['bulk_reb','_reb'],['bulk_dis','_dis'],['bulk_str','_str'],['bulk_ext','_ext']];
+  checked.forEach(cb=>{
+    const dk=cb.dataset.dk;
+    fields.forEach(([bulkId,suffix])=>{
+      const bulkEl=document.getElementById(bulkId);
+      const targetEl=document.getElementById('modal_ov_'+dk+suffix);
+      if(bulkEl&&targetEl&&bulkEl.value!==''){
+        targetEl.value=bulkEl.value;
+        showPreview(targetEl);
+      }
+    });
+  });
+  document.getElementById('bulkEditPanel').style.display='none';
+  alert(checked.length+'개 기기에 적용했어요!');
+};
+
+// renderPlanChecks
+function renderPlanChecks(selectedGroups=[]){
+  const el=document.getElementById('pol_plan_checks');
+  if(!el) return;
+  const planKeys=Object.keys(plans).filter(k=>plans[k].visible!==false);
+  if(!planKeys.length){el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:4px">등록된 요금제가 없습니다</div>';return;}
+  el.innerHTML=planKeys.map(k=>{
+    const p=plans[k];
+    const plangroup=String(Math.round((p.monthlyPrice||0)/1000));
+    const isChecked=selectedGroups.includes(plangroup)||selectedGroups.includes('all');
+    return `<label style="display:flex;align-items:center;gap:6px;padding:6px 4px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--line)">
+      <input type="checkbox" class="pol_plan_cb" value="${plangroup}" ${isChecked?'checked':''}>
+      <span>${p.name||k}</span>
+      <span style="margin-left:auto;color:var(--muted);font-size:11px">${(p.monthlyPrice||0).toLocaleString()}원</span>
+    </label>`;
+  }).join('');
+}
+
+window.handleCarrierAll = (el) => {
+  if(el.checked) document.querySelectorAll('.pol_carrier_cb').forEach(cb=>cb.checked=false);
+};
+window.handleCarrierCb = () => {
+  // 개별 선택 시 전체 체크박스 해제
+  document.getElementById('pol_carrier_all').checked=false;
+};
+
+window.savePolicy = () => {
+  const overrides={};
+  Object.keys(devices).forEach(dk=>{
+    const pub=document.getElementById('modal_ov_'+dk+'_pub');
+    const reb=document.getElementById('modal_ov_'+dk+'_reb');
+    const dis=document.getElementById('modal_ov_'+dk+'_dis');
+    const str=document.getElementById('modal_ov_'+dk+'_str');
+    const ext=document.getElementById('modal_ov_'+dk+'_ext');
+    const hasVal=[pub,reb,dis,str,ext].some(el=>el&&el.value!=='');
+    if(hasVal){
+      const ov={};
+      if(pub&&pub.value!=='') ov.pubSupport=Number(pub.value);
+      if(reb&&reb.value!=='') ov.rebate=Number(reb.value);
+      if(dis&&dis.value!=='') ov.distribution=Number(dis.value);
+      if(str&&str.value!=='') ov.structure=Number(str.value);
+      if(ext&&ext.value!=='') ov.extraPolicy=Number(ext.value);
+      overrides[dk]=ov;
+    }
+  });
+  const data={
+    jointype:document.getElementById('pol_jointype').value,
+    carrier:(()=>{
+      if(document.getElementById('pol_carrier_all').checked) return 'all';
+      const checked=[...document.querySelectorAll('.pol_carrier_cb:checked')].map(cb=>cb.value);
+      return checked.length?checked.join(','):'all';
+    })(),
+    plangroup:(()=>{
+      const checked=[...document.querySelectorAll('.pol_plan_cb:checked')].map(cb=>cb.value);
+      return checked.length?checked.join(','):'all';
+    })(),
+    pubSupport:Number(document.getElementById('pol_pub').value)||0,
+    rebate:Number(document.getElementById('pol_rebate').value)||0,
+    distribution:Number(document.getElementById('pol_dist').value)||0,
+    structure:Number(document.getElementById('pol_struct').value)||0,
+    extraPolicy:Number(document.getElementById('pol_extra').value)||0,
+    visible:document.getElementById('pol_visible').checked,
+    deviceOverrides:overrides
+  };
+  const r=editPolicyKey?ref(db,`policy2/${editPolicyKey}`):push(ref(db,'policy2'));
+  set(r,data).then(()=>closeModal('policyModal'));
+};
+
+window.deletePolicy = (k) => { if(confirm('삭제?')) remove(ref(db,`policy2/${k}`)); };
+
+// ── 통신사 ──
+function renderCarriers(){
+  const el=document.getElementById('carrierList');
+  const keys=Object.keys(carriers);
+  if(!keys.length){
+    el.innerHTML=`<div class="card">
+      <p style="color:var(--muted);font-size:13px;margin-bottom:12px">기본 통신사를 초기화합니다</p>
+      <button class="btn btn-blue" onclick="initCarriers()">기본 통신사 초기화</button>
+    </div>`;
+    return;
+  }
+  el.innerHTML=keys.map(k=>{
+    const c=carriers[k];
+    return `<div class="card row-between"><b>${c.name||''}</b><label class="toggle"><input type="checkbox" ${c.visible?'checked':''} onchange="toggleCarrier('${k}',this.checked)"><span class="toggle-slider"></span></label></div>`;
+  }).join('');
+}
+
+window.toggleCarrier = (k,v) => update(ref(db,`carriers/${k}`),{visible:v});
+window.initCarriers = () => {
+  const defaults=[{name:'LG U+',visible:true},{name:'SKT',visible:true},{name:'KT',visible:true}];
+  defaults.forEach(c=>push(ref(db,'carriers'),c));
+};
+
+// ── 가입유형 ──
+function renderJoinTypes(){
+  const el=document.getElementById('joinTypeList');
+  const keys=Object.keys(joinTypes);
+  if(!keys.length){
+    el.innerHTML=`<div class="card">
+      <p style="color:var(--muted);font-size:13px;margin-bottom:12px">기본 가입유형을 초기화합니다</p>
+      <button class="btn btn-blue" onclick="initJoinTypes()">기본 가입유형 초기화</button>
+    </div>`;
+    return;
+  }
+  el.innerHTML=keys.map(k=>{
+    const j=joinTypes[k];
+    return `<div class="card row-between"><b>${j.name||''}</b><label class="toggle"><input type="checkbox" ${j.visible?'checked':''} onchange="toggleJoinType('${k}',this.checked)"><span class="toggle-slider"></span></label></div>`;
+  }).join('');
+}
+
+window.toggleJoinType = (k,v) => update(ref(db,`joinTypes/${k}`),{visible:v});
+window.initJoinTypes = () => {
+  const defaults=[{name:'기기변경',visible:true},{name:'번호이동',visible:true},{name:'신규가입',visible:true}];
+  defaults.forEach(j=>push(ref(db,'joinTypes'),j));
+};
+
+// ── 화면 문구 ──
+function renderUiTexts(){
+  const fields=[
+    ['siteName',    '사이트명',           '상단 로고 옆에 표시되는 서비스명',            '예: VIVID 비비드'],
+    ['heroBadge',   '히어로 뱃지',         '제목 위 작은 뱃지 텍스트',                   '예: LG U+ 조건 확인 서비스'],
+    ['heroDesc',    '히어로 설명',          '제목 아래 한두 줄 설명 문구',                '예: 통신사·기기·요금제·할인 방식을 선택하면 월 부담금을 바로 계산해드립니다.'],
+    ['noticeText',  '공지 텍스트',          '페이지 상단 공지 문구 (비워두면 미표시)',      '예: 5월 정책 업데이트 완료'],
+    ['sectionDesc', '섹션 설명',           '기기 목록 위 안내 문구',                     '예: 기기를 선택하면 혜택이 계산돼요'],
+    ['summaryNote', '요약 노트',           '결과 하단 작은 안내 문구',                   '예: 위 금액은 선택하신 조건 기준 예상 금액입니다.'],
+    ['selfDiscountLabel','추가 혜택할인 라벨','공시지원금 외 자체 할인 항목명',             '예: 추가 혜택할인'],
+    ['planLabelOver','85이상 요금제 라벨',  '85,000원 이상 요금제에 붙는 배지 텍스트',    '예: 85,000원 이상'],
+    ['planLabelUnder','85미만 요금제 라벨', '85,000원 미만 요금제에 붙는 배지 텍스트',    '예: 상담 안내'],
+    ['planSubOver', '85이상 요금제 설명',   '85,000원 이상 요금제 아래 작은 설명 문구',   '예: 공시지원금 조건 확인 가능'],
+    ['planSubUnder','85미만 요금제 설명',   '85,000원 미만 요금제 아래 작은 설명 문구',   '예: 85,000원 미만 구간'],
+  ];
+  const showLabel = uiTexts.showPlanLabel !== false;
+  document.getElementById('uitextForm').innerHTML=`
+    <div style="background:#f0f7ff;border:1.5px solid #2563eb22;border-radius:10px;padding:14px 16px;margin-bottom:20px">
+      <div style="font-weight:700;font-size:14px;margin-bottom:10px">85이상/이하 배지 표시</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <label class="toggle"><input type="checkbox" id="ut_showPlanLabel" ${showLabel?'checked':''} onchange="saveShowPlanLabel(this.checked)"><span class="toggle-slider"></span></label>
+        <span style="font-size:13px;color:var(--muted)">요금제 목록에 85이상/이하 배지 노출 여부 (저장 즉시 반영)</span>
+      </div>
+    </div>
+  `+fields.map(([k,label,desc,ph])=>`
+    <div style="margin-bottom:14px">
+      <label class="field-label" style="margin-bottom:2px">${label}</label>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">${desc}</div>
+      <input type="text" id="ut_${k}" value="${(uiTexts[k]||'').replace(/"/g,'&quot;')}" placeholder="${ph}" style="margin-bottom:0">
+    </div>
+  `).join('')+`<div style="margin-top:16px"><button class="btn btn-blue" onclick="saveUiTexts()">저장</button></div>`;
+}
+
+window.saveShowPlanLabel = (v) => {
+  update(ref(db,'uiTexts'),{showPlanLabel:v}).then(()=>{
+    // 저장 피드백 없이 토글만
+  });
+};
+
+window.saveUiTexts = () => {
+  const fields=['siteName','heroBadge','heroDesc','noticeText','sectionDesc','summaryNote','selfDiscountLabel','planLabelOver','planLabelUnder','planSubOver','planSubUnder'];
+  const data={};
+  fields.forEach(k=>{ data[k]=document.getElementById('ut_'+k)?.value||''; });
+  set(ref(db,'uiTexts'),data).then(()=>alert('저장 완료'));
+};
+
+// ── 시뮬레이터 ──
+function renderSimDevices(){
+  document.getElementById('simDevice').innerHTML=Object.keys(devices).filter(k=>devices[k].visible).map(k=>`<option value="${k}">${devices[k].name}</option>`).join('');
+}
+function renderSimPlans(){
+  document.getElementById('simPlan').innerHTML=Object.keys(plans).filter(k=>plans[k].visible).map(k=>`<option value="${k}">${plans[k].name} (${(plans[k].monthlyPrice||0).toLocaleString()}원)</option>`).join('');
+}
+function renderSimCarriers(){
+  document.getElementById('simCarrier').innerHTML=Object.keys(carriers).filter(k=>carriers[k].visible).map(k=>`<option value="${k}">${carriers[k].name}</option>`).join('');
+}
+function renderSimJoinTypes(){
+  document.getElementById('simJoinType').innerHTML=Object.keys(joinTypes).filter(k=>joinTypes[k].visible).map(k=>`<option value="${k}">${joinTypes[k].name}</option>`).join('');
+}
+
+window.simCalc = () => {
+  const dk=document.getElementById('simDevice').value;
+  const pk=document.getElementById('simPlan').value;
+  const ck=document.getElementById('simCarrier').value;
+  const jk=document.getElementById('simJoinType').value;
+  if(!dk||!pk) return;
+
+  const device=devices[dk];
+  const plan=plans[pk];
+  const carrier=carriers[ck]?.name||'all';
+  const jointype=joinTypes[jk]?.name||'all';
+  const plangroup=String(Math.round((plan.monthlyPrice||0)/1000));
+
+  // 정책 매칭
+  const priority=[[jointype,carrier,plangroup],[jointype,carrier,'all'],[jointype,'all',plangroup],[jointype,'all','all'],['all',carrier,plangroup],['all',carrier,'all'],['all','all',plangroup],['all','all','all']];
+  let matched=null;
+  for(const [jt,ca,pg] of priority){
+    const found=Object.values(policies).find(p=>p.visible&&p.jointype===jt&&p.carrier===ca&&p.plangroup===pg);
+    if(found){matched=found;break;}
+  }
+
+  const launchPrice=device.launchPrice||0;
+  const pubSupport=matched?.deviceOverrides?.[dk]?.pubSupport??matched?.pubSupport??0;
+  const selfDiscount=(matched?.rebate||0)+(matched?.distribution||0)+(matched?.structure||0)+(matched?.extraPolicy||0);
+  const realPrice=launchPrice-pubSupport-selfDiscount;
+  const monthly=Math.round(realPrice/24);
+  const choiceMonthly=Math.round((plan.monthlyPrice||0)*0.25);
+
+  document.getElementById('simResult').innerHTML=`
+    <div class="sim-result">
+      <h3>📊 계산 결과</h3>
+      <div class="sim-row"><span>출고가</span><span>${launchPrice.toLocaleString()}원</span></div>
+      <div class="sim-row"><span>공시지원금</span><span>-${pubSupport.toLocaleString()}원</span></div>
+      <div class="sim-row"><span>자체할인(VIVID)</span><span>-${selfDiscount.toLocaleString()}원</span></div>
+      <div class="sim-row"><span>실구매가</span><span>${realPrice.toLocaleString()}원</span></div>
+      <div class="sim-row"><span>공시지원금 월납부금 (÷24)</span><span>${monthly.toLocaleString()}원/월</span></div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:8px 0">
+      <div class="sim-row"><span>선택약정 요금할인</span><span>월 -${choiceMonthly.toLocaleString()}원</span></div>
+      ${matched?('<div style="font-size:11px;color:var(--muted);margin-top:8px">매칭 정책: '+matched.jointype+'·'+matched.carrier+'·'+matched.plangroup+'구간</div>'):'<div style="font-size:11px;color:var(--red);margin-top:8px">매칭 정책 없음</div>'}
+    </div>`;
+};
+
+// ── FAQ 기본 데이터 ──
+const FAQ_DEFAULT_DATA = {
+  '요금제': [
+    {q:'나에게 맞는 요금제는 어떻게 찾을 수 있나요?',a:'비비드 홈페이지에서 내 상황(영상 자주 봄, 테더링 필요 등)을 선택하면 맞춤 요금제를 추천해드려요.'},
+    {q:'데이터 사용량은 어떻게 확인하나요?',a:'LG U+ 공식 앱(My LGU+)에서 실시간으로 데이터 잔량을 확인할 수 있어요.'},
+    {q:'요금제 변경은 언제, 어떻게 하나요?',a:'요금제 변경은 매월 가능하며, 변경 후 익월 1일부터 새 요금제가 적용됩니다.'},
+    {q:'요금제 변경 시 위약금이 발생하나요?',a:'선택약정 중 요금제를 하향 변경하면 위약금이 발생할 수 있어요. 상향 변경은 위약금 없이 가능합니다.'},
+    {q:'5G 요금제와 LTE 요금제의 차이는 무엇인가요?',a:'5G 요금제는 더 빠른 속도와 많은 데이터를 제공합니다.'},
+    {q:'무제한 요금제는 정말 데이터 제한 없이 사용할 수 있나요?',a:'완전 무제한 요금제는 속도 제한 없이 사용 가능합니다.'},
+    {q:'요금제에 포함된 혜택은 어디서 확인하나요?',a:'각 요금제별 포함 혜택은 비비드 요금제 페이지에서 확인하실 수 있어요.'},
+    {q:'요금제 변경 후 적용 시점은 언제인가요?',a:'당월 변경 신청 시 익월 1일부터 적용됩니다.'},
+    {q:'요금제를 변경하면 기존 할인은 어떻게 되나요?',a:'선택약정, 결합 할인 등 기존 할인은 요금제 변경 후에도 유지됩니다.'},
+    {q:'요금제 변경 이력이 신용도에 영향을 주나요?',a:'요금제 변경 자체는 신용도에 영향을 주지 않습니다.'},
+  ],
+  '공시지원금': [
+    {q:'공시지원금이란 무엇인가요?',a:'통신사가 단말기 구매 시 제공하는 보조금으로 단말기 출고가에서 차감됩니다.'},
+    {q:'공시지원금은 어떻게 확인하나요?',a:'비비드 혜택 확인 페이지에서 기기·요금제·할인방식을 선택하면 바로 확인할 수 있어요.'},
+    {q:'공시지원금을 받으면 약정이 생기나요?',a:'12개월 또는 24개월 의무 사용 약정이 발생합니다.'},
+    {q:'공시지원금과 선택약정 중 어떤 게 유리한가요?',a:'고가 단말기는 공시지원금이, 중저가 단말기는 선택약정(25% 요금 할인)이 유리한 경우가 많아요.'},
+    {q:'공시지원금은 매달 바뀌나요?',a:'네, 통신사 정책에 따라 수시로 변경됩니다.'},
+    {q:'추가지원금이란 무엇인가요?',a:'판매점에서 공시지원금 외에 추가로 제공할 수 있는 보조금으로, 공시지원금의 최대 15%까지 제공 가능합니다.'},
+    {q:'요금제 변경 시 위약금이 발생하나요?',a:'6개월 이후에 변경하시면 위약금이 발생하지 않습니다! 6개월 이후부터는 자유롭게 저가 요금제로 변경하실 수 있으며, 그 전에 임의로 변경하실 경우 위약금이 발생할 수 있으니 유의 부탁드립니다.'},
+    {q:'공시지원금은 매장마다 다를 수 있나요?',a:'기본 공시지원금은 통신사 기준으로 동일하지만, 추가지원금이나 판매 조건은 매장마다 다를 수 있습니다.'},
+    {q:'공시지원금을 받으면 요금제를 꼭 유지해야 하나요?',a:'일정 기간 요금제 유지 조건이 있을 수 있습니다. 중도 변경 시 할인 반환금이 발생할 수 있습니다.'},
+    {q:'공시지원금 받고 해지하면 위약금이 나오나요?',a:'약정 기간 내 해지 시 지원받은 금액 일부를 반환해야 할 수 있습니다.'},
+    {q:'공시지원금이 큰 휴대폰이 무조건 좋은 선택인가요?',a:'아닙니다. 지원금뿐 아니라 월 요금, 사용 기간, 총 납부금까지 함께 비교하는 것이 중요합니다.'},
+  ],
+  '선택약정': [
+    {q:'선택약정 할인이란 무엇인가요?',a:'단말기 지원금 대신 매월 요금의 25%를 할인받는 제도입니다.'},
+    {q:'선택약정 중도 해지 시 위약금은 얼마인가요?',a:'받은 할인 혜택의 일부를 반환하는 방식으로 산정됩니다.'},
+    {q:'선택약정은 단말기를 바꾸면 유지되나요?',a:'선택약정은 유심(번호)에 묶여 있어 단말기 변경 시 약정 조건이 달라질 수 있습니다.'},
+    {q:'선택약정 24개월 vs 12개월, 뭐가 나은가요?',a:'장기 사용 계획이 확실하다면 24개월, 유연하게 이용하고 싶다면 12개월을 추천드려요.'},
+    {q:'선택약정 할인은 언제부터 적용되나요?',a:'신규 가입 시에는 가입 당월, 기존 사용자는 신청 익월부터 적용됩니다.'},
+    {q:'선택약정은 누구나 가입할 수 있나요?',a:'조건에 맞는 단말기라면 가입 가능합니다. 일부 단말기는 가입이 제한될 수 있습니다.'},
+    {q:'선택약정은 12개월과 24개월 중 뭐가 좋나요?',a:'오래 사용할 계획이라면 24개월, 변경 가능성을 고려한다면 12개월이 유리할 수 있습니다.'},
+    {q:'선택약정 할인은 가족결합과 중복되나요?',a:'대부분 중복 적용 가능하지만 결합 상품에 따라 달라질 수 있습니다.'},
+    {q:'기존 휴대폰도 선택약정 가입이 가능한가요?',a:'공시지원금 약정이 종료된 단말기라면 가입 가능한 경우가 많습니다.'},
+    {q:'선택약정이 끝나면 자동으로 연장되나요?',a:'자동 연장되지 않는 경우가 많으므로 만료 시 재가입 여부를 확인하는 것이 좋습니다.'},
+  ],
+  '기기변경': [
+    {q:'기기변경은 어떻게 하나요?',a:'비비드 매장 방문, 카카오톡 상담, 또는 전화 상담을 통해 신청이 가능합니다.'},
+    {q:'기기변경 시 번호는 그대로 유지되나요?',a:'네, 기기변경은 같은 통신사 내 단말기 교체이므로 기존 번호가 그대로 유지됩니다.'},
+    {q:'기기변경 후 데이터 이전은 어떻게 하나요?',a:'갤럭시는 삼성 스마트 스위치, 아이폰은 iCloud 또는 Quick Start를 이용하면 쉽게 이전할 수 있어요.'},
+    {q:'기기변경 시 할부 잔액은 어떻게 되나요?',a:'기존 단말기 할부 잔액은 기기변경 후에도 계속 납부해야 합니다.'},
+    {q:'기기변경과 번호이동 중 어떤 게 더 이득인가요?',a:'번호이동 시 더 많은 혜택이 제공되는 경우가 많아요.'},
+    {q:'약정이 남아 있어도 기기변경이 가능한가요?',a:'가능한 경우가 많지만 약정 조건에 따라 추가 비용이 발생할 수 있습니다.'},
+    {q:'기존 유심을 그대로 사용할 수 있나요?',a:'기기와 유심 규격이 맞으면 그대로 사용할 수 있습니다.'},
+    {q:'온라인으로 기기변경도 가능한가요?',a:'네. 본인 인증 후 비대면으로 진행 가능한 경우가 많습니다.'},
+    {q:'기기변경이 번호이동보다 유리한 경우는 언제인가요?',a:'기존 결합 할인이나 장기 고객 혜택을 유지하려는 경우 유리할 수 있습니다.'},
+    {q:'기기변경 시 기존 데이터는 자동으로 옮겨지나요?',a:'자동 이전 기능을 지원하는 경우가 많지만 직접 이전 작업이 필요할 수 있습니다.'},
+  ],
+  '번호이동': [
+    {q:'번호이동이란 무엇인가요?',a:'기존 전화번호를 유지하면서 다른 통신사로 이동하는 것입니다.'},
+    {q:'번호이동 시 필요한 서류는 무엇인가요?',a:'본인 명의의 신분증이 필요합니다.'},
+    {q:'번호이동 후 기존 통신사 해지는 자동으로 되나요?',a:'네, LG U+로 번호이동 처리 완료 시 기존 통신사가 자동 해지됩니다.'},
+    {q:'번호이동 처리 시간은 얼마나 걸리나요?',a:'신청 후 통상 1~2시간 내에 처리됩니다.'},
+    {q:'번호이동 시 기존 포인트나 혜택은 어떻게 되나요?',a:'기존 통신사의 포인트나 멤버십은 이동 전에 사용하시는 것을 권장드립니다.'},
+    {q:'번호이동하면 위약금이 발생하나요?',a:'기존 통신사의 약정이 남아 있다면 위약금 또는 할인 반환금이 발생할 수 있습니다.'},
+    {q:'번호이동 개통은 얼마나 걸리나요?',a:'보통 당일 처리되지만 상황에 따라 시간이 달라질 수 있습니다.'},
+    {q:'번호이동이 안 되는 경우도 있나요?',a:'미납 요금, 명의 문제, 인증 오류 등이 있으면 진행이 어려울 수 있습니다.'},
+    {q:'번호이동 시 기존 요금은 어떻게 정산되나요?',a:'사용한 기간만큼 일할 계산되어 청구됩니다.'},
+    {q:'번호이동과 신규가입은 뭐가 다른가요?',a:'번호이동은 기존 번호를 유지하고, 신규가입은 새로운 번호를 받는 방식입니다.'},
+  ],
+  '유심': [
+    {q:'유심이란 무엇인가요?',a:'유심(USIM)은 전화번호와 가입자 정보가 저장된 작은 칩으로, 단말기에 삽입해서 사용합니다.'},
+    {q:'유심만 구매해서 기존 폰에 끼울 수 있나요?',a:'LG U+ 유심을 구매하여 기존 단말기에 삽입하면 LG U+ 서비스를 이용할 수 있어요.'},
+    {q:'유심 분실 시 어떻게 해야 하나요?',a:'LG U+ 고객센터(101)에 즉시 신고하여 일시 정지 처리를 하고, 매장에서 유심을 재발급 받으세요.'},
+    {q:'e심(eSIM)이란 무엇인가요?',a:'물리적 유심 칩 없이 단말기에 내장된 디지털 유심입니다.'},
+    {q:'유심 크기는 어떻게 확인하나요?',a:'현재 대부분의 스마트폰은 나노유심(Nano-SIM)을 사용합니다.'},
+    {q:'유심 배송받고 직접 꽂아도 되나요?',a:'개통이 완료된 유심이라면 직접 장착 후 사용할 수 있습니다.'},
+    {q:'유심 인식이 안 되면 어떻게 하나요?',a:'재부팅 후 다시 장착해보고, 문제가 지속되면 고객센터나 매장에 문의하세요.'},
+    {q:'eSIM도 가능한가요?',a:'지원 기종이라면 별도 유심 없이 eSIM 개통이 가능합니다.'},
+    {q:'유심 변경 시 전화번호가 바뀌나요?',a:'아니요. 유심을 바꿔도 번호는 그대로 유지됩니다.'},
+    {q:'유심 개통은 비대면으로 가능한가요?',a:'네. 본인 인증 후 비대면 개통이 가능한 경우가 많습니다.'},
+  ],
+  '부모님요금제': [
+    {q:'부모님께 적합한 요금제는 무엇인가요?',a:'저용량 요금제부터 자녀와 데이터를 나눌 수 있는 투게더 요금제까지 다양하게 준비되어 있어요.'},
+    {q:'부모님 명의로 가입할 때 대리 가입이 가능한가요?',a:'네, 가족 대리 가입이 가능합니다. 부모님 신분증, 대리인 신분증, 가족관계증명서를 준비해주세요.'},
+    {q:'자녀가 부모님 요금을 대신 납부할 수 있나요?',a:'자동이체 계좌를 자녀 명의로 설정하거나 통합 청구 서비스를 이용하면 됩니다.'},
+    {q:'부모님 요금제에서 데이터 쉐어링이 가능한가요?',a:'LG U+ 투게더 가족 결합 상품을 이용하면 가족 간 데이터 공유가 가능합니다.'},
+    {q:'부모님이 데이터 사용이 적으면 어떤 요금제가 좋나요?',a:'통화 중심 또는 시니어 전용 요금제가 적합할 수 있습니다.'},
+    {q:'통화 위주로 쓰면 어떤 요금제가 좋나요?',a:'통화 무제한이 포함된 요금제를 우선 고려하는 것이 좋습니다.'},
+    {q:'부모님 요금제도 선택약정 할인이 가능한가요?',a:'조건이 맞으면 동일하게 선택약정 할인을 받을 수 있습니다.'},
+    {q:'부모님 요금제도 가족결합이 가능한가요?',a:'가족관계 확인 후 결합 할인 적용이 가능한 경우가 많습니다.'},
+    {q:'부모님이 기존 폰을 계속 쓰는 게 나을 수도 있나요?',a:'기기 상태가 좋다면 휴대폰 교체보다 요금제 조정이 더 유리할 수 있습니다.'},
+    {q:'부모님 휴대폰 변경 시 주의할 점은 무엇인가요?',a:'화면 크기, 배터리, 사용 편의성, 월 부담금을 함께 고려하는 것이 좋습니다.'},
+  ],
+  '인터넷결합': [
+    {q:'인터넷 결합 할인이란 무엇인가요?',a:'LG U+ 인터넷과 휴대폰을 함께 사용하면 매월 요금을 추가로 할인받을 수 있는 결합 상품입니다.'},
+    {q:'인터넷 없이 모바일만 결합 혜택을 받을 수 있나요?',a:'기본적으로 LG U+ 인터넷 가입이 필요합니다.'},
+    {q:'결합 할인은 얼마나 받을 수 있나요?',a:'통상 1회선 기준 월 1,000~5,500원의 추가 할인이 적용되며, 결합 회선이 많을수록 할인이 커요.'},
+    {q:'다른 가족이 다른 통신사를 쓰면 결합이 안 되나요?',a:'LG U+ 결합 할인은 LG U+ 회선 간 결합이 기본입니다.'},
+    {q:'인터넷 결합 신청은 어떻게 하나요?',a:'비비드 매장 방문 또는 전화/카카오톡 상담을 통해 신청 가능합니다.'},
+    {q:'기존 인터넷 약정이 남아 있어도 변경 가능한가요?',a:'가능하지만 위약금 발생 여부를 먼저 확인해야 합니다.'},
+    {q:'인터넷·TV 신규가입 혜택은 어떻게 확인하나요?',a:'가입 시점과 상품에 따라 달라지므로 상담을 통해 확인하는 것이 가장 정확합니다.'},
+    {q:'인터넷 속도는 100M, 500M, 1G 중 뭐가 좋나요?',a:'사용 인원과 사용 목적에 따라 적합한 속도가 달라집니다.'},
+    {q:'IPTV까지 같이 하면 유리한가요?',a:'TV 시청이 많다면 결합 할인과 함께 이용하는 것이 유리할 수 있습니다.'},
+    {q:'결합 할인은 언제부터 적용되나요?',a:'결합 등록이 완료된 이후부터 순차적으로 적용됩니다.'},
+  ],
+};
+
+window.uploadDefaultFaqs = async function() {
+  if(!confirm('기존 FAQ 데이터를 Firebase에 업로드할까요?')) return;
+  let count = 0;
+  for(const [cat, items] of Object.entries(FAQ_DEFAULT_DATA)) {
+    for(const item of items) {
+      await set(push(ref(db,'faq')), { cat, q:item.q, a:item.a, visible:true, order:Date.now()+count });
+      count++;
+    }
+  }
+  alert('✅ 총 ' + count + '개의 FAQ가 업로드됐어요!');
+  document.getElementById('faqUploadBanner').style.display='none';
+};
+
+window.renderFaqList = function() {
+  const cat = document.getElementById('faqCatSelect').value;
+  const el = document.getElementById('faqList');
+  const items = Object.entries(faqs).filter(([k,v]) => v.cat === cat);
+  if(!items.length){ el.innerHTML='<div class="empty">등록된 FAQ가 없습니다</div>'; return; }
+  el.innerHTML = items.map(([k,v]) => `
+    <div class="card" style="margin-bottom:8px">
+      <div class="row-between">
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px">${v.q}</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">${v.a}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:16px;flex-shrink:0">
+          <label class="toggle"><input type="checkbox" ${v.visible!==false?'checked':''} onchange="toggleFaq('${k}',this.checked)"><span class="toggle-slider"></span></label>
+          <button class="btn btn-gray btn-sm" onclick="openFaqEdit('${k}')">수정</button>
+          <button class="btn btn-red btn-sm" onclick="deleteFaq('${k}')">삭제</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+};
+
+window.openFaqModal = function() {
+  editFaqKey = null;
+  document.getElementById('faqModalTitle').textContent = 'FAQ 추가';
+  document.getElementById('faq_cat').value = document.getElementById('faqCatSelect').value;
+  document.getElementById('faq_q').value = '';
+  document.getElementById('faq_a').value = '';
+  document.getElementById('faq_visible').checked = true;
+  openModal('faqModal');
+};
+
+window.openFaqEdit = function(k) {
+  editFaqKey = k;
+  const v = faqs[k];
+  document.getElementById('faqModalTitle').textContent = 'FAQ 수정';
+  document.getElementById('faq_cat').value = v.cat;
+  document.getElementById('faq_q').value = v.q;
+  document.getElementById('faq_a').value = v.a;
+  document.getElementById('faq_visible').checked = v.visible !== false;
+  openModal('faqModal');
+};
+
+window.saveFaq = function() {
+  const data = {
+    cat: document.getElementById('faq_cat').value,
+    q: document.getElementById('faq_q').value.trim(),
+    a: document.getElementById('faq_a').value.trim(),
+    visible: document.getElementById('faq_visible').checked,
+    order: Date.now()
+  };
+  if(!data.q || !data.a){ alert('질문과 답변을 모두 입력해주세요.'); return; }
+  const r = editFaqKey ? ref(db,'faq/'+editFaqKey) : push(ref(db,'faq'));
+  set(r, data);
+  closeModal('faqModal');
+};
+
+window.toggleFaq = (k,v) => update(ref(db,'faq/'+k), {visible:v});
+window.deleteFaq = (k) => { if(confirm('삭제할까요?')) remove(ref(db,'faq/'+k)); };
+</script>
+</body>
+</html>

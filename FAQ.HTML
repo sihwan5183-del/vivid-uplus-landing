@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>궁금해요 FAQ - VIVID</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', -apple-system, sans-serif;
+  background: #fff;
+  color: #111827;
+}
+
+/* ===== NAV ===== */
+@media (min-width: 769px) {
+  :root { --blue:#2563EB; --nav-h:160px; --sub-h:50px; --nav-total:210px; }
+  .nav-top {
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    height:var(--nav-h); background:rgba(255,255,255,0.97);
+    backdrop-filter:blur(12px);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 68px; border-bottom:1px solid rgba(0,0,0,0.06);
+  }
+  .nav-logo img { height:144px; width:auto; }
+  .nav-vivid { position:absolute; left:50%; transform:translateX(-50%); text-decoration:none; }
+  .nav-vivid img { height:136px; width:auto; object-fit:contain; }
+  .nav-btns { display:flex; align-items:center; gap:12px; }
+  .btn-kakao {
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:#fff; color:#111; border:1.5px solid #E5E7EB;
+    width:168px; height:50px; border-radius:50px;
+    font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap;
+  }
+  .btn-consult {
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:#2563EB; color:#fff; border:none;
+    width:142px; height:50px; border-radius:50px;
+    font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap;
+  }
+  .nav-hamburger { display:none; }
+  .nav-sub {
+    position:fixed; top:var(--nav-h); left:0; right:0; z-index:999;
+    height:var(--sub-h); background:#fff;
+    border-bottom:1px solid rgba(0,0,0,0.06);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .nav-sub a { font-size:17px; font-weight:600; color:#111827; text-decoration:none; padding:0 32px; }
+  .nav-sub a:hover { color:#2563EB; }
+  .nav-sub a.active { color:#2563EB; }
+  .nav-sub-div { width:1px; height:13px; background:#9CA3AF; }
+  .mobile-drawer { display:none !important; }
+}
+
+/* ===== HERO ===== */
+.faq-hero {
+  margin-top:var(--nav-total, 210px);
+  background:#fff;
+  border-bottom:1px solid #E5E7EB;
+}
+.faq-hero-inner {
+  max-width:1100px; margin:0 auto;
+  padding:52px 80px 44px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:40px;
+}
+.faq-hero-left { flex:1; }
+.faq-hero-title {
+  font-size:38px; font-weight:900; line-height:1.3;
+  color:#111827; margin-bottom:12px; letter-spacing:-0.5px;
+}
+.faq-hero-title span { color:#2563EB; }
+.faq-hero-desc {
+  font-size:14px; color:#6B7280; line-height:1.7; margin-bottom:24px;
+}
+.faq-search-wrap {
+  display:flex; align-items:center;
+  border:1.5px solid #E5E7EB; border-radius:10px;
+  padding:0 16px; gap:10px; height:48px;
+  max-width:440px; transition:border-color .2s;
+  background:#fff;
+}
+.faq-search-wrap:focus-within { border-color:#2563EB; }
+.faq-search-wrap input { flex:1; border:none; background:transparent; font-size:14px; color:#111827; outline:none; }
+.faq-search-wrap input::placeholder { color:#9CA3AF; }
+.faq-search-icon { color:#9CA3AF; flex-shrink:0; }
+.faq-hero-img { flex-shrink:0; }
+.faq-hero-img svg { display:block; }
+
+/* ===== CATEGORY TABS ===== */
+.faq-tabs-wrap {
+  background:#fff; border-bottom:1px solid #E5E7EB;
+  overflow-x:auto; scrollbar-width:none;
+}
+.faq-tabs-wrap::-webkit-scrollbar { display:none; }
+.faq-tabs-outer {
+  max-width:1100px; margin:0 auto;
+  padding:0 80px;
+  display:flex; justify-content:center;
+}
+.faq-tabs { display:flex; gap:0; flex:1; justify-content:space-between; }
+.faq-tab {
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+  padding:20px 0 16px; min-width:104px;
+  border:none; background:transparent; cursor:pointer;
+  font-size:13px; font-weight:600; color:#6B7280;
+  border-bottom:2.5px solid transparent;
+  transition:all .2s; text-align:center;
+}
+.faq-tab:hover { color:#2563EB; }
+.faq-tab.active { color:#2563EB; border-bottom-color:#2563EB; }
+.faq-tab-icon {
+  width:46px; height:46px; border-radius:12px;
+  background:#F3F4F6;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:background .2s;
+}
+.faq-tab.active .faq-tab-icon { background:#EEF2FF; }
+.faq-tab-icon svg { display:block; }
+
+/* ===== BODY LAYOUT ===== */
+.faq-body {
+  display:grid; grid-template-columns:260px 1fr;
+  max-width:1100px; margin:0 auto;
+  padding:40px 80px 80px;
+  gap:48px;
+}
+
+/* ===== SIDEBAR ===== */
+.faq-sidebar { position:sticky; top:calc(var(--nav-total,210px) + 20px); align-self:start; }
+.faq-sidebar-label {
+  font-size:11px; font-weight:700; color:#9CA3AF;
+  letter-spacing:1px; text-transform:uppercase;
+  padding:0 4px; margin-bottom:10px;
+}
+.faq-sidebar-list { display:flex; flex-direction:column; gap:1px; margin-bottom:20px; }
+.faq-sidebar-btn {
+  display:flex; align-items:center; gap:10px;
+  width:100%; padding:11px 12px; border:none;
+  background:transparent; border-radius:8px;
+  font-size:14px; font-weight:500; color:#374151;
+  cursor:pointer; text-align:left; transition:all .15s;
+  line-height:1.4;
+}
+.faq-sidebar-btn:hover { background:#F9FAFB; color:#111827; }
+.faq-sidebar-btn.active { background:#EEF2FF; color:#2563EB; font-weight:700; }
+.faq-sidebar-btn-icon {
+  width:22px; height:22px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.faq-sidebar-arrow { margin-left:auto; font-size:14px; color:#D1D5DB; }
+.faq-sidebar-btn.active .faq-sidebar-arrow { color:#93C5FD; }
+
+.faq-consult-box {
+  border:1px solid #E5E7EB; border-radius:14px; padding:20px 16px;
+}
+.faq-consult-icon {
+  width:40px; height:40px; border-radius:50%;
+  background:#EEF2FF; display:flex; align-items:center; justify-content:center;
+  margin-bottom:12px;
+}
+.faq-consult-title { font-size:14px; font-weight:700; color:#111827; margin-bottom:5px; }
+.faq-consult-desc { font-size:12px; color:#6B7280; line-height:1.6; margin-bottom:14px; }
+.faq-consult-btns { display:flex; flex-direction:column; gap:8px; }
+.btn-kakao-s {
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  height:38px; border-radius:8px; font-size:13px; font-weight:600;
+  background:#fff; color:#111; border:1.5px solid #E5E7EB; cursor:pointer;
+  transition:border-color .15s;
+}
+.btn-kakao-s:hover { border-color:#2563EB; }
+.btn-consult-s {
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  height:38px; border-radius:8px; font-size:13px; font-weight:700;
+  background:#2563EB; color:#fff; border:none; cursor:pointer;
+  transition:background .15s;
+}
+.btn-consult-s:hover { background:#1d4ed8; }
+
+/* ===== FAQ CONTENT ===== */
+.faq-content {}
+.faq-content-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:4px;
+}
+.faq-content-title { font-size:22px; font-weight:800; color:#111827; }
+.faq-expand-btn {
+  font-size:13px; color:#2563EB; font-weight:600;
+  background:none; border:none; cursor:pointer; white-space:nowrap;
+}
+.faq-content-sub { font-size:13px; color:#9CA3AF; margin-bottom:20px; }
+
+.faq-list { display:flex; flex-direction:column; }
+.faq-item { border-bottom:1px solid #F3F4F6; }
+.faq-item:first-child { border-top:1px solid #F3F4F6; }
+.faq-q-btn {
+  display:flex; align-items:center; gap:16px;
+  width:100%; padding:18px 6px; border:none; background:transparent;
+  cursor:pointer; text-align:left; transition:background .15s;
+}
+.faq-q-btn:hover { background:#FAFAFA; }
+.faq-q-num { font-size:13px; font-weight:800; color:#2563EB; width:22px; flex-shrink:0; }
+.faq-q-text { flex:1; font-size:15px; font-weight:500; color:#111827; line-height:1.5; }
+.faq-q-plus {
+  width:26px; height:26px; border-radius:50%;
+  background:#F3F4F6; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; font-size:18px; line-height:1; color:#6B7280; font-weight:300;
+  transition:all .25s;
+}
+.faq-item.open .faq-q-plus { background:#EEF2FF; color:#2563EB; transform:rotate(45deg); }
+.faq-item.open .faq-q-text { color:#3B6FA8; font-weight:600; }
+.faq-answer { max-height:0; overflow:hidden; transition:max-height .4s cubic-bezier(0.4,0,0.2,1); }
+.faq-item.open .faq-answer { max-height:800px; }
+.faq-answer-inner { padding:8px 6px 24px 6px; }
+
+/* 클립보드 스타일 */
+.faq-clipboard {
+  background: #1E3A5F;
+  border-radius: 10px;
+  padding: 0 12px 12px;
+  box-shadow: 0 4px 16px rgba(30,58,95,0.25);
+}
+.faq-clipboard-clip {
+  width: 60px; height: 22px;
+  background: linear-gradient(180deg, #94A3B8 0%, #CBD5E1 40%, #94A3B8 100%);
+  border-radius: 6px 6px 3px 3px;
+  margin: 0 auto;
+  position: relative; top: -8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.faq-clipboard-clip::before {
+  content: '';
+  position: absolute; top: 4px;
+  left: 50%; transform: translateX(-50%);
+  width: 28px; height: 10px;
+  background: #E2E8F0; border-radius: 3px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+}
+.faq-clipboard-paper {
+  background: #fff; border-radius: 6px;
+  padding: 14px 16px 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.faq-clipboard-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px; padding-bottom: 10px;
+  border-bottom: 1.5px solid #EEF2FF;
+}
+.faq-clipboard-icon {
+  width: 24px; height: 24px; border-radius: 6px;
+  background: #EEF2FF; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.faq-clipboard-title { font-size: 12px; font-weight: 800; color: #3B6FA8; }
+.faq-clipboard-body { font-size: 14px; color: #4B5563; line-height: 1.85; word-break: keep-all; }
+.faq-answer-text { display:none; }
+
+/* ===== BOTTOM CTA ===== */
+.faq-bottom {
+  background:#F8FAFF; border-top:1px solid #E5E7EB;
+}
+.faq-bottom-inner {
+  max-width:1100px; margin:0 auto;
+  padding:36px 80px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+}
+.faq-bottom-left { display:flex; align-items:center; gap:16px; }
+.faq-bottom-icon {
+  width:52px; height:52px; border-radius:50%;
+  background:#EEF2FF; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.faq-bottom-title { font-size:17px; font-weight:800; color:#111827; margin-bottom:3px; }
+.faq-bottom-desc { font-size:13px; color:#6B7280; }
+.faq-bottom-btns { display:flex; gap:10px; }
+.btn-bottom-ghost {
+  height:46px; padding:0 26px; border-radius:50px;
+  border:1.5px solid #E5E7EB; background:#fff;
+  font-size:14px; font-weight:700; color:#111827; cursor:pointer; transition:all .15s;
+}
+.btn-bottom-ghost:hover { border-color:#2563EB; color:#2563EB; }
+.btn-bottom-primary {
+  height:46px; padding:0 26px; border-radius:50px;
+  border:none; background:#2563EB;
+  font-size:14px; font-weight:700; color:#fff; cursor:pointer; transition:background .15s;
+}
+.btn-bottom-primary:hover { background:#1d4ed8; }
+
+/* ===== FADE ===== */
+.fade-up { opacity:0; transform:translateY(14px); transition:opacity .4s ease, transform .4s ease; }
+.fade-up.visible { opacity:1; transform:translateY(0); }
+
+/* ===== MOBILE ===== */
+@media (max-width:768px) {
+  :root { --nav-total:146px; }
+  .pc-only { display:none !important; }
+  .nav-top {
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    height:110px; background:#fff; border-bottom:1px solid rgba(0,0,0,0.07);
+    display:flex; align-items:center; justify-content:space-between; padding:0 20px;
+  }
+  .nav-logo img { height:66px; }
+  .nav-vivid { position:absolute; left:50%; transform:translateX(-50%); text-decoration:none; }
+  .nav-vivid img { height:100px; }
+  .nav-btns { display:none; }
+  .nav-hamburger { display:flex; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:4px; }
+  .nav-hamburger span { width:22px; height:2px; background:#111827; border-radius:2px; display:block; }
+  .nav-sub { position:fixed; top:110px; left:0; right:0; z-index:999; height:36px; background:#fff; border-bottom:1px solid rgba(0,0,0,0.07); display:flex; align-items:center; justify-content:space-around; padding:0 8px; }
+  .nav-sub a { font-size:11px; font-weight:600; color:#111827; text-decoration:none; padding:0 8px; white-space:nowrap; }
+  .nav-sub-div { display:none; }
+  .mobile-drawer { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:2000; }
+  .mobile-drawer.open { display:block; }
+  .drawer-inner { background:#fff; width:280px; height:100%; padding:28px 20px; display:flex; flex-direction:column; gap:12px; animation:slideIn .25s ease; }
+  @keyframes slideIn { from{transform:translateX(-100%)} to{transform:translateX(0)} }
+  .drawer-links a { display:block; font-size:15px; font-weight:600; color:#111827; text-decoration:none; padding:12px 4px; border-bottom:1px solid #f3f4f6; }
+  .drawer-divider { height:1px; background:#F3F4F6; }
+  .drawer-btn-kakao { display:flex; align-items:center; justify-content:center; gap:8px; background:#FEE500; color:#000; border:none; padding:14px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; width:100%; }
+  .drawer-btn-consult { display:flex; align-items:center; justify-content:center; gap:8px; background:#2563EB; color:#fff; border:none; padding:14px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; width:100%; }
+  .faq-hero-inner { padding:24px 20px 20px; flex-direction:column; gap:0; }
+  .faq-hero-img { display:none; }
+  .faq-hero-title { font-size:24px; }
+  .faq-search-wrap { max-width:100%; }
+  .faq-tabs-wrap { padding:0; overflow-x:auto; }
+  .faq-tabs-outer { padding:0 16px; display:block; }
+  .faq-tabs { justify-content:flex-start; width:max-content; }
+  .faq-tab { min-width:80px; padding:14px 10px 12px; font-size:12px; flex:none; }
+  .faq-tab-icon { width:38px; height:38px; border-radius:10px; margin:0 auto; }
+  .faq-body { padding:20px 16px 100px; grid-template-columns:1fr; gap:0; }
+  .faq-sidebar { display:none; }
+  .faq-bottom-inner { flex-direction:column; padding:24px 20px; align-items:flex-start; }
+  .faq-bottom-btns { width:100%; }
+  .btn-bottom-ghost, .btn-bottom-primary { flex:1; }
+
+  /* 모바일 하단 고정 카테고리 필터 */
+  .mobile-cat-bar {
+    display: flex;
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 900;
+    background: #fff;
+    border-top: 1px solid #E5E7EB;
+    overflow-x: auto; scrollbar-width: none;
+    padding: 8px 12px 12px;
+    gap: 8px;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+  }
+  .mobile-cat-bar::-webkit-scrollbar { display:none; }
+  .mobile-cat-btn {
+    display: flex; align-items: center; gap: 5px;
+    flex-shrink: 0;
+    height: 34px; padding: 0 12px;
+    border-radius: 50px;
+    border: 1.5px solid #E5E7EB;
+    background: #fff;
+    font-size: 12px; font-weight: 600; color: #6B7280;
+    cursor: pointer; transition: all .15s;
+    white-space: nowrap;
+  }
+  .mobile-cat-btn.active {
+    background: #1E3A5F; color: #fff; border-color: #1E3A5F;
+  }
+}
+
+footer { background:#111827; color:#9CA3AF; padding:28px; text-align:center; font-size:12px; line-height:2; }
+.mobile-cat-bar { display:none; }
+@media (max-width:768px) { .mobile-cat-bar { display:flex !important; } }
+
+/* 플로팅 상담 버튼 */
+.float-consult {
+  position: fixed; right: calc(50% - 620px); bottom: 140px; z-index: 800;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity .3s ease, transform .3s ease;
+  pointer-events: none;
+}
+.float-consult.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+.float-btn {
+  display: flex; align-items: center; gap: 8px;
+  height: 48px; padding: 0 20px;
+  border-radius: 50px; border: none; cursor: pointer;
+  font-size: 14px; font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  transition: transform .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+.float-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+.float-btn-kakao { background: #FEE500; color: #111; }
+.float-btn-consult { background: #1E3A5F; color: #fff; }
+.float-btn-main {
+  height: 52px; padding: 0 20px;
+  border-radius: 50px; background: #1E3A5F; color: #fff;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 4px 20px rgba(30,58,95,0.45);
+  font-size: 14px; font-weight: 700;
+}
+.float-sub { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.float-sub.hidden { display: none; }
+
+@media (max-width:768px) {
+  .float-consult { right: 16px; bottom: 80px; }
+  .float-btn { font-size: 13px; height: 42px; padding: 0 16px; }
+  .float-btn-main { height: 44px; padding: 0 16px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav-top">
+  <a href="hero_pc.html" class="nav-logo"><img src="images/embedded_extra_1.webp" alt="LG U+"></a>
+  <a href="hero_pc.html" class="nav-vivid"><img src="images/embedded_extra_2.webp" alt="VIVID"></a>
+  <div class="nav-btns">
+    <button class="btn-kakao" onclick="alert('준비중이에요.');">
+      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" width="18" height="18" style="border-radius:3px;"> 카카오톡 문의
+    </button>
+    <button class="btn-consult" onclick="location.href='https://vivid-crm-buddy.lovable.app'">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+      상담 예약
+    </button>
+  </div>
+  <button class="nav-hamburger" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="nav-sub">
+  <a href="hero_pc.html">혜택 확인하기</a><span class="nav-sub-div"></span>
+  <a href="plans-s.html">요금제</a><span class="nav-sub-div"></span>
+  <a href="#" onclick="alert('준비중이에요.');return false;">인터넷·TV</a><span class="nav-sub-div"></span>
+  <a href="faq.html" class="active">궁금해요</a>
+</div>
+
+<div class="mobile-drawer" id="mobileDrawer" onclick="closeDrawer(event)">
+  <div class="drawer-inner">
+    <div class="drawer-links">
+      <a href="hero_pc.html">혜택 확인하기</a>
+      <a href="plans-s.html">요금제</a>
+      <a href="#" onclick="alert('준비중이에요.');return false;">인터넷·TV</a>
+      <a href="faq.html">궁금해요</a>
+    </div>
+    <div class="drawer-divider"></div>
+    <button class="drawer-btn-kakao" onclick="alert('준비중이에요.');">
+      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" width="18" height="18" style="border-radius:3px;"> 카카오톡 문의하기
+    </button>
+    <button class="drawer-btn-consult" onclick="location.href='https://vivid-crm-buddy.lovable.app'">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+      상담 예약하기
+    </button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="faq-hero">
+<div class="faq-hero-inner">
+  <div class="faq-hero-left">
+    <h1 class="faq-hero-title">휴대폰 · 요금제 · 개통,<br><span>궁금한 점을 쉽게 확인하세요.</span></h1>
+    <p class="faq-hero-desc">자주 찾는 질문을 카테고리별로 확인하고<br>더 궁금한 점은 언제든지 상담받아보세요.</p>
+    <div class="faq-search-wrap">
+      <svg class="faq-search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="궁금한 내용을 검색해보세요." oninput="handleSearch(this.value)">
+    </div>
+  </div>
+  <div class="faq-hero-img pc-only">
+    <svg width="220" height="180" viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="96" r="80" fill="#EEF2FF"/>
+      <rect x="52" y="36" width="80" height="100" rx="14" fill="#fff" stroke="#DBEAFE" stroke-width="2"/>
+      <rect x="66" y="55" width="52" height="8" rx="4" fill="#BFDBFE"/>
+      <rect x="66" y="69" width="36" height="6" rx="3" fill="#DBEAFE"/>
+      <rect x="66" y="81" width="44" height="6" rx="3" fill="#DBEAFE"/>
+      <rect x="66" y="93" width="28" height="6" rx="3" fill="#DBEAFE"/>
+      <rect x="66" y="105" width="40" height="6" rx="3" fill="#E0E7FF"/>
+      <circle cx="156" cy="48" r="28" fill="#2563EB"/>
+      <text x="156" y="57" text-anchor="middle" font-size="30" fill="#fff" font-weight="900" font-family="sans-serif">?</text>
+    </svg>
+  </div>
+</div>
+</section>
+
+<!-- TABS -->
+<div class="faq-tabs-wrap">
+<div class="faq-tabs-outer">
+  <div class="faq-tabs" id="faqTabs">
+    <button class="faq-tab active" onclick="switchCat('요금제',this)">
+      <div class="faq-tab-icon"><svg width="22" height="22" fill="none" stroke="#2563EB" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v.5M12 17.5V18M8.5 9.5C8.5 8.12 10.07 7 12 7s3.5 1.12 3.5 2.5c0 1.5-1.5 2-2.5 2.5S11 13 11 14.5h2c0-.83.67-1.17 1.5-1.67C15.83 12.17 17 11.17 17 9.5 17 7.57 14.76 6 12 6s-5 1.57-5 3.5z"/></svg></div>
+      요금제
+    </button>
+    <button class="faq-tab" onclick="switchCat('공시지원금',this)">
+      <div class="faq-tab-icon"><svg width="22" height="22" fill="none" stroke="#6B7280" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="3"/></svg></div>
+      공시지원금
+    </button>
+    <button class="faq-tab" onclick="switchCat('선택약정',this)">
+      <div class="faq-tab-icon"><svg width="22" height="22" fill="none" stroke="#6B7280" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+      선택약정
+    </button>
+    <button class="faq-tab" onclick="switchCat('기기변경',this)">
+      <div class="faq-tab-icon"><svg width="22" height="22" fill="none" stroke="#6B7280" stroke-width="1.8" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><circle cx="12" cy="18" r="1.2" fill="#6B7280" stroke="none"/></svg></div>
+      기기변경
+    </button>
+    <button class="faq-tab" onclick="switchCat('번호이동',this)">
+      <div class="faq-tab-icon"><svg width="22" height="22" fill="none" stroke="#6B7280" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+      번호이동
+    </button>
+    <button class="faq-tab" onclick="switchCat('유심',this)">
+      <div class="faq-tab-icon"><svg width="22" height="22" fill="none" stroke="#6B7280" stroke-width="1.8" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><rect x="9" y="7" width="6" height="5" rx="1"/></svg></div>
+      유심
+    </button>
+    <button class="faq-tab" onclick="switchCat('부모님요금제',this)">
+      <div class="faq-tab-icon"><svg width="22" height="22" fill="none" stroke="#6B7280" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      부모님요금제
+    </button>
+    <button class="faq-tab" onclick="switchCat('인터넷결합',this)">
+      <div class="faq-tab-icon"><svg width="22" height="22" fill="none" stroke="#6B7280" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+      인터넷결합
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- BODY -->
+<div class="faq-body">
+  <aside class="faq-sidebar">
+    <div class="faq-sidebar-label">카테고리</div>
+    <div class="faq-sidebar-list">
+      <button class="faq-sidebar-btn active" onclick="switchCat('요금제',null,this)">
+        <span class="faq-sidebar-btn-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8.5 9.5C8.5 8.12 10.07 7 12 7s3.5 1.12 3.5 2.5c0 1.5-1.5 2-2.5 2.5S11 13 11 14.5h2"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2.5"/></svg></span>
+        요금제 <span class="faq-sidebar-arrow">›</span>
+      </button>
+      <button class="faq-sidebar-btn" onclick="switchCat('공시지원금',null,this)">
+        <span class="faq-sidebar-btn-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></svg></span>
+        공시지원금 <span class="faq-sidebar-arrow">›</span>
+      </button>
+      <button class="faq-sidebar-btn" onclick="switchCat('선택약정',null,this)">
+        <span class="faq-sidebar-btn-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+        선택약정 <span class="faq-sidebar-arrow">›</span>
+      </button>
+      <button class="faq-sidebar-btn" onclick="switchCat('기기변경',null,this)">
+        <span class="faq-sidebar-btn-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><circle cx="12" cy="18" r="1" fill="currentColor" stroke="none"/></svg></span>
+        기기변경 <span class="faq-sidebar-arrow">›</span>
+      </button>
+      <button class="faq-sidebar-btn" onclick="switchCat('번호이동',null,this)">
+        <span class="faq-sidebar-btn-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>
+        번호이동 <span class="faq-sidebar-arrow">›</span>
+      </button>
+      <button class="faq-sidebar-btn" onclick="switchCat('유심',null,this)">
+        <span class="faq-sidebar-btn-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><rect x="9" y="7" width="6" height="5" rx="1"/></svg></span>
+        유심 <span class="faq-sidebar-arrow">›</span>
+      </button>
+      <button class="faq-sidebar-btn" onclick="switchCat('부모님요금제',null,this)">
+        <span class="faq-sidebar-btn-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        부모님 요금제 <span class="faq-sidebar-arrow">›</span>
+      </button>
+      <button class="faq-sidebar-btn" onclick="switchCat('인터넷결합',null,this)">
+        <span class="faq-sidebar-btn-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+        인터넷 결합 <span class="faq-sidebar-arrow">›</span>
+      </button>
+    </div>
+
+    <div class="faq-consult-box">
+      <div class="faq-consult-icon">
+        <svg width="20" height="20" fill="none" stroke="#2563EB" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      </div>
+      <div class="faq-consult-title">그래도 해결이 안 되셨나요?</div>
+      <div class="faq-consult-desc">전문 상담사가 빠르고 정확하게<br>안내해드립니다.</div>
+      <div class="faq-consult-btns">
+        <button class="btn-kakao-s" onclick="alert('준비중이에요.');">💬 카카오톡 상담</button>
+        <button class="btn-consult-s" onclick="location.href='https://vivid-crm-buddy.lovable.app'">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          전화 상담하기
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="faq-content">
+    <div class="faq-content-header">
+      <div class="faq-content-title" id="contentTitle">요금제</div>
+      <button class="faq-expand-btn" onclick="expandAll()">전체 열기 +</button>
+    </div>
+    <div class="faq-content-sub" id="contentCount"></div>
+    <div class="faq-list" id="faqList"></div>
+  </div>
+</div>
+
+<!-- BOTTOM CTA -->
+<section class="faq-bottom">
+<div class="faq-bottom-inner">
+  <div class="faq-bottom-left">
+    <div class="faq-bottom-icon">
+      <svg width="26" height="26" fill="none" stroke="#2563EB" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+    <div>
+      <div class="faq-bottom-title">원하는 답변을 찾지 못하셨나요?</div>
+      <div class="faq-bottom-desc">검색하거나 1:1 상담을 통해 정확한 답변을 받아보세요.</div>
+    </div>
+  </div>
+  <div class="faq-bottom-btns">
+    <button class="btn-bottom-ghost" onclick="document.getElementById('searchInput').focus();window.scrollTo({top:0,behavior:'smooth'})">검색하기</button>
+    <button class="btn-bottom-primary" onclick="location.href='https://vivid-crm-buddy.lovable.app'">1:1 상담하기</button>
+  </div>
+</div>
+</section>
+
+<!-- 플로팅 상담 버튼 -->
+<div class="float-consult" id="floatConsult">
+  <div class="float-sub hidden" id="floatSub">
+    <button class="float-btn float-btn-kakao" onclick="alert('준비중이에요.');">
+      💬 카카오톡 상담
+    </button>
+    <button class="float-btn float-btn-consult" onclick="location.href='https://vivid-crm-buddy.lovable.app'">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+      전화 상담 예약
+    </button>
+  </div>
+  <button class="float-btn float-btn-main" id="floatMainBtn" onclick="toggleFloat()">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    상담하기
+  </button>
+</div>
+
+<!-- 모바일 하단 카테고리 필터 -->
+<div class="mobile-cat-bar" id="mobileCatBar">
+  <button class="mobile-cat-btn active" onclick="mobileSwitchCat('요금제', this)">💰 요금제</button>
+  <button class="mobile-cat-btn" onclick="mobileSwitchCat('공시지원금', this)">🔓 공시지원금</button>
+  <button class="mobile-cat-btn" onclick="mobileSwitchCat('선택약정', this)">✅ 선택약정</button>
+  <button class="mobile-cat-btn" onclick="mobileSwitchCat('기기변경', this)">📱 기기변경</button>
+  <button class="mobile-cat-btn" onclick="mobileSwitchCat('번호이동', this)">🔄 번호이동</button>
+  <button class="mobile-cat-btn" onclick="mobileSwitchCat('유심', this)">💳 유심</button>
+  <button class="mobile-cat-btn" onclick="mobileSwitchCat('부모님요금제', this)">👨‍👩‍👦 부모님</button>
+  <button class="mobile-cat-btn" onclick="mobileSwitchCat('인터넷결합', this)">🖥️ 인터넷결합</button>
+</div>
+
+<footer><span style="color:#9CA3AF;font-size:12px;">ⓒ 2026 VIVID. All rights reserved.</span></footer>
+
+<script>
+// 기본 FAQ 데이터
+const FAQ_DEFAULT = {
+  '요금제': [
+    {q:'나에게 맞는 요금제는 어떻게 찾을 수 있나요?',a:'비비드 홈페이지에서 내 상황(영상 자주 봄, 테더링 필요 등)을 선택하면 맞춤 요금제를 추천해드려요.'},
+    {q:'데이터 사용량은 어떻게 확인하나요?',a:'LG U+ 공식 앱(My LGU+)에서 실시간으로 데이터 잔량을 확인할 수 있어요.'},
+    {q:'요금제 변경은 언제, 어떻게 하나요?',a:'요금제 변경은 매월 가능하며, 변경 후 익월 1일부터 새 요금제가 적용됩니다.'},
+    {q:'요금제 변경 시 위약금이 발생하나요?',a:'선택약정 중 요금제를 하향 변경하면 위약금이 발생할 수 있어요. 상향 변경은 위약금 없이 가능합니다.'},
+    {q:'5G 요금제와 LTE 요금제의 차이는 무엇인가요?',a:'5G 요금제는 더 빠른 속도와 많은 데이터를 제공합니다. 5G 단말기가 필요하며, 5G 미지원 지역에서는 LTE로 자동 전환됩니다.'},
+    {q:'무제한 요금제는 정말 데이터 제한 없이 사용할 수 있나요?',a:'완전 무제한 요금제는 속도 제한 없이 사용 가능합니다.'},
+    {q:'요금제에 포함된 혜택은 어디서 확인하나요?',a:'각 요금제별 포함 혜택은 비비드 요금제 페이지에서 확인하실 수 있어요.'},
+    {q:'요금제 변경 후 적용 시점은 언제인가요?',a:'당월 변경 신청 시 익월 1일부터 적용됩니다.'},
+    {q:'요금제를 변경하면 기존 할인은 어떻게 되나요?',a:'선택약정, 결합 할인 등 기존 할인은 요금제 변경 후에도 유지됩니다.'},
+    {q:'요금제 변경 이력이 신용도에 영향을 주나요?',a:'요금제 변경 자체는 신용도에 영향을 주지 않습니다.'},
+  ],
+  '공시지원금': [
+    {q:'공시지원금이란 무엇인가요?',a:'통신사가 단말기 구매 시 제공하는 보조금으로 단말기 출고가에서 차감됩니다.'},
+    {q:'공시지원금은 어떻게 확인하나요?',a:'비비드 혜택 확인 페이지에서 기기·요금제·할인방식을 선택하면 바로 확인할 수 있어요.'},
+    {q:'공시지원금을 받으면 약정이 생기나요?',a:'12개월 또는 24개월 의무 사용 약정이 발생합니다.'},
+    {q:'공시지원금과 선택약정 중 어떤 게 유리한가요?',a:'고가 단말기는 공시지원금이, 중저가 단말기는 선택약정(25% 요금 할인)이 유리한 경우가 많아요.'},
+    {q:'공시지원금은 매달 바뀌나요?',a:'네, 통신사 정책에 따라 수시로 변경됩니다.'},
+    {q:'추가지원금이란 무엇인가요?',a:'판매점에서 공시지원금 외에 추가로 제공할 수 있는 보조금으로, 공시지원금의 최대 15%까지 제공 가능합니다.'},
+    {q:'요금제 변경 시 위약금이 발생하나요?',a:'6개월 이후에 변경하시면 위약금이 발생하지 않습니다! 6개월 이후부터는 자유롭게 저가 요금제로 변경하실 수 있으며, 그 전에 임의로 변경하실 경우 위약금이 발생할 수 있으니 유의 부탁드립니다.'},
+    {q:'공시지원금은 매장마다 다를 수 있나요?',a:'기본 공시지원금은 통신사 기준으로 동일하지만, 추가지원금이나 판매 조건은 매장마다 다를 수 있습니다.'},
+    {q:'공시지원금을 받으면 요금제를 꼭 유지해야 하나요?',a:'일정 기간 요금제 유지 조건이 있을 수 있습니다. 중도 변경 시 할인 반환금이 발생할 수 있습니다.'},
+    {q:'공시지원금 받고 해지하면 위약금이 나오나요?',a:'약정 기간 내 해지 시 지원받은 금액 일부를 반환해야 할 수 있습니다.'},
+    {q:'공시지원금이 큰 휴대폰이 무조건 좋은 선택인가요?',a:'아닙니다. 지원금뿐 아니라 월 요금, 사용 기간, 총 납부금까지 함께 비교하는 것이 중요합니다.'},
+  ],
+  '선택약정': [
+    {q:'선택약정 할인이란 무엇인가요?',a:'단말기 지원금 대신 매월 요금의 25%를 할인받는 제도입니다.'},
+    {q:'선택약정 중도 해지 시 위약금은 얼마인가요?',a:'받은 할인 혜택의 일부를 반환하는 방식으로 산정됩니다.'},
+    {q:'선택약정은 단말기를 바꾸면 유지되나요?',a:'선택약정은 유심(번호)에 묶여 있어 단말기 변경 시 약정 조건이 달라질 수 있습니다.'},
+    {q:'선택약정 24개월 vs 12개월, 뭐가 나은가요?',a:'장기 사용 계획이 확실하다면 24개월, 유연하게 이용하고 싶다면 12개월을 추천드려요.'},
+    {q:'선택약정 할인은 언제부터 적용되나요?',a:'신규 가입 시에는 가입 당월, 기존 사용자는 신청 익월부터 적용됩니다.'},
+    {q:'선택약정은 누구나 가입할 수 있나요?',a:'조건에 맞는 단말기라면 가입 가능합니다. 일부 단말기는 가입이 제한될 수 있습니다.'},
+    {q:'선택약정은 12개월과 24개월 중 뭐가 좋나요?',a:'오래 사용할 계획이라면 24개월, 변경 가능성을 고려한다면 12개월이 유리할 수 있습니다.'},
+    {q:'선택약정 할인은 가족결합과 중복되나요?',a:'대부분 중복 적용 가능하지만 결합 상품에 따라 달라질 수 있습니다.'},
+    {q:'기존 휴대폰도 선택약정 가입이 가능한가요?',a:'공시지원금 약정이 종료된 단말기라면 가입 가능한 경우가 많습니다.'},
+    {q:'선택약정이 끝나면 자동으로 연장되나요?',a:'자동 연장되지 않는 경우가 많으므로 만료 시 재가입 여부를 확인하는 것이 좋습니다.'},
+  ],
+  '기기변경': [
+    {q:'기기변경은 어떻게 하나요?',a:'비비드 매장 방문, 카카오톡 상담, 또는 전화 상담을 통해 신청이 가능합니다.'},
+    {q:'기기변경 시 번호는 그대로 유지되나요?',a:'네, 기기변경은 같은 통신사 내 단말기 교체이므로 기존 번호가 그대로 유지됩니다.'},
+    {q:'기기변경 후 데이터 이전은 어떻게 하나요?',a:'갤럭시는 삼성 스마트 스위치, 아이폰은 iCloud 또는 Quick Start를 이용하면 쉽게 이전할 수 있어요.'},
+    {q:'기기변경 시 할부 잔액은 어떻게 되나요?',a:'기존 단말기 할부 잔액은 기기변경 후에도 계속 납부해야 합니다.'},
+    {q:'기기변경과 번호이동 중 어떤 게 더 이득인가요?',a:'번호이동 시 더 많은 혜택이 제공되는 경우가 많아요.'},
+    {q:'약정이 남아 있어도 기기변경이 가능한가요?',a:'가능한 경우가 많지만 약정 조건에 따라 추가 비용이 발생할 수 있습니다.'},
+    {q:'기존 유심을 그대로 사용할 수 있나요?',a:'기기와 유심 규격이 맞으면 그대로 사용할 수 있습니다.'},
+    {q:'온라인으로 기기변경도 가능한가요?',a:'네. 본인 인증 후 비대면으로 진행 가능한 경우가 많습니다.'},
+    {q:'기기변경이 번호이동보다 유리한 경우는 언제인가요?',a:'기존 결합 할인이나 장기 고객 혜택을 유지하려는 경우 유리할 수 있습니다.'},
+    {q:'기기변경 시 기존 데이터는 자동으로 옮겨지나요?',a:'자동 이전 기능을 지원하는 경우가 많지만 직접 이전 작업이 필요할 수 있습니다.'},
+  ],
+  '번호이동': [
+    {q:'번호이동이란 무엇인가요?',a:'기존 전화번호를 유지하면서 다른 통신사로 이동하는 것입니다.'},
+    {q:'번호이동 시 필요한 서류는 무엇인가요?',a:'본인 명의의 신분증이 필요합니다.'},
+    {q:'번호이동 후 기존 통신사 해지는 자동으로 되나요?',a:'네, LG U+로 번호이동 처리 완료 시 기존 통신사가 자동 해지됩니다.'},
+    {q:'번호이동 처리 시간은 얼마나 걸리나요?',a:'신청 후 통상 1~2시간 내에 처리됩니다.'},
+    {q:'번호이동 시 기존 포인트나 혜택은 어떻게 되나요?',a:'기존 통신사의 포인트나 멤버십은 이동 전에 사용하시는 것을 권장드립니다.'},
+    {q:'번호이동하면 위약금이 발생하나요?',a:'기존 통신사의 약정이 남아 있다면 위약금 또는 할인 반환금이 발생할 수 있습니다.'},
+    {q:'번호이동 개통은 얼마나 걸리나요?',a:'보통 당일 처리되지만 상황에 따라 시간이 달라질 수 있습니다.'},
+    {q:'번호이동이 안 되는 경우도 있나요?',a:'미납 요금, 명의 문제, 인증 오류 등이 있으면 진행이 어려울 수 있습니다.'},
+    {q:'번호이동 시 기존 요금은 어떻게 정산되나요?',a:'사용한 기간만큼 일할 계산되어 청구됩니다.'},
+    {q:'번호이동과 신규가입은 뭐가 다른가요?',a:'번호이동은 기존 번호를 유지하고, 신규가입은 새로운 번호를 받는 방식입니다.'},
+  ],
+  '유심': [
+    {q:'유심이란 무엇인가요?',a:'유심(USIM)은 전화번호와 가입자 정보가 저장된 작은 칩으로, 단말기에 삽입해서 사용합니다.'},
+    {q:'유심만 구매해서 기존 폰에 끼울 수 있나요?',a:'LG U+ 유심을 구매하여 기존 단말기에 삽입하면 LG U+ 서비스를 이용할 수 있어요.'},
+    {q:'유심 분실 시 어떻게 해야 하나요?',a:'LG U+ 고객센터(101)에 즉시 신고하여 일시 정지 처리를 하고, 매장에서 유심을 재발급 받으세요.'},
+    {q:'e심(eSIM)이란 무엇인가요?',a:'물리적 유심 칩 없이 단말기에 내장된 디지털 유심입니다.'},
+    {q:'유심 크기는 어떻게 확인하나요?',a:'현재 대부분의 스마트폰은 나노유심(Nano-SIM)을 사용합니다.'},
+    {q:'유심 배송받고 직접 꽂아도 되나요?',a:'개통이 완료된 유심이라면 직접 장착 후 사용할 수 있습니다.'},
+    {q:'유심 인식이 안 되면 어떻게 하나요?',a:'재부팅 후 다시 장착해보고, 문제가 지속되면 고객센터나 매장에 문의하세요.'},
+    {q:'eSIM도 가능한가요?',a:'지원 기종이라면 별도 유심 없이 eSIM 개통이 가능합니다.'},
+    {q:'유심 변경 시 전화번호가 바뀌나요?',a:'아니요. 유심을 바꿔도 번호는 그대로 유지됩니다.'},
+    {q:'유심 개통은 비대면으로 가능한가요?',a:'네. 본인 인증 후 비대면 개통이 가능한 경우가 많습니다.'},
+  ],
+  '부모님요금제': [
+    {q:'부모님께 적합한 요금제는 무엇인가요?',a:'저용량 요금제부터 자녀와 데이터를 나눌 수 있는 투게더 요금제까지 다양하게 준비되어 있어요.'},
+    {q:'부모님 명의로 가입할 때 대리 가입이 가능한가요?',a:'네, 가족 대리 가입이 가능합니다. 부모님 신분증, 대리인 신분증, 가족관계증명서를 준비해주세요.'},
+    {q:'자녀가 부모님 요금을 대신 납부할 수 있나요?',a:'자동이체 계좌를 자녀 명의로 설정하거나 통합 청구 서비스를 이용하면 됩니다.'},
+    {q:'부모님 요금제에서 데이터 쉐어링이 가능한가요?',a:'LG U+ 투게더 가족 결합 상품을 이용하면 가족 간 데이터 공유가 가능합니다.'},
+    {q:'부모님이 데이터 사용이 적으면 어떤 요금제가 좋나요?',a:'통화 중심 또는 시니어 전용 요금제가 적합할 수 있습니다.'},
+    {q:'통화 위주로 쓰면 어떤 요금제가 좋나요?',a:'통화 무제한이 포함된 요금제를 우선 고려하는 것이 좋습니다.'},
+    {q:'부모님 요금제도 선택약정 할인이 가능한가요?',a:'조건이 맞으면 동일하게 선택약정 할인을 받을 수 있습니다.'},
+    {q:'부모님 요금제도 가족결합이 가능한가요?',a:'가족관계 확인 후 결합 할인 적용이 가능한 경우가 많습니다.'},
+    {q:'부모님이 기존 폰을 계속 쓰는 게 나을 수도 있나요?',a:'기기 상태가 좋다면 휴대폰 교체보다 요금제 조정이 더 유리할 수 있습니다.'},
+    {q:'부모님 휴대폰 변경 시 주의할 점은 무엇인가요?',a:'화면 크기, 배터리, 사용 편의성, 월 부담금을 함께 고려하는 것이 좋습니다.'},
+  ],
+  '인터넷결합': [
+    {q:'인터넷 결합 할인이란 무엇인가요?',a:'LG U+ 인터넷과 휴대폰을 함께 사용하면 매월 요금을 추가로 할인받을 수 있는 결합 상품입니다.'},
+    {q:'인터넷 없이 모바일만 결합 혜택을 받을 수 있나요?',a:'기본적으로 LG U+ 인터넷 가입이 필요합니다.'},
+    {q:'결합 할인은 얼마나 받을 수 있나요?',a:'통상 1회선 기준 월 1,000~5,500원의 추가 할인이 적용되며, 결합 회선이 많을수록 할인이 커요.'},
+    {q:'다른 가족이 다른 통신사를 쓰면 결합이 안 되나요?',a:'LG U+ 결합 할인은 LG U+ 회선 간 결합이 기본입니다.'},
+    {q:'인터넷 결합 신청은 어떻게 하나요?',a:'비비드 매장 방문 또는 전화/카카오톡 상담을 통해 신청 가능합니다.'},
+    {q:'기존 인터넷 약정이 남아 있어도 변경 가능한가요?',a:'가능하지만 위약금 발생 여부를 먼저 확인해야 합니다.'},
+    {q:'인터넷·TV 신규가입 혜택은 어떻게 확인하나요?',a:'가입 시점과 상품에 따라 달라지므로 상담을 통해 확인하는 것이 가장 정확합니다.'},
+    {q:'인터넷 속도는 100M, 500M, 1G 중 뭐가 좋나요?',a:'사용 인원과 사용 목적에 따라 적합한 속도가 달라집니다.'},
+    {q:'IPTV까지 같이 하면 유리한가요?',a:'TV 시청이 많다면 결합 할인과 함께 이용하는 것이 유리할 수 있습니다.'},
+    {q:'결합 할인은 언제부터 적용되나요?',a:'결합 등록이 완료된 이후부터 순차적으로 적용됩니다.'},
+  ],
+};
+
+let curCat = '요금제', allOpen = false;
+
+function getFaqItems(cat) {
+  return FAQ_DEFAULT[cat] || [];
+}
+
+function renderFAQ(cat, kw) {
+  const list = document.getElementById('faqList');
+  const title = document.getElementById('contentTitle');
+  const count = document.getElementById('contentCount');
+  let items = getFaqItems(cat);
+  if (kw) {
+    const allItems = Object.keys(FAQ_DEFAULT).flatMap(c => FAQ_DEFAULT[c] || []);
+    items = allItems.filter(i => i.q.includes(kw) || i.a.includes(kw));
+    title.textContent = '"' + kw + '" 검색 결과';
+    count.textContent = '총 ' + items.length + '개의 검색 결과';
+  } else {
+    title.textContent = cat;
+    count.textContent = '총 ' + items.length + '개의 자주 묻는 질문';
+  }
+  list.innerHTML = '';
+  if (!items.length) {
+    list.innerHTML = '<div style="padding:48px 0;text-align:center;color:#9CA3AF;font-size:14px;">검색 결과가 없어요.</div>';
+    return;
+  }
+  items.forEach(function(item, i) {
+    var el = document.createElement('div');
+    el.className = 'faq-item fade-up';
+    el.innerHTML =
+      '<button class="faq-q-btn" onclick="this.parentElement.classList.toggle(\'open\')">' +
+        '<span class="faq-q-num">' + String(i+1).padStart(2,'0') + '</span>' +
+        '<span class="faq-q-text">' + item.q + '</span>' +
+        '<span class="faq-q-plus">+</span>' +
+      '</button>' +
+      '<div class="faq-answer"><div class="faq-answer-inner">' +
+        '<div class="faq-clipboard">' +
+          '<div class="faq-clipboard-clip"></div>' +
+          '<div class="faq-clipboard-paper">' +
+            '<div class="faq-clipboard-header">' +
+              '<div class="faq-clipboard-icon"><svg width="13" height="13" fill="none" stroke="#4C7DB8" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div>' +
+              '<span class="faq-clipboard-title">궁금해요!</span>' +
+            '</div>' +
+            '<div class="faq-clipboard-body">' + item.a + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div></div>';
+    list.appendChild(el);
+    setTimeout(function(e){ e.classList.add('visible'); }, i * 35, el);
+  });
+}
+
+function expandAll() {
+  allOpen = !allOpen;
+  document.querySelectorAll('.faq-item').forEach(function(el){ allOpen ? el.classList.add('open') : el.classList.remove('open'); });
+  document.querySelector('.faq-expand-btn').textContent = allOpen ? '전체 닫기 −' : '전체 열기 +';
+}
+window.expandAll = expandAll;
+
+function switchCat(cat, tabEl, sideEl) {
+  curCat = cat;
+  document.querySelectorAll('.faq-tab').forEach(function(t){ t.classList.toggle('active', t.textContent.trim() === cat); });
+  document.querySelectorAll('.faq-sidebar-btn').forEach(function(b){ b.classList.toggle('active', b.textContent.trim().replace(/\s+/g,' ').indexOf(cat) === 0); });
+  allOpen = false;
+  document.querySelector('.faq-expand-btn').textContent = '전체 열기 +';
+  renderFAQ(cat);
+}
+window.switchCat = switchCat;
+
+var st;
+function handleSearch(v) {
+  clearTimeout(st);
+  st = setTimeout(function(){ v.trim() ? renderFAQ(curCat, v.trim()) : renderFAQ(curCat); }, 280);
+}
+window.handleSearch = handleSearch;
+
+function toggleDrawer(){ document.getElementById('mobileDrawer').classList.toggle('open'); }
+function closeDrawer(e){ if(e.target===e.currentTarget) document.getElementById('mobileDrawer').classList.remove('open'); }
+window.toggleDrawer = toggleDrawer;
+window.closeDrawer = closeDrawer;
+
+// 플로팅 버튼
+var floatEl = document.getElementById('floatConsult');
+var floatOpen = false;
+window.addEventListener('scroll', function(){
+  if(window.scrollY > 150) floatEl.classList.add('visible');
+  else floatEl.classList.remove('visible');
+});
+window.toggleFloat = function() {
+  floatOpen = !floatOpen;
+  var sub = document.getElementById('floatSub');
+  var btn = document.getElementById('floatMainBtn');
+  sub.classList.toggle('hidden', !floatOpen);
+  btn.style.background = floatOpen ? '#374151' : '#1E3A5F';
+  btn.innerHTML = floatOpen
+    ? '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> 닫기'
+    : '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 상담하기';
+};
+window.mobileSwitchCat = function(cat, btn) {
+  document.querySelectorAll('.mobile-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  switchCat(cat);
+  window.scrollTo({top: 0, behavior: 'smooth'});
+};
+
+var nav = document.querySelector('.nav-top');
+window.addEventListener('scroll', function(){
+  var s = window.scrollY > 40;
+  if(nav){ nav.style.backdropFilter=s?'blur(12px)':''; nav.style.boxShadow=s?'0 2px 20px rgba(0,0,0,0.08)':''; nav.style.background=s?'rgba(255,255,255,0.85)':''; }
+});
+
+// 초기 렌더
+renderFAQ('요금제');
+</script>
+</body>
+</html>

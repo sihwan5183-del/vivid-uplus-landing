@@ -1,0 +1,2145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VIVID | LG U+ 요금제 추천</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+:root{
+  --blue:#2563EB;
+  --pink:#E6007E;
+  --ink:#111827;
+  --sub:#374151;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --line2:#f3f4f6;
+  --bg:#ffffff;
+  --soft:#fafafa;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:"Pretendard Variable","Pretendard","Apple SD Gothic Neo","Noto Sans KR",Arial,sans-serif;
+  color:var(--ink);
+  background:#fff;
+  letter-spacing:-.03em;
+}
+a{text-decoration:none;color:inherit}
+button{font:inherit;color:inherit;background:none;border:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px 56px}
+.nav{
+  height:68px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line);background:#fff;
+}
+.brand{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:700}
+.brand .lg{color:var(--pink);font-weight:800}
+.brand small{font-size:14px;color:#444;font-weight:500}
+@media(max-width:768px){
+  .nav-actions{display:none !important;}
+  .brand small{display:inline !important;}
+}
+.nav-menu{display:flex;align-items:center;gap:34px;font-size:15px;font-weight:600}
+.nav-menu a.active{color:var(--blue)}
+.nav-cta{
+  min-width:112px;height:40px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:999px;border:1px solid var(--blue);color:var(--blue);font-size:14px;font-weight:600;
+}
+.hero{padding:64px 0 54px;border-bottom:1px solid var(--line)}
+.hero-inner{display:grid;grid-template-columns:1fr 430px;gap:64px;align-items:end}
+.kicker{
+  display:inline-flex;align-items:center;gap:6px;color:var(--blue);font-size:14px;font-weight:600;margin-bottom:24px
+}
+.kicker b{color:var(--pink)}
+.hero h1{margin:0;font-size:56px;line-height:1.13;font-weight:650;letter-spacing:-.055em}
+.hero h1 .point{color:var(--blue);font-weight:720}
+.hero p{margin:28px 0 0;max-width:560px;font-size:20px;line-height:1.72;color:#374151;font-weight:400}
+.hero p strong{color:var(--blue);font-weight:650}
+.hero-actions{display:flex;gap:12px;margin-top:34px}
+.btn{
+  min-width:150px;height:48px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:999px;border:1px solid var(--blue);background:#fff;color:var(--blue);font-size:15px;font-weight:600;cursor:pointer
+}
+.btn.primary{background:var(--blue);border:1.5px solid var(--blue);color:#fff;}
+.hero-side{display:grid;gap:12px}
+.guide-box,.guide-chip{
+  padding:24px;border:1px solid var(--line);border-radius:14px;background:#fff
+}
+.guide-box .label{font-size:13px;color:#666;margin-bottom:10px}
+.guide-box .value{font-size:32px;line-height:1.15;font-weight:650;letter-spacing:-.045em}
+.guide-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.guide-chip b{display:block;font-size:17px;font-weight:650;margin-bottom:8px}
+.guide-chip span{color:#666;font-size:14px;line-height:1.45}
+.section{padding:56px 0 0}
+.section-head{margin-bottom:20px}
+.section-head h2{margin:0;font-size:30px;line-height:1.28;font-weight:650;letter-spacing:-.045em}
+.section-head p{margin:10px 0 0;font-size:16px;line-height:1.65;color:#555}
+.situation-list{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start}
+.situation{
+  position:relative;padding:22px 20px 22px;text-align:left;background:#fff;
+  border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:.15s ease;
+  display:flex;flex-direction:column;
+}
+.situation:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 4px 16px rgba(18,107,255,.10)}
+.situation.active{
+  border-color:var(--blue);
+  background:linear-gradient(135deg,#f0f6ff 0%,#e8f0ff 100%);
+  box-shadow:0 6px 24px rgba(18,107,255,.15);
+  transform:translateY(-2px);
+}
+.situation.active .icon{background:#dbeafe;}
+.situation.active h3{color:var(--blue);}
+.situation.active:after{
+  content:"✓ 선택됨";position:absolute;right:12px;top:12px;padding:4px 10px;border-radius:999px;
+  background:var(--blue);color:#fff;font-size:11px;font-weight:700;
+  box-shadow:0 2px 8px rgba(18,107,255,.3);
+}
+.icon{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:#f3f6ff;margin-bottom:auto;padding-bottom:0;font-size:17px}
+.situation h3{margin:16px 0 6px;font-size:16px;line-height:1.35;font-weight:700;letter-spacing:-.03em}
+.situation p{margin:0;color:#6b7280;font-size:13px;line-height:1.55;word-break:keep-all}
+.result{margin-top:24px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;transition:box-shadow .3s ease;}
+.result.highlight{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(18,107,255,.15), 0 8px 32px rgba(18,107,255,.12);
+  animation:resultPulse .6s ease;
+}
+@keyframes resultPulse{
+  0%{box-shadow:0 0 0 0 rgba(18,107,255,.4);}
+  70%{box-shadow:0 0 0 10px rgba(18,107,255,0);}
+  100%{box-shadow:0 0 0 3px rgba(18,107,255,.15), 0 8px 32px rgba(18,107,255,.12);}
+}
+.result-top{display:grid;grid-template-columns:1fr 1fr;min-height:280px}
+.result-left{padding:34px 40px;border-right:1px solid var(--line)}
+.selected-tag{
+  display:inline-flex;color:var(--blue);font-size:13px;font-weight:600;margin-bottom:18px;
+  background:#f6f8ff;border-radius:999px;padding:7px 10px
+}
+.result-title{margin:0;font-size:30px;line-height:1.35;font-weight:650}
+.result-desc{margin:18px 0 0;color:#333;font-size:16px;line-height:1.72}
+.check-list{display:grid;gap:10px;margin-top:24px}
+.check{
+  display:flex;gap:8px;color:#333;font-size:15px;line-height:1.5;
+  padding:12px 14px;border:1px solid #edf0f4;border-radius:12px;background:#fbfcff
+}
+.check span{color:var(--blue);font-weight:700}
+.result-right{padding:34px 40px}
+.result-right-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:22px}
+.result-right h3{margin:0;font-size:24px;font-weight:650}
+.range{
+  color:#475569;font-size:15px;font-weight:650;border:1px solid var(--line);
+  padding:10px 14px;border-radius:999px
+}
+.plan-list{display:grid;gap:12px}
+.plan-card{
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:20px;padding:20px 0;border-top:1px solid var(--line);cursor:pointer
+}
+.plan-card:first-child{border-top:0}
+.plan-name{font-size:20px;font-weight:650;margin-bottom:8px}
+.plan-meta{color:#555;font-size:15px;line-height:1.5}
+.plan-price{text-align:right;min-width:160px;font-size:22px;font-weight:700;white-space:nowrap}
+.plan-price small{display:block;margin-top:6px;color:#94a3b8;font-size:12px;font-weight:500}
+.benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line)}
+.benefit{padding:22px;border-right:1px solid var(--line);font-size:15px;line-height:1.5;background:#fbfcff}
+.benefit:last-child{border-right:0}
+.benefit b{display:block;color:var(--blue);font-size:13px;margin-bottom:7px}
+.result-note{padding:18px 22px;border-top:1px solid var(--line);background:#fff7fb;color:#7c4964;font-size:13px;line-height:1.65}
+.result-actions{display:flex;gap:10px;padding:24px 40px 34px}
+.segment-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.segment{padding:26px 22px;border-right:1px solid var(--line);cursor:pointer}
+.segment:last-child{border-right:0}
+.segment:hover{background:#fafafa}
+.segment.highlighted{
+  background:linear-gradient(135deg,#f0f6ff 0%,#e8f0ff 100%);
+  border-bottom:3px solid var(--blue);
+  position:relative;
+}
+.segment.highlighted::after{
+  content:"✓ 추천";
+  position:absolute;
+  top:10px;right:10px;
+  background:var(--blue);color:#fff;
+  font-size:11px;font-weight:700;
+  padding:3px 8px;border-radius:999px;
+}
+.segment.highlighted .price-range{color:var(--blue);}
+.segment h3{margin:0;font-size:20px;font-weight:650}
+.segment .price-range{margin:12px 0;color:var(--blue);font-size:18px;font-weight:650}
+.segment p{margin:0;color:#555;font-size:14px;line-height:1.55}
+.table-wrap{border:1px solid var(--line);border-radius:14px;overflow:auto;background:#fff}
+table{width:100%;min-width:980px;border-collapse:collapse;font-size:15px}
+th{padding:18px 20px;background:#fafafa;border-bottom:1px solid var(--line);text-align:left;font-weight:650}
+td{padding:22px 20px;border-bottom:1px solid var(--line2);color:#222;line-height:1.55}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:#fafafa}
+.type{display:inline-flex;color:var(--blue);font-size:13px;font-weight:650}
+.price{color:#111;font-weight:700;white-space:nowrap}
+.notice-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.notice{padding:24px;border-right:1px solid var(--line)}
+.notice:last-child{border-right:0}
+.notice i{font-style:normal;display:block;font-size:22px;margin-bottom:14px}
+.notice h4{margin:0 0 10px;font-size:18px;font-weight:650}
+.notice p{margin:0;color:#555;font-size:14px;line-height:1.6}
+.bottom-cta{display:flex;justify-content:space-between;align-items:center;gap:30px;padding:36px 40px;border:1px solid var(--line);border-radius:14px}
+.bottom-cta h2{margin:0;font-size:26px;font-weight:650}
+.bottom-cta p{margin:10px 0 0;color:#555;font-size:15px}
+.bottom-actions{display:flex;gap:10px;flex-wrap:wrap}
+.footer{margin-top:54px;padding-top:24px;border-top:1px solid var(--line);color:#666;font-size:13px}
+.footer-links{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;color:#333;font-weight:600}
+.footer-links button{padding:0;border:0;background:transparent;cursor:pointer;color:inherit}
+.footer-info{display:flex;gap:12px;flex-wrap:wrap;line-height:1.7}
+.modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.4)}
+.modal.open{display:flex}
+.modal-card{width:min(720px,100%);max-height:78vh;overflow:auto;padding:28px;border-radius:18px;background:#fff}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-head h3{margin:0;font-size:22px}
+.close{width:40px;height:40px;border:0;border-radius:50%;background:#f4f4f4;cursor:pointer;font-size:22px}
+.modal-body{color:#444;line-height:1.75;white-space:pre-line}
+@media(max-width:980px){
+  .wrap{padding:0 18px 44px}
+  .nav-menu a:nth-child(1), .nav-menu a:nth-child(2){display:none}
+  .hero-inner{grid-template-columns:1fr;gap:36px}
+  .hero h1{font-size:44px}
+  .hero p{font-size:17px}
+  .situation-list{grid-template-columns:repeat(2,1fr);align-items:start}
+  .result-top{grid-template-columns:1fr}
+  .result-left{border-right:0;border-bottom:1px solid var(--line)}
+  .segment-grid{grid-template-columns:repeat(2,1fr)}
+  .segment:nth-child(2){border-right:0}
+  .segment:nth-child(1),.segment:nth-child(2){border-bottom:1px solid var(--line)}
+  .notice-grid{grid-template-columns:1fr}
+  .notice{border-right:0;border-bottom:1px solid var(--line)}
+  .notice:last-child{border-bottom:0}
+  .bottom-cta{display:block}
+  .bottom-actions{margin-top:22px}
+}
+@media(max-width:560px){
+  .hero{padding:44px 0}
+  .hero h1{font-size:36px}
+  .hero-actions,.result-actions,.bottom-actions{display:grid}
+  .btn{width:100%}
+  .situation-list{grid-template-columns:1fr;align-items:start}
+  .guide-row,.benefits{grid-template-columns:1fr}
+  .benefit{border-right:0;border-bottom:1px solid var(--line)}
+  .benefit:last-child{border-bottom:0}
+  .plan-card{grid-template-columns:1fr}
+  .plan-price{text-align:left}
+  .segment-grid{grid-template-columns:1fr}
+  .segment{border-right:0;border-bottom:1px solid var(--line)}
+  .segment:last-child{border-bottom:0}
+}
+
+/* v13 minimal icon alignment only */
+.btn,
+.nav-cta{
+  gap:8px;
+}
+.guide-box .label,
+.guide-chip b,
+.segment h3,
+.value{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+
+/* ===== MOBILE PLAN PAGE OPTIMIZATION V1: mobile only, PC unchanged ===== */
+.mobile-more-wrap,
+.mobile-plan-section {
+  display: none;
+}
+
+@media(max-width:560px){
+  /* 1) 상황 카드: 대표 6개 먼저, 나머지 접기 */
+  #situations .section-head {
+    border-left: 4px solid var(--blue);
+    padding-left: 16px;
+    margin-bottom: 28px;
+  }
+  #situations .section-head h2 {
+    font-size: 26px;
+    line-height: 1.28;
+    letter-spacing: -.055em;
+    margin-bottom: 10px;
+  }
+  #situations .section-head p {
+    font-size: 14px;
+    line-height: 1.75;
+    color: #6b7280;
+    margin: 0;
+    word-break: keep-all;
+  }
+
+  #situations .situation-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    align-items: start !important;
+  }
+
+  #situations .situation {
+    padding: 14px 12px 13px !important;
+    border-radius: 15px !important;
+  }
+
+  #situations .situation.active {
+    background: linear-gradient(135deg,#f0f6ff 0%,#e8f0ff 100%) !important;
+    box-shadow: 0 4px 16px rgba(18,107,255,.15) !important;
+  }
+  #situations .situation.active h3 {
+    color: var(--blue) !important;
+  }
+  #situations .situation.active:after {
+    right: 8px !important;
+    top: 8px !important;
+    padding: 3px 7px !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    content: "✓ 선택됨" !important;
+  }
+
+  #situations .icon {
+    width: 30px !important;
+    height: 30px !important;
+    margin-bottom: auto !important;
+    border-radius: 9px !important;
+    font-size: 15px !important;
+    flex-shrink: 0 !important;
+  }
+
+  #situations .situation {
+    padding: 18px 16px 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 130px !important;
+  }
+  #situations .situation .icon {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 15px !important;
+    margin-bottom: auto !important;
+    flex-shrink: 0 !important;
+  }
+  #situations .situation h3 {
+    margin: 14px 0 5px !important;
+    font-size: 13.5px !important;
+    line-height: 1.32 !important;
+    font-weight: 700 !important;
+    letter-spacing: -.04em !important;
+    word-break: keep-all !important;
+  }
+  #situations .situation p {
+    margin: 0 !important;
+    color: #6b7280 !important;
+    font-size: 11.5px !important;
+    line-height: 1.55 !important;
+    word-break: keep-all !important;
+  }
+
+  #situations .situation.is-extra {
+    display: none !important;
+  }
+
+  #situations .situation-list.is-expanded .situation.is-extra {
+    display: block !important;
+  }
+
+  .mobile-more-wrap {
+    display: block !important;
+    margin-top: 12px;
+  }
+
+  .mobile-more-btn {
+    width: 100%;
+    height: 46px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 650;
+    letter-spacing: -.035em;
+    cursor: pointer;
+  }
+
+  .mobile-more-btn strong {
+    color: var(--blue);
+    font-weight: 700;
+  }
+
+  /* 2) 선택 결과 영역: 모바일 가독성 */
+  .result {
+    margin-top: 18px !important;
+    border-radius: 16px !important;
+  }
+
+  .result-left,
+  .result-right {
+    padding: 24px 20px !important;
+  }
+
+  .selected-tag {
+    margin-bottom: 12px !important;
+    font-size: 12px !important;
+  }
+
+  .result-title {
+    font-size: 24px !important;
+    line-height: 1.35 !important;
+    letter-spacing: -.055em !important;
+    word-break: keep-all !important;
+  }
+
+  .result-desc {
+    margin-top: 12px !important;
+    font-size: 14.5px !important;
+    line-height: 1.68 !important;
+    word-break: keep-all !important;
+  }
+
+  .check-list {
+    margin-top: 18px !important;
+    gap: 8px !important;
+  }
+
+  .check {
+    padding: 11px 12px !important;
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+    border-radius: 12px !important;
+    word-break: keep-all !important;
+  }
+
+  .result-right-head {
+    display: block !important;
+    margin-bottom: 14px !important;
+  }
+
+  .result-right h3 {
+    margin-bottom: 10px !important;
+    font-size: 22px !important;
+    line-height: 1.28 !important;
+    word-break: keep-all !important;
+  }
+
+  .range {
+    display: inline-flex !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    word-break: keep-all !important;
+    line-height: 1.35 !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+
+  .plan-card {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    padding: 16px 0 !important;
+  }
+
+  .plan-name {
+    font-size: 18px !important;
+    line-height: 1.35 !important;
+    word-break: keep-all !important;
+  }
+
+  .plan-meta {
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+    word-break: keep-all !important;
+  }
+
+  .plan-price {
+    text-align: left !important;
+    min-width: 0 !important;
+    font-size: 20px !important;
+    line-height: 1.25 !important;
+  }
+
+  .benefits {
+    grid-template-columns: 1fr 1fr 1fr !important;
+  }
+
+  .benefit {
+    padding: 14px 10px !important;
+    border-right: 1px solid var(--line) !important;
+    border-bottom: 0 !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    word-break: keep-all !important;
+  }
+
+  .benefit:last-child {
+    border-right: 0 !important;
+  }
+
+  .result-note {
+    padding: 14px 16px !important;
+    font-size: 13px !important;
+    line-height: 1.62 !important;
+    word-break: keep-all !important;
+  }
+
+  .result-actions {
+    padding: 0 20px 24px !important;
+    gap: 10px !important;
+  }
+
+  /* 3) 전체 요금제표: 모바일에서는 카드형 + 탭 */
+  #plans .table-wrap {
+    display: none !important;
+  }
+
+  .mobile-plan-section {
+    display: block !important;
+  }
+
+  .mobile-plan-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 8px 0 14px;
+    margin: 2px 0 12px;
+    background: #fff;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-plan-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-plan-tab {
+    flex: 0 0 auto;
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 650;
+    letter-spacing: -.035em;
+    cursor: pointer;
+  }
+
+  .mobile-plan-tab.active {
+    border-color: var(--blue);
+    background: #f3f6ff;
+    color: var(--blue);
+  }
+
+  .mobile-plan-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .mobile-plan-card {
+    padding: 18px 18px 16px;
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    background: #fff;
+  }
+
+  .mobile-plan-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .mobile-plan-type {
+    display: inline-flex;
+    margin-bottom: 8px;
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: -.03em;
+  }
+
+  .mobile-plan-name {
+    margin: 0;
+    color: #111827;
+    font-size: 18px;
+    line-height: 1.36;
+    font-weight: 700;
+    letter-spacing: -.05em;
+    word-break: keep-all;
+  }
+
+  .mobile-plan-price {
+    min-width: 92px;
+    color: #111827;
+    text-align: right;
+    font-size: 18px;
+    line-height: 1.28;
+    font-weight: 780;
+    letter-spacing: -.045em;
+    white-space: nowrap;
+  }
+
+  .mobile-plan-detail {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .mobile-plan-row {
+    display: grid;
+    grid-template-columns: 66px 1fr;
+    gap: 10px;
+    padding-top: 8px;
+    border-top: 1px solid #f1f3f6;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+
+  .mobile-plan-row b {
+    color: #6b7280;
+    font-weight: 650;
+  }
+
+  .mobile-plan-row span {
+    color: #333;
+    word-break: keep-all;
+  }
+
+  .mobile-plan-cta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .mobile-plan-cta a,
+  .mobile-plan-cta button {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--blue);
+    font-size: 13.5px;
+    font-weight: 650;
+    letter-spacing: -.035em;
+    cursor: pointer;
+  }
+
+  .mobile-plan-cta .primary {
+    background: #fff;
+    border: 1.5px solid var(--blue);
+    color: var(--blue);
+  }
+
+  .mobile-plan-cta .ghost {
+    background: #fff;
+    color: var(--blue);
+  }
+}
+
+@media(max-width:380px){
+  #situations .situation {
+    padding: 13px 11px 14px !important;
+  }
+
+  #situations .situation h3 {
+    font-size: 13px !important;
+  }
+
+  #situations .situation p {
+    font-size: 11px !important;
+  }
+
+  .mobile-plan-card {
+    padding: 16px 15px 14px;
+  }
+
+  .mobile-plan-name {
+    font-size: 17px;
+  }
+
+  .mobile-plan-price {
+    font-size: 17px;
+    min-width: 86px;
+  }
+}
+
+
+/* ===== PLAN PAGE HIERARCHY V2: PC/Mobile hierarchy clarification ===== */
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: #f3f6ff;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 650;
+}
+.section-head h2 {
+  letter-spacing: -.055em;
+}
+@media(min-width:981px){
+  #situations .section-head,
+  #plans.section-head {
+    max-width: 720px;
+  }
+  .situation-list {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .situation {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .situation .icon {
+    margin-bottom: auto !important;
+    flex-shrink: 0 !important;
+  }
+  .situation h3 {
+    margin-top: 16px !important;
+  }
+}
+@media(max-width:560px){
+  .hero h1 {
+    font-size: 28px !important;
+    line-height: 1.25 !important;
+    word-break: keep-all !important;
+  }
+  .hero p {
+    font-size: 15px !important;
+    line-height: 1.65 !important;
+    word-break: keep-all !important;
+  }
+  .section {
+    padding-top: 46px !important;
+  }
+}
+
+</style>
+
+
+
+<style id="plan-nav-premium-fixed-v4">
+/* PLAN NAV PREMIUM FIXED V4
+   목적:
+   1) 네비 메뉴 색상 검정 통일
+   2) 네비가 '글씨만 떠 있는 느낌'이 아니라 버튼형 네비처럼 보이게 개선
+   3) 내 상황 선택하기 / 전체 요금제 클릭 시 정확한 섹션으로 이동
+   4) 혜택 확인하기 PC/모바일 자동 분기
+*/
+html{
+  scroll-padding-top:92px;
+}
+#top,
+#situations,
+#plans{
+  scroll-margin-top:92px;
+}
+
+/* 기존 .nav-menu a.active 파란색 완전 무력화 */
+body .nav-menu a,
+body .nav-menu a.active,
+body .nav-menu a:visited{
+  color:#111827 !important;
+}
+
+/* 상단 네비 자체를 얇은 바 형태로 보이게 */
+body .nav{
+  position:sticky !important;
+  top:0 !important;
+  z-index:80 !important;
+  min-height:70px !important;
+  padding:0 40px !important;
+  margin:0 !important;
+  display:grid !important;
+  grid-template-columns:auto 1fr auto !important;
+  align-items:center !important;
+  gap:22px !important;
+  background:rgba(255,255,255,.96) !important;
+  border-bottom:1px solid #E5EAF2 !important;
+  box-shadow:0 10px 28px rgba(15,23,42,.035) !important;
+  backdrop-filter:blur(14px) !important;
+}
+
+body .brand{
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  min-width:max-content !important;
+  font-size:20px !important;
+  font-weight:850 !important;
+  letter-spacing:-.04em !important;
+}
+body .brand .lg{
+  color:var(--pink) !important;
+  font-weight:950 !important;
+}
+body .brand small{
+  color:#344054 !important;
+  font-size:14px !important;
+  font-weight:650 !important;
+}
+
+/* 중앙 메뉴: PC 전용 pill 스타일 */
+@media(min-width:561px){
+  body .nav-menu{
+    justify-self:center !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:6px !important;
+    padding:5px !important;
+    border:1px solid #E5EAF2 !important;
+    border-radius:999px !important;
+    background:#F8FAFD !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.85) !important;
+  }
+  body .nav-menu a{
+    height:36px !important;
+    min-width:104px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:0 16px !important;
+    border-radius:999px !important;
+    color:#111827 !important;
+    font-size:14px !important;
+    font-weight:800 !important;
+    letter-spacing:-.04em !important;
+    background:transparent !important;
+    transition:background .15s ease, box-shadow .15s ease, transform .15s ease !important;
+  }
+  body .nav-menu a:hover,
+  body .nav-menu a.is-current{
+    background:#fff !important;
+    color:#111827 !important;
+    box-shadow:0 6px 16px rgba(15,23,42,.065) !important;
+  }
+}
+
+/* 우측 CTA 2개 */
+body .nav-actions{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:10px !important;
+}
+@media(max-width:768px){
+  body .nav-actions{display:none !important;}
+}
+body .nav-actions .nav-cta{
+  height:40px !important;
+  min-width:auto !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:0 17px !important;
+  border-radius:999px !important;
+  font-size:14px !important;
+  font-weight:800 !important;
+  letter-spacing:-.04em !important;
+  white-space:nowrap !important;
+  transition:transform .15s ease, box-shadow .15s ease !important;
+}
+body .nav-actions .nav-cta:hover{
+  transform:translateY(-1px) !important;
+}
+body .nav-actions .nav-cta.benefit{
+  border:1.5px solid var(--blue) !important;
+  color:var(--blue) !important;
+  background:#fff !important;
+}
+body .nav-actions .nav-cta.consult{
+  border:1.5px solid var(--blue) !important;
+  color:var(--blue) !important;
+  background:#fff !important;
+  box-shadow:none !important;
+}
+
+/* 히어로 CTA 동작/톤 */
+body .hero-actions .btn{
+  gap:8px !important;
+}
+
+/* 태블릿 */
+@media(max-width:980px){
+  html{
+    scroll-padding-top:116px;
+  }
+  #top,#situations,#plans{
+    scroll-margin-top:116px;
+  }
+  body .nav{
+    grid-template-columns:auto 1fr auto !important;
+    gap:12px !important;
+    padding:0 10px !important;
+  }
+  body .brand small{
+    display:inline !important;
+  }
+  body .nav-menu a{
+    min-width:auto !important;
+    height:34px !important;
+    padding:0 13px !important;
+    font-size:13px !important;
+  }
+  body .nav-actions{
+    gap:7px !important;
+  }
+  body .nav-actions .nav-cta{
+    height:36px !important;
+    padding:0 12px !important;
+    font-size:12.5px !important;
+  }
+}
+
+/* 모바일: 한 줄 구조 — 브랜드 왼쪽 / 메뉴 pill 오른쪽 */
+@media(max-width:560px){
+  html{
+    scroll-padding-top:60px;
+  }
+  #top,#situations,#plans{
+    scroll-margin-top:60px;
+  }
+  body .nav{
+    min-height:52px !important;
+    grid-template-columns:1fr auto !important;
+    grid-template-areas:"brand menu" !important;
+    row-gap:0 !important;
+    column-gap:8px !important;
+    padding:0 16px !important;
+  }
+  body .brand{
+    grid-area:brand !important;
+    font-size:14px !important;
+    white-space:nowrap !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  body .brand small{
+    font-size:11px !important;
+    color:#6b7280 !important;
+    font-weight:500 !important;
+  }
+  body .nav-actions{
+    display:none !important;
+  }
+  body .nav-menu{
+    grid-area:menu !important;
+    justify-self:end !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:0 !important;
+    padding:3px 4px !important;
+    background:#fff !important;
+    border:1.5px solid var(--blue,#2563EB) !important;
+    border-radius:999px !important;
+    width:auto !important;
+    flex-shrink:0 !important;
+  }
+  body .nav-menu a{
+    height:28px !important;
+    padding:0 10px !important;
+    font-size:11.5px !important;
+    font-weight:650 !important;
+    border-radius:999px !important;
+    background:transparent !important;
+    border:none !important;
+    color:var(--blue,#2563EB) !important;
+    white-space:nowrap !important;
+    letter-spacing:-.02em !important;
+    display:inline-flex !important;
+    align-items:center !important;
+  }
+  body .nav-menu a.is-current,
+  body .nav-menu a.active{
+    background:var(--blue,#2563EB) !important;
+    color:#fff !important;
+    box-shadow:none !important;
+  }
+}
+</style>
+
+
+<style id="plan-hero-nav-polish-v5">
+/* PLAN HERO + NAV POLISH V5
+   1) 히어로 우측 3만~8만원대+ 안내 카드 제거
+   2) 히어로를 1단 중심형으로 재배치
+   3) 중앙 네비 '내 상황 선택하기 | 전체 요금제' 구분선 추가
+   4) 네비 버튼 톤 차콜 통일
+*/
+
+/* 네비 중앙 메뉴 구분선 */
+/* PC: nav-menu 숨김 */
+@media(min-width:561px){
+  body .nav-menu{
+    display:none !important;
+  }
+}
+
+/* 히어로 우측 카드 제거 및 배치 재정렬 */
+@media(min-width:981px){
+  body .hero{
+    padding:80px 0 64px !important;
+  }
+
+  body .hero-inner{
+    display:block !important;
+    max-width:860px !important;
+    margin:0 auto !important;
+    text-align:left !important;
+    padding:0 !important;
+  }
+
+  body .hero-side{
+    display:none !important;
+  }
+
+  body .hero h1{
+    max-width:850px !important;
+    font-size:56px !important;
+    line-height:1.13 !important;
+    letter-spacing:-.055em !important;
+    font-weight:650 !important;
+  }
+
+  body .hero p{
+    max-width:680px !important;
+    font-size:19px !important;
+    line-height:1.72 !important;
+  }
+
+  body .hero-actions{
+    margin-top:34px !important;
+  }
+
+  body .hero{
+    border-bottom:1px solid #E3E8F0 !important;
+  }
+}
+
+/* 태블릿/모바일도 우측 안내 카드 제거 */
+@media(max-width:980px){
+  body .hero-side{
+    display:none !important;
+  }
+
+  body .hero-inner{
+    display:block !important;
+  }
+}
+
+/* 모바일에서는 네비 구분선도 유지하되 버튼 크기 안정화 */
+@media(max-width:560px){
+  /* nav-menu gap/구분선은 903 블록에서 처리 */
+  body .nav-menu a + a::before{
+    display:none !important;
+  }
+}
+</style>
+
+
+<style id="plan-common-cta-polish-v6">
+/* PLAN COMMON CTA POLISH V6
+   - 결과 하단 CTA / 페이지 최하단 CTA를 네비게이션 CTA와 같은 톤으로 통일
+   - 긴 문구 제거: 내 혜택 확인하기 / 상담 신청하기
+   - 두 버튼을 하나의 공통 CTA 그룹처럼 보이게 정리
+*/
+
+.result-actions,
+.bottom-actions{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:10px !important;
+  flex-wrap:wrap !important;
+}
+
+.result-actions .btn,
+.bottom-actions .btn{
+  min-width:154px !important;
+  height:42px !important;
+  min-height:42px !important;
+  padding:0 18px !important;
+  border-radius:999px !important;
+  font-size:14px !important;
+  font-weight:850 !important;
+  letter-spacing:-.04em !important;
+  box-shadow:none !important;
+  white-space:nowrap !important;
+}
+
+.result-actions .btn.primary,
+.bottom-actions .btn.primary{
+  background:#fff !important;
+  border:1.5px solid var(--blue) !important;
+  color:var(--blue) !important;
+  box-shadow:none !important;
+}
+
+.result-actions .btn:not(.primary),
+.bottom-actions .btn:not(.primary){
+  background:#fff !important;
+  border:1.5px solid var(--blue) !important;
+  color:var(--blue) !important;
+}
+
+/* 결과 박스 하단 CTA 영역 여백 정리 */
+.result-actions{
+  padding:22px 40px 34px !important;
+}
+
+/* 최하단 CTA 박스는 텍스트와 버튼이 너무 벌어지지 않게 */
+.bottom-cta{
+  align-items:center !important;
+}
+
+.bottom-cta .bottom-actions{
+  flex:0 0 auto !important;
+}
+
+/* 모바일에서는 버튼 2개가 같은 줄을 유지하다가 좁으면 1열 */
+@media(max-width:560px){
+  .result-actions,
+  .bottom-actions{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:8px !important;
+    width:100% !important;
+  }
+
+  .result-actions .btn,
+  .bottom-actions .btn{
+    width:100% !important;
+    min-width:0 !important;
+    height:42px !important;
+    padding:0 10px !important;
+    font-size:13px !important;
+  }
+
+  .result-actions{
+    padding:0 20px 24px !important;
+  }
+}
+
+@media(max-width:360px){
+  .result-actions,
+  .bottom-actions{
+    grid-template-columns:1fr !important;
+  }
+}
+</style>
+
+
+<style id="plan-soft-blue-v7">
+/* PLAN SOFT BLUE V7
+   형광처럼 번지는 블루를 차분한 블루로 보정.
+   네비 CTA / 하단 공통 CTA / 주요 버튼 중심.
+*/
+:root{
+  --blue:#2563EB !important;
+}
+
+body .nav-actions .nav-cta.benefit{
+  border-color:#2563EB !important;
+  color:#2563EB !important;
+  background:#fff !important;
+}
+
+body .nav-actions .nav-cta.consult,
+.result-actions .btn.primary,
+.bottom-actions .btn.primary,
+.hero-actions .btn.primary,
+.btn.primary{
+  background:#fff !important;
+  border:1.5px solid var(--blue) !important;
+  color:var(--blue) !important;
+  box-shadow:none !important;
+}
+
+.result-actions .btn:not(.primary),
+.bottom-actions .btn:not(.primary),
+.hero-actions .btn:not(.primary){
+  border-color:#2563EB !important;
+  color:#2563EB !important;
+  background:#fff !important;
+}
+
+.hero h1 .point,
+.hero p strong,
+.kicker,
+.nav-menu a:hover,
+.nav-menu a.is-current{
+  color:#2563EB;
+}
+
+body .nav-actions .nav-cta:hover,
+.result-actions .btn:hover,
+.bottom-actions .btn:hover,
+.hero-actions .btn:hover{
+  box-shadow:0 8px 18px rgba(29,95,219,.10) !important;
+  transform:translateY(-1px);
+}
+
+/* 과한 파란 glow 제거 */
+.result-actions .btn.primary,
+.bottom-actions .btn.primary{
+  box-shadow:0 8px 18px rgba(29,95,219,.10) !important;
+}
+</style>
+
+
+<style id="plan-hero-vivid-customer-first-v5">
+/* PLAN HERO VIVID CUSTOMER FIRST V5
+   수정 범위: 요금제 페이지 히어로 문구/폰트 크기/굵기/강조색만.
+   기존 네비, CTA 링크, 상황 카드, 요금제표, JS 기능은 유지.
+*/
+
+/* 상단 작은 문구 */
+.hero .kicker{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:5px !important;
+  margin-bottom:24px !important;
+  color:#111827 !important;
+  font-size:16px !important;
+  line-height:1.35 !important;
+  font-weight:560 !important;
+  letter-spacing:-.035em !important;
+}
+.hero .kicker b{
+  color:var(--blue,#2563EB) !important;
+  font-weight:780 !important;
+}
+
+/* 메인 히어로 */
+.hero h1.vivid-hero-title,
+.hero h1{
+  max-width:980px !important;
+  margin:0 !important;
+  color:#111827 !important;
+  font-size:54px !important;
+  line-height:1.18 !important;
+  letter-spacing:-.065em !important;
+  font-weight:640 !important;
+  word-break:keep-all !important;
+}
+.hero h1 .point{
+  color:var(--blue,#2563EB) !important;
+  font-weight:720 !important;
+}
+
+/* 설명문 */
+.hero .vivid-hero-desc,
+.hero p{
+  max-width:720px !important;
+  margin:26px 0 0 !important;
+  color:#374151 !important;
+  font-size:19px !important;
+  line-height:1.78 !important;
+  font-weight:420 !important;
+  letter-spacing:-.035em !important;
+  word-break:keep-all !important;
+}
+.hero .vivid-hero-desc strong,
+.hero p strong{
+  color:var(--blue,#2563EB) !important;
+  font-weight:650 !important;
+}
+
+/* CTA는 기존 동작 유지, 시각만 히어로와 맞춤 */
+.hero-actions{
+  display:flex !important;
+  gap:14px !important;
+  margin-top:34px !important;
+}
+@media(min-width:769px){
+.hero-actions .btn{
+  min-width:168px !important;
+  height:50px !important;
+  border-radius:999px !important;
+  font-size:15px !important;
+  font-weight:400 !important;
+  letter-spacing:-.035em !important;
+}
+}
+@media(max-width:768px){
+  .hero-actions{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:8px !important;
+    margin-top:20px !important;
+  }
+  .hero-actions .btn{
+    height:38px !important;
+    min-width:0 !important;
+    font-size:13px !important;
+    border-radius:10px !important;
+    padding:0 16px !important;
+  }
+}
+.hero-actions .btn.primary{
+  background:#fff !important;
+  border:1.5px solid var(--blue) !important;
+  color:var(--blue) !important;
+  box-shadow:none !important;
+}
+.hero-actions .btn:not(.primary){
+  background:#fff !important;
+  border:1.5px solid var(--blue,#2563EB) !important;
+  color:var(--blue,#2563EB) !important;
+}
+
+
+
+/* 태블릿 */
+@media(max-width:980px){
+  body .hero-side{
+    display:none !important;
+  }
+  body .hero-inner{
+    display:block !important;
+  }
+  .hero h1.vivid-hero-title,
+  .hero h1{
+    font-size:30px !important;
+    line-height:1.25 !important;
+  }
+  .hero .vivid-hero-desc,
+  .hero p{
+    font-size:17px !important;
+  }
+}
+
+/* 모바일 최적화 */
+@media(max-width:560px){
+  /* 모바일 전체 90% 축소 */
+  body{
+    zoom:0.88;
+  }
+  /* ── 히어로 여백 ── */
+  body .hero{
+    padding:56px 0 52px !important;
+  }
+
+  /* ── kicker ── */
+  .hero .kicker{
+    margin-bottom:18px !important;
+    font-size:13px !important;
+    line-height:1.4 !important;
+    color:#6b7280 !important;
+    font-weight:500 !important;
+  }
+
+  /* ── 제목 ── */
+  .hero h1.vivid-hero-title,
+  .hero h1{
+    font-size:28px !important;
+    line-height:1.28 !important;
+    letter-spacing:-.04em !important;
+    font-weight:700 !important;
+  }
+  .hero h1 .point{
+    font-weight:750 !important;
+  }
+
+  /* ── 설명 ── */
+  .hero .vivid-hero-desc,
+  .hero p{
+    margin-top:18px !important;
+    font-size:15px !important;
+    line-height:1.78 !important;
+    color:#4b5563 !important;
+  }
+
+  /* ── CTA 버튼 ── */
+  /* 히어로 CTA 버튼 — 모바일에서 숨김 (네비 메뉴로 대체) */
+  .hero-actions{
+    display:none !important;
+  }
+}
+
+@media(max-width:380px){
+  .hero h1.vivid-hero-title,
+  .hero h1{
+    font-size:24px !important;
+    word-break:keep-all !important;
+  }
+  .hero .vivid-hero-desc,
+  .hero p{
+    font-size:14px !important;
+  }
+}
+</style>
+
+
+<style id="plan-hero-cta-polish-v6">
+/* PC 전용 */
+@media(min-width:769px){
+  .hero-actions{
+    display:flex !important;
+    align-items:center !important;
+    gap:18px !important;
+    margin-top:36px !important;
+  }
+  .hero-actions .btn{
+    min-width:260px !important;
+    height:62px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:14px !important;
+    border-radius:18px !important;
+    padding:0 26px !important;
+    font-size:18px !important;
+    font-weight:700 !important;
+    letter-spacing:-.04em !important;
+    text-decoration:none !important;
+  }
+}
+/* 모바일 전용 — CTA 숨김 */
+@media(max-width:768px){
+  .hero-actions{
+    display:none !important;
+  }
+}
+/* 공통 */
+.hero-actions .btn.primary{
+  background:var(--blue) !important;
+  border:1.5px solid var(--blue) !important;
+  color:#fff !important;
+  box-shadow:0 4px 14px rgba(37,99,235,.25) !important;
+}
+.hero-actions .btn:not(.primary){
+  background:#fff !important;
+  border:1.5px solid #e5e7eb !important;
+  color:#374151 !important;
+  box-shadow:none !important;
+}
+</style>
+
+<style id="plan-hero-mobile-only">
+/* 히어로 CTA 모바일 숨김 — 네비 메뉴로 대체 */
+@media(max-width:768px){
+  body .hero-actions{
+    display:none !important;
+  }
+}
+</style>
+
+
+<style id="plan-remove-inline-cta-v10">
+/* PLAN REMOVE INLINE CTA V10
+   - 1단계 결과 박스 하단 CTA 제거
+   - 전체 요금제 아래 큰 CTA 박스 제거
+   - 하단 고정 퀵 CTA는 유지
+   - PC/모바일 공통 적용
+*/
+
+.result > .result-actions{
+  display:none !important;
+}
+
+section.bottom-cta{
+  display:none !important;
+}
+
+.result{
+  padding-bottom:0 !important;
+}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="top">
+  <header class="nav">
+    <a href="hero_pc.html" class="brand" aria-label="LG U+ 요금제 확인 서비스">
+      <span class="lg">LG U+</span><small>요금제 확인 서비스</small>
+    </a>
+
+    <nav class="nav-menu" aria-label="페이지 메뉴">
+      <a href="#situations" data-scroll-target="situations">내 상황 선택하기</a>
+      <span style="display:inline-block;width:1px;height:14px;background:#d1d5db;margin:0 2px;flex-shrink:0;align-self:center;"></span>
+      <a href="#plans" data-scroll-target="plans">전체 요금제</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a class="nav-cta benefit" href="#" data-benefit-link>🎁 혜택 확인하기</a>
+      <a class="nav-cta" href="faq.html" style="border:1.5px solid var(--blue);color:var(--blue);background:#fff;">🙋 궁금해요</a>
+      <a class="nav-cta consult" href="https://vivid-crm-buddy.lovable.app">💬 상담 신청하기</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <div>
+          <div class="kicker">고객님을 먼저 생각하는 <b>비비드</b></div>
+          <h1 class="vivid-hero-title">
+            
+고객님을 우선하는<br><span class="point">비비드</span>가 보여드리는 <span class="point">투명한 혜택</span>
+
+          </h1>
+          <p class="vivid-hero-desc">
+            사용량, 결합 가능성, 휴대폰 변경 조건까지 함께 보고 <strong>고객님을 위한 안내</strong>를 해 드립니다.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary js-scroll-link" href="#situations" data-scroll-target="situations"><span>🙋</span><span>내 상황 선택하기</span></a>
+            <a class="btn js-scroll-link" href="#plans" data-scroll-target="plans"><span>📋</span><span>전체 요금제 보기</span></a>
+          </div>
+        </div>
+        <aside class="hero-side">
+          <div class="guide-box">
+            <div class="label">💰 추천 월정액</div>
+            <div class="value">3만~8만원대+</div>
+          </div>
+          <div class="guide-row">
+            <div class="guide-chip">
+              <b>💸 절약형</b>
+              <span>5G 미니 · 5G 슬림+</span>
+            </div>
+            <div class="guide-chip">
+              <b>⚖️ 균형형</b>
+              <span>데이터 슈퍼 · 스탠다드</span>
+            </div>
+          </div>
+          <div class="guide-box">
+            <div class="label">📱 최신폰 / 공시지원금 상담 구간</div>
+            <div class="value" style="font-size:26px">📱 프리미어 에센셜 이상</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="situations">
+      <div class="section-head">
+        <h2>1단계. 내 상황부터 선택하세요</h2>
+        <p>휴대폰 변경 · 통신사 이동 · 사용 패턴 · 가족 사용 기준으로 먼저 보여드립니다.<br>선택하면 어울리는 요금제 월정액과 추천 이유를 바로 확인할 수 있습니다.</p>
+      </div>
+      <div class="situation-list" id="situationList"></div>
+
+      <div class="mobile-more-wrap">
+        <button class="mobile-more-btn" type="button" id="mobileMoreSituations">
+          더 많은 상황 보기 <strong>+6</strong>
+        </button>
+      </div>
+
+
+      <div class="result" id="result">
+        <div class="result-top">
+          <div class="result-left">
+            <div class="selected-tag" id="selectedTag"></div>
+            <h2 class="result-title" id="resultTitle"></h2>
+            <p class="result-desc" id="resultDesc"></p>
+            <div class="check-list" id="checkList"></div>
+          </div>
+          <div class="result-right">
+            <div class="result-right-head">
+              <h3>추천 요금제 예시</h3>
+              <div class="range" id="estimateRange"></div>
+            </div>
+            <div class="plan-list" id="planList"></div>
+          </div>
+        </div>
+
+        <div class="benefits" id="benefits"></div>
+        <div class="result-note" id="resultNote"></div>
+        <div class="result-actions">
+          <a class="btn primary" href="#" data-benefit-link>🎁 내 혜택 확인하기</a>
+          <a class="btn" href="https://vivid-crm-buddy.lovable.app">💬 상담 신청하기</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>2단계. 추천 구간을 확인하세요</h2>
+        <p>요금제명보다 먼저 절약형·일반형·균형형·혜택형 중 내 상황에 맞는 구간부터 잡으면 됩니다.</p>
+      </div>
+      <div class="segment-grid">
+        <article class="segment" data-jump="wifi"><h3>💸 절약형</h3><div class="price-range">3만~5만원대</div><p>와이파이 위주, 데이터 사용량이 적은 고객.</p></article>
+        <article class="segment" data-jump="unknown"><h3>📱 일반형</h3><div class="price-range">5만~6만원대</div><p>카톡, 검색, 짧은 영상 중심의 일반 사용자.</p></article>
+        <article class="segment" data-jump="video"><h3>⚖️ 균형형</h3><div class="price-range">6만~7만원대</div><p>영상, 음악, 출퇴근 데이터 사용이 많은 고객.</p></article>
+        <article class="segment" data-jump="newphone"><h3>🎁 혜택형</h3><div class="price-range">8만원대 이상</div><p>최신폰, 무제한, 가족·인터넷 결합까지 보는 고객.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="plans">
+      <div class="section-head">
+        <h2>전체 5G 요금제표</h2>
+        <p>전체 요금제 기본표입니다. 요금제 행을 누르면 해당 금액대의 추천 상황으로 이동합니다.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>추천 유형</th>
+              <th>요금제명</th>
+              <th>월정액</th>
+              <th>데이터</th>
+              <th>테더링/쉐어링</th>
+              <th>음성</th>
+            </tr>
+          </thead>
+          <tbody id="planRows"></tbody>
+        </table>
+      </div>
+
+      <div class="mobile-plan-section" aria-label="모바일 요금제 카드">
+        <div class="mobile-plan-tabs" id="mobilePlanTabs">
+          <button class="mobile-plan-tab active" type="button" data-type="전체">전체</button>
+          <button class="mobile-plan-tab" type="button" data-type="절약형">절약형</button>
+          <button class="mobile-plan-tab" type="button" data-type="일반형">일반형</button>
+          <button class="mobile-plan-tab" type="button" data-type="균형형">균형형</button>
+          <button class="mobile-plan-tab" type="button" data-type="혜택형">혜택형</button>
+        </div>
+        <div class="mobile-plan-list" id="mobilePlanList"></div>
+      </div>
+
+    </section>
+
+    <section class="section">
+      <div class="notice-grid">
+        <div class="notice"><i>📶</i><h4>데이터 기준</h4><p>영상·게임 사용이 많다면 데이터 소진 후 속도까지 확인해야 합니다.</p></div>
+        <div class="notice"><i>🔗</i><h4>결합 가능성</h4><p>가족·인터넷 결합 여부에 따라 체감 납부금과 할인 규모는 달라질 수 있습니다.</p></div>
+        <div class="notice"><i>📌</i><h4>최종 조건 확인</h4><p>정책, 재고, 단말기 조건에 따라 실제 혜택은 상담 시점 기준으로 안내됩니다.</p></div>
+      </div>
+    </section>
+
+    <section class="section bottom-cta">
+      <div>
+        <h2>내 조건 기준으로 실제 납부금을 확인해보세요.</h2>
+        <p>요금제, 단말기, 결합 가능성을 함께 보고 안내해드립니다.</p>
+      </div>
+      <div class="bottom-actions">
+        <a class="btn primary" href="#" data-benefit-link>🎁 내 혜택 확인하기</a>
+        <a class="btn" href="https://vivid-crm-buddy.lovable.app">💬 상담 신청하기</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <button data-legal="terms">이용약관</button><span>|</span>
+      <button data-legal="privacy">개인정보처리방침</button><span>|</span>
+      <button data-legal="email">이메일무단수집거부</button>
+    </div>
+    <div class="footer-info">
+      <span><b>상호명</b> 다우수패밀리</span><span>|</span>
+      <span><b>사업장 주소</b> 경기도 구리시 검배로60번길 4 1층 101호 (수택동)</span><span>|</span>
+      <span><b>사업자등록번호</b> 541-70-00732</span><span>|</span>
+      <span><b>이메일</b> ssgvivid2026@gmail.com</span>
+    </div>
+  </footer>
+</div>
+
+<div class="modal" id="legalModal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="legalTitle"></h3>
+      <button class="close" id="modalClose">×</button>
+    </div>
+    <div class="modal-body" id="legalBody"></div>
+  </div>
+</div>
+
+<script>
+const situations = [
+  {
+    key:"newphone", icon:"📱", title:"최신폰 구매 예정이에요", desc:"공시지원금과 기기 혜택을\n함께 확인하고 싶은 고객",
+    tag:"최신폰 구매 고객", headline:"공시지원금 혜택은 85,000원\n이상 구간부터 확인하세요.",
+    text:"최신 스마트폰은 85,000원 이상 요금제 구간에서 더 높은 혜택이 적용되는 경우가 많습니다. 비비드는 고객님 상황에 맞는 조건을 먼저 확인하고, 안내 가능한 최대 혜택 기준으로 투명하게 도와드립니다.",
+    checks:["85,000원 이상 요금제 구간 확인","공시지원금/선택약정 중 유리한 방식 비교","단말기 할부금 포함 실납부 기준 확인"],
+    note:"※ 공시지원금은 85,000원 이상 구간부터 확인되는 경우가 많습니다. 85,000원 미만 요금제를 원하시는 경우 선택약정 기준으로 비교 안내합니다.",
+    range:"월 85,000원 이상",
+    plans:[
+      {name:"5G 프리미어 에센셜", price:"월 85,000원", meta:"무제한 + 테더링/쉐어링 70GB", benefit:"공시지원금 상담 시작점"},
+      {name:"5G 프리미어 레귤러", price:"월 95,000원", meta:"무제한 + 테더링/쉐어링 80GB", benefit:"혜택형 비교"},
+      {name:"5G 프리미어 플러스", price:"월 105,000원", meta:"무제한 + 테더링/쉐어링 100GB", benefit:"상위 혜택 구간"}
+    ],
+    benefits:["85,000원 이상","공시지원금 상담","실납부 확인"]
+  },
+  {
+    key:"switch", icon:"🔁", title:"타 통신사에서 변경 고민 중", desc:"기존 약정·위약금·월 납부금 차이를\n먼저 비교하고 싶은 고객",
+    tag:"통신사 변경 고객", headline:"공시지원금 혜택은 85,000원\n이상 구간부터 확인하세요.",
+    text:"최신 스마트폰은 85,000원 이상 요금제 구간에서 더 높은 혜택이 적용되는 경우가 많습니다. 비비드는 고객님 상황에 맞는 조건을 먼저 확인하고, 안내 가능한 최대 혜택 기준으로 투명하게 도와드립니다.",
+    checks:["기존 약정·위약금 확인","85,000원 이상 요금제 구간 확인","공시지원금/선택약정 비교"],
+    note:"※ 공시지원금은 단말기, 요금제, 유지 조건, 개통 시점 정책에 따라 달라집니다.",
+    range:"월 85,000원 이상",
+    plans:[
+      {name:"5G 프리미어 에센셜", price:"월 85,000원", meta:"무제한 + 테더링/쉐어링 70GB", benefit:"공시지원금 상담 시작점"},
+      {name:"5G 프리미어 레귤러", price:"월 95,000원", meta:"무제한 + 테더링/쉐어링 80GB", benefit:"혜택형 비교"},
+      {name:"5G 프리미어 플러스", price:"월 105,000원", meta:"무제한 + 테더링/쉐어링 100GB", benefit:"고혜택 구간"}
+    ],
+    benefits:["통신사 변경","85,000원 이상","공시지원금 상담"]
+  },
+  {
+    key:"video", icon:"🎬", title:"영상·OTT를 자주 봐요", desc:"유튜브·OTT·음악 스트리밍을 자주 이용하는 고객",
+    tag:"영상·OTT 사용 고객", headline:"균형형 이상을 먼저 비교해보세요.",
+    text:"영상 시청이 많으면 데이터가 빠르게 줄어듭니다. 낮은 요금제보다 데이터 제공량과 소진 후 속도를 같이 봐야 합니다.",
+    checks:["유튜브·OTT 사용 시간이 많은지 확인","1Mbps/3Mbps/5Mbps 차이 비교","월 요금과 데이터 편의성 균형 확인"],
+    note:"※ OTT 관련 혜택은 모든 요금제에 동일 적용되는 것이 아니므로, 선택 요금제와 가입 조건 기준으로 확인합니다.",
+    range:"월 63,000~70,000원",
+    plans:[
+      {name:"5G 데이터 레귤러", price:"월 63,000원", meta:"50GB + 최대 1Mbps", benefit:"가성비 데이터"},
+      {name:"5G 데이터 슈퍼", price:"월 68,000원", meta:"95GB + 최대 3Mbps", benefit:"영상 사용 안정"},
+      {name:"5G 스탠다드 에센셜", price:"월 70,000원", meta:"125GB + 최대 5Mbps", benefit:"고용량 추천"}
+    ],
+    benefits:["영상 사용","고용량 데이터","속도 제한 비교"]
+  },
+  {
+    key:"parents", icon:"🧓", title:"부모님 요금제를 봐드려요", desc:"통화·카톡 위주로 사용하시는 부모님께 맞는 요금제",
+    tag:"부모님 시니어 요금제", headline:"부모님은 시니어 전용 요금제부터 확인하세요.",
+    text:"부모님 요금제는 일반 고가 요금제보다 연령 조건에 맞는 시니어 전용 요금제가 더 적합할 수 있습니다. 통화·문자 무제한과 10GB 데이터 구성을 먼저 확인합니다.",
+    checks:["만 65세 / 75세 / 80세 이상 연령 조건 확인","통화·문자 무제한 필요 여부 확인","기초연금 감면 또는 선택약정 가능 여부 확인"],
+    note:"※ 시니어 요금제는 연령 조건에 따라 가입 가능 요금제가 달라집니다. 아래 내용은 2026년 기준 참고 예시입니다.",
+    range:"월 39,000~45,000원",
+    plans:[
+      {name:"5G 시니어 C형", price:"월 39,000원", meta:"만 80세 이상 · 데이터 10GB + 1Mbps · 음성/문자 무제한", benefit:"시니어 최저 구간"},
+      {name:"5G 시니어 B형", price:"월 43,000원", meta:"만 75세 이상 · 데이터 10GB + 1Mbps · 음성/문자 무제한", benefit:"시니어 중간 구간"},
+      {name:"5G 시니어 A형", price:"월 45,000원", meta:"만 65세 이상 · 데이터 10GB + 1Mbps · 음성/문자 무제한", benefit:"시니어 기본 구간"}
+    ],
+    benefits:["시니어 연령","10GB+1Mbps","음성/문자 무제한"]
+  },
+  {
+    key:"kids", icon:"🧒", title:"자녀 데이터가 걱정돼요", desc:"영상·게임·학습 앱으로 데이터가\n걱정되는 자녀 요금제를 찾는 경우",
+    tag:"자녀 데이터 고객", headline:"자녀 요금제는 가족 결합 할인까지 같이 봐야 합니다.",
+    text:"자녀에게 꼭 높은 요금제를 권하기보다, 사용량·가족 결합·현재 통신비 조건까지 함께 확인해 보다 합리적인 방향으로 안내해드립니다.",
+    checks:["자녀 실제 데이터 사용량 확인","부모/자녀 회선 결합 가능성 확인","결합 적용 후 체감 납부금 비교"],
+    note:"※ 자녀 회선은 부모 회선 조합, 결합 여부, 명의 조건에 따라 추천이 달라질 수 있습니다. 아래 할인 금액은 이해를 돕기 위한 예시입니다.",
+    range:"사용량·결합 조건 기준",
+    plans:[
+      {name:"자녀 상황에 맞는 요금제 안내", price:"상담을 통한 안내", meta:"사용량과 가족 결합 조건을 함께 확인해 가정에 맞는 방향으로 안내해드립니다.", benefit:"우리 자녀·가정 맞춤 제안"},
+      {name:"가족 결합 예시", price:"월 -5,500원~", meta:"부모/자녀 회선 결합 시 할인 가능", benefit:"결합 할인"},
+      {name:"사용량 초과 시", price:"상담 기준", meta:"결합·사용량 확인 후 맞는 구간 안내", benefit:"조건별 안내"}
+    ],
+    benefits:["5만원대 기준","가족 결합 할인","실사용량 확인"]
+  },
+  {
+    key:"tethering", icon:"💻", title:"테더링·외근이 많아요", desc:"외근·카페에서 노트북·태블릿 연결이 잦은 고객",
+    tag:"테더링·외근 고객", headline:"공유 데이터 제공량까지 확인해야 합니다.",
+    text:"테더링을 자주 쓰면 기본 데이터뿐 아니라 테더링·쉐어링 제공량이 중요합니다.",
+    checks:["노트북 테더링 사용 빈도 확인","공유 데이터 제공량 비교","업무용이면 안정성 우선"],
+    note:"※ 업무용 사용은 월별 편차가 크므로 평균 사용량 확인 후 추천 구간을 안내합니다.",
+    range:"월 75,000~95,000원",
+    plans:[
+      {name:"5G 스탠다드", price:"월 75,000원", meta:"150GB + 테더링/쉐어링 60GB", benefit:"외근형 기준"},
+      {name:"5G 프리미어 에센셜", price:"월 85,000원", meta:"무제한 + 테더링/쉐어링 70GB", benefit:"무제한 시작"},
+      {name:"5G 프리미어 레귤러", price:"월 95,000원", meta:"무제한 + 테더링/쉐어링 80GB", benefit:"공유 데이터 여유"}
+    ],
+    benefits:["테더링","외근 업무","공유 데이터"]
+  },
+  {
+    key:"budget", icon:"💸", title:"월 요금이 부담돼요", desc:"꼭 필요한 만큼만 쓰고\n매월 통신비를 줄이고 싶은 고객",
+    tag:"요금 절감 고객", headline:"절약형부터 보되 사용 불편도 확인하세요.",
+    text:"월 요금을 낮추는 것이 목표라면 절약형부터 확인합니다. 다만 데이터 부족이 잦다면 일반형이 더 나을 수 있습니다.",
+    checks:["통신비 절감이 최우선인지 확인","데이터 부족 불편 가능성 확인","가족·인터넷 결합 가능성 확인"],
+    note:"※ 가장 낮은 요금제가 항상 정답은 아닙니다. 사용량과 함께 확인합니다.",
+    range:"월 37,000~55,000원",
+    plans:[
+      {name:"5G 미니", price:"월 37,000원", meta:"5GB + 최대 400kbps", benefit:"최저 월정액"},
+      {name:"데이터플랜9GB(표준)", price:"월 47,000원", meta:"9GB + 최대 400kbps", benefit:"절약형"},
+      {name:"5G 라이트+", price:"월 55,000원", meta:"14GB + 최대 1Mbps", benefit:"조금 더 안정"}
+    ],
+    benefits:["요금 절감","낮은 월정액","사용량 확인"]
+  },
+  {
+    key:"wifi", icon:"📶", title:"와이파이를 주로 써요", desc:"집·회사 와이파이 위주로 사용해\n외부 데이터가 많지 않은 고객",
+    tag:"와이파이 위주 고객", headline:"절약형 또는 일반형부터 확인해보세요.",
+    text:"데이터 사용량이 많지 않다면 고가 요금제가 항상 유리한 것은 아닙니다. 단, 데이터 소진 후 속도 제한은 꼭 확인해야 합니다.",
+    checks:["월 데이터 사용량이 10GB 이하인지 확인","영상 시청이 많지 않다면 낮은 구간도 가능","400kbps 제한은 체감상 느릴 수 있음"],
+    note:"※ 요금제 월정액 기준의 추천 예시입니다. 실제 청구 금액은 선택약정, 공시지원금, 단말기 할부금, 결합 여부, 가입 시점 정책 확인 후 달라질 수 있습니다.",
+    range:"월 37,000~55,000원",
+    plans:[
+      {name:"5G 미니", price:"월 37,000원", meta:"5GB + 소진 후 최대 400kbps", benefit:"월 부담 최소"},
+      {name:"5G 슬림+", price:"월 47,000원", meta:"9GB + 소진 후 최대 400kbps", benefit:"가벼운 사용"},
+      {name:"5G 라이트+", price:"월 55,000원", meta:"14GB + 소진 후 최대 1Mbps", benefit:"일반 사용 안정"}
+    ],
+    benefits:["요금 절감","와이파이 위주","속도 제한 확인"]
+  },
+  {
+    key:"family", icon:"👨‍👩‍👧", title:"가족 결합이 가능해요", desc:"가족이 함께 묶어 결합 할인을\n받을 수 있을 것 같은 고객",
+    tag:"가족 결합 고객", headline:"요금제보다 결합 할인폭을 먼저 확인하세요.",
+    text:"가족 결합은 특정 요금제를 무조건 추천하는 영역이 아닙니다. 가족 회선 수, 인터넷 결합 여부, 명의 조건에 따라 매월 빠지는 할인폭을 먼저 계산해야 합니다.",
+    checks:["가족 휴대폰 회선 수 확인","집 인터넷 LG U+ 결합 가능 여부 확인","회선별 요금제 구간에 따른 할인폭 확인"],
+    note:"※ 아래 할인 금액은 상담 이해를 돕기 위한 예시입니다. 실제 결합 할인은 회선 수, 인터넷 상품, 명의, 요금제 구간에 따라 달라질 수 있습니다.",
+    range:"결합 할인 예시",
+    plans:[
+      {name:"가족 회선 결합", price:"월 -5,500원~", meta:"가족 휴대폰 회선 수에 따라 할인 가능", benefit:"회선 수 기준"},
+      {name:"인터넷 + 모바일 결합", price:"월 -9,900원~", meta:"집 인터넷과 모바일을 함께 묶는 경우", benefit:"인터넷 결합"},
+      {name:"다회선 결합", price:"월 -13,200원 이상", meta:"회선 수와 상품 조건에 따라 할인폭 확대", benefit:"상담 계산 필요"}
+    ],
+    benefits:["회선 수 확인","인터넷 결합","월 할인폭 계산"]
+  },
+  {
+    key:"unknown", icon:"❓", title:"뭘 골라야 할지 잘 모르겠어요", desc:"내게 맞는 요금제를 잘 모르겠어서\n전문가 상담을 원하는 고객",
+    tag:"초기 진단 고객", headline:"얼마를 골라야 할지 모르겠다고요?",
+    text:"걱정하지 않으셔도 됩니다. 고객님의 현재 납부금, 데이터 사용량, 가족·인터넷 결합 가능성을 전달해주시면 친절한 상담을 통해 딱 맞는 요금제 방향을 정리해드립니다.",
+    checks:["현재 월 납부금 확인","평소 데이터 사용 패턴 확인","가족·인터넷 결합 가능성 확인"],
+    note:"※ 이 항목은 특정 금액대를 먼저 추천하지 않습니다. 고객님의 상황을 듣고 필요한 구간부터 안내합니다.",
+    range:"상담 후 추천",
+    plans:[
+      {name:"1단계", price:"현재 조건 확인", meta:"월 납부금, 통신사, 데이터 사용량 확인", benefit:"기본 진단"},
+      {name:"2단계", price:"추천 구간 정리", meta:"절약형·일반형·균형형·혜택형 중 방향 제안", benefit:"맞춤 추천"},
+      {name:"3단계", price:"실제 납부금 안내", meta:"결합, 할인, 단말기 조건까지 함께 확인", benefit:"상담 기준"}
+    ],
+    benefits:["친절한 상담","상황 전달","맞춤 추천"]
+  },
+  {
+    key:"home", icon:"🏠", title:"인터넷·TV도 같이 봐요", desc:"집 인터넷·IPTV를 함께 바꾸면\n유리한지 궁금한 고객",
+    tag:"인터넷·TV 결합 고객", headline:"모바일만 보지 말고 집 통신비까지 보세요.",
+    text:"인터넷이나 IPTV까지 함께 이용한다면 전체 통신비 기준으로 보는 편이 더 정확합니다.",
+    checks:["현재 인터넷 통신사 확인","IPTV 이용 여부 확인","모바일과 묶었을 때 조건 비교"],
+    note:"※ 인터넷/IPTV 요금, 장비 임대료, 가입 혜택은 시점별 차이가 큽니다.",
+    range:"모바일 + 인터넷/IPTV 별도 산정",
+    plans:[
+      {name:"5G 라이트+", price:"월 55,000원", meta:"모바일 절약 조합", benefit:"결합 시작점"},
+      {name:"5G 데이터 슈퍼", price:"월 68,000원", meta:"영상·데이터 사용", benefit:"균형 조합"},
+      {name:"인터넷/IPTV", price:"상담 기준", meta:"100M/500M/1G 및 IPTV 구성", benefit:"별도 확인"}
+    ],
+    benefits:["인터넷 결합","IPTV 구성","가입 시점 확인"]
+  },
+  {
+    key:"commute", icon:"🚇", title:"출퇴근 시간이 길어요", desc:"이동 중 영상·음악·검색으로\n데이터가 빨리 줄어드는 고객",
+    tag:"출퇴근 데이터 고객", headline:"이동 중 데이터 사용량이 핵심입니다.",
+    text:"출퇴근길 영상·음악 사용이 많다면 낮은 요금제의 속도 제한이 불편할 수 있습니다.",
+    checks:["출퇴근 중 영상 시청 시간 확인","소진 후 속도 제한 체감 고려","균형형 이상 비교 추천"],
+    note:"※ 출퇴근 시간과 영상 화질에 따라 데이터 사용량이 크게 달라집니다.",
+    range:"월 63,000~70,000원",
+    plans:[
+      {name:"5G 데이터 레귤러", price:"월 63,000원", meta:"50GB + 최대 1Mbps", benefit:"균형형 시작"},
+      {name:"5G 데이터 슈퍼", price:"월 68,000원", meta:"95GB + 최대 3Mbps", benefit:"영상 안정"},
+      {name:"5G 스탠다드 에센셜", price:"월 70,000원", meta:"125GB + 최대 5Mbps", benefit:"고용량"}
+    ],
+    benefits:["출퇴근","영상 시청","고용량"]
+  }
+];
+
+const planRowsData = [
+["혜택형","5G 시그니처","월 130,000원","무제한","120GB + 참 쉬운 가족 데이터 60GB","무제한 + 부가 300분"],
+["혜택형","5G 프리미어 슈퍼","월 115,000원","무제한","100GB + 참 쉬운 가족 데이터 50GB","무제한 + 부가 300분"],
+["혜택형","5G 프리미어 플러스","월 105,000원","무제한","100GB","무제한 + 부가 300분"],
+["혜택형","5G 프리미어 레귤러","월 95,000원","무제한","80GB","무제한 + 부가 300분"],
+["혜택형","5G 프리미어 에센셜","월 85,000원","무제한","70GB","무제한 + 부가 300분"],
+["균형형","5G 스탠다드","월 75,000원","150GB + 다 쓰면 최대 5Mbps","기본 제공량 내 60GB","무제한 + 부가 300분"],
+["균형형","5G 스탠다드 에센셜","월 70,000원","125GB + 다 쓰면 최대 5Mbps","기본 제공량 내 55GB","무제한 + 부가 300분"],
+["균형형","LTE 추가 요금 걱정 없는 데이터 69","월 69,000원","일 5GB + 다 쓰면 최대 5Mbps","테더링+쉐어링 11GB","무제한 + 부가 300분"],
+["균형형","5G 데이터 슈퍼","월 68,000원","95GB + 다 쓰면 최대 3Mbps","기본 제공량 내 50GB","무제한 + 부가 300분"],
+["균형형","5G 데이터 플러스","월 66,000원","80GB + 다 쓰면 최대 1Mbps","기본 제공량 내 45GB","무제한 + 부가 300분"],
+["균형형","5G 데이터 레귤러","월 63,000원","50GB + 다 쓰면 최대 1Mbps","기본 제공량 내 40GB","무제한 + 부가 300분"],
+["일반형","5G 심플+","월 61,000원","31GB + 다 쓰면 최대 1Mbps","-","무제한 + 부가 300분"],
+["일반형","5G 베이직+","월 59,000원","24GB + 다 쓰면 최대 1Mbps","-","무제한 + 부가 300분"],
+["일반형","5G 라이트+","월 55,000원","14GB + 다 쓰면 최대 1Mbps","-","무제한 + 부가 300분"],
+["절약형","데이터플랜9GB(표준)","월 47,000원","9GB + 다 쓰면 최대 400kbps","기본 제공량 내","무제한 + 부가 300분"],
+["절약형","5G 슬림+","월 47,000원","9GB + 다 쓰면 최대 400kbps","-","무제한 + 부가 300분"],
+["절약형","5G 미니","월 37,000원","5GB + 다 쓰면 최대 400kbps","-","무제한 + 부가 300분"]
+];
+
+function renderSituations(){
+  situationList.innerHTML = situations.map((item, index)=>`
+    <button class="situation ${index===0 ? "active" : ""} ${index >= 6 ? "is-extra" : ""}" data-key="${item.key}">
+      <div class="icon">${item.icon}</div>
+      <h3>${item.title}</h3>
+      <p>${item.desc.replace(/\n/g," ")}</p>
+    </button>
+  `).join("");
+}
+
+function renderResult(key){
+  const data = situations.find(item=>item.key===key) || situations[0];
+  document.querySelectorAll(".situation").forEach(btn=>btn.classList.toggle("active", btn.dataset.key===key));
+
+  selectedTag.textContent = data.tag;
+  resultTitle.textContent = data.headline;
+  resultDesc.textContent = data.text;
+  checkList.innerHTML = data.checks.map(check=>`<div class="check"><span>✓</span><div>${check}</div></div>`).join("");
+  estimateRange.textContent = data.range;
+  resultNote.textContent = data.note;
+
+  planList.innerHTML = data.plans.map(plan=>`
+    <article class="plan-card">
+      <div>
+        <div class="plan-name">${plan.name}</div>
+        <div class="plan-meta">${plan.meta}</div>
+      </div>
+      <div class="plan-price">${plan.price}<small>${plan.benefit}</small></div>
+    </article>
+  `).join("");
+
+  benefits.innerHTML = data.benefits.map((benefit, idx)=>`
+    <div class="benefit"><b>${idx + 1} 기준</b>${benefit}</div>
+  `).join("");
+
+  // 2단계 구간 자동 하이라이트
+  const segmentMap = {
+    newphone:"newphone", switch:"newphone", video:"video",
+    parents:"wifi", kids:"wifi", tethering:"video",
+    budget:"wifi", wifi:"wifi", family:"video",
+    unknown:"unknown", home:"video", commute:"video"
+  };
+  const targetSegment = segmentMap[key];
+  document.querySelectorAll(".segment").forEach(el=>{
+    el.classList.remove("highlighted");
+    if(targetSegment && el.dataset.jump === targetSegment){
+      el.classList.add("highlighted");
+    }
+  });
+
+  // 2단계 섹션으로 부드럽게 안내 (스크롤 없이 시각적으로만)
+  const segSection = document.querySelector(".segment-grid");
+  if(segSection && targetSegment){
+    segSection.style.transition = "box-shadow .4s ease";
+    segSection.style.boxShadow = "0 0 0 2px rgba(18,107,255,.25)";
+    setTimeout(()=>{ segSection.style.boxShadow = ""; }, 1500);
+  }
+}
+
+function getPlanJump(row){
+  const type = row[0];
+  const priceNum = Number(String(row[2]).replace(/[^0-9]/g,""));
+  if(priceNum >= 85000) return "newphone";
+  if(type === "균형형") return "video";
+  if(type === "일반형") return "unknown";
+  if(type === "절약형") return "wifi";
+  return "unknown";
+}
+
+function renderTable(){
+  planRows.innerHTML = planRowsData.map(row=>`
+    <tr data-jump="${getPlanJump(row)}">
+      <td><span class="type">${row[0]}</span></td>
+      <td>${row[1]}</td>
+      <td class="price">${row[2]}</td>
+      <td>${row[3]}</td>
+      <td>${row[4]}</td>
+      <td>${row[5]}</td>
+    </tr>
+  `).join("");
+}
+
+
+function renderMobilePlanCards(filterType = "전체"){
+  const list = document.getElementById("mobilePlanList");
+  if(!list) return;
+
+  const filtered = filterType === "전체" ? planRowsData : planRowsData.filter(row => row[0] === filterType);
+
+  list.innerHTML = filtered.map(row=>`
+    <article class="mobile-plan-card" data-jump="${getPlanJump(row)}">
+      <div class="mobile-plan-top">
+        <div>
+          <div class="mobile-plan-type">${row[0]}</div>
+          <h3 class="mobile-plan-name">${row[1]}</h3>
+        </div>
+        <div class="mobile-plan-price">${row[2]}</div>
+      </div>
+
+      <div class="mobile-plan-detail">
+        <div class="mobile-plan-row"><b>데이터</b><span>${row[3]}</span></div>
+        <div class="mobile-plan-row"><b>공유</b><span>${row[4]}</span></div>
+        <div class="mobile-plan-row"><b>음성</b><span>${row[5]}</span></div>
+      </div>
+
+      <div class="mobile-plan-cta">
+        <a class="btn" href="https://vivid-crm-buddy.lovable.app">상담 신청하기</a>
+        <button class="ghost" type="button" data-mobile-jump="${getPlanJump(row)}">추천 상황 보기</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function setupMobileSituationMore(){
+  const moreBtn = document.getElementById("mobileMoreSituations");
+  if(!moreBtn) return;
+
+  moreBtn.addEventListener("click", ()=>{
+    const expanded = situationList.classList.toggle("is-expanded");
+    moreBtn.innerHTML = expanded ? '상황 접기 <strong>−</strong>' : '더 많은 상황 보기 <strong>+6</strong>';
+  });
+}
+
+function setupMobilePlanUI(){
+  const tabs = document.getElementById("mobilePlanTabs");
+
+  renderMobilePlanCards("전체");
+
+  if(tabs){
+    tabs.addEventListener("click", event=>{
+      const btn = event.target.closest(".mobile-plan-tab");
+      if(!btn) return;
+      tabs.querySelectorAll(".mobile-plan-tab").forEach(item=>item.classList.remove("active"));
+      btn.classList.add("active");
+      renderMobilePlanCards(btn.dataset.type);
+    });
+  }
+
+  document.addEventListener("click", event=>{
+    const jumpBtn = event.target.closest("[data-mobile-jump]");
+    if(!jumpBtn) return;
+    jumpTo(jumpBtn.dataset.mobileJump);
+  });
+}
+
+function jumpTo(key, target="result"){
+  renderResult(key);
+  const el = target === "situations" ? document.getElementById("situations") : result;
+  // 네비바 높이만큼 offset 적용
+  const navHeight = document.querySelector(".nav")?.offsetHeight || 68;
+  const top = el.getBoundingClientRect().top + window.scrollY - navHeight - 12;
+  window.scrollTo({top, behavior:"smooth"});
+  // 결과 섹션 하이라이트
+  if(target !== "situations"){
+    result.classList.remove("highlight");
+    void result.offsetWidth; // reflow
+    result.classList.add("highlight");
+    setTimeout(()=>result.classList.remove("highlight"), 2000);
+  }
+}
+
+renderSituations();
+renderResult("newphone");
+renderTable();
+setupMobileSituationMore();
+setupMobilePlanUI();
+
+situationList.addEventListener("click", event=>{
+  const button = event.target.closest(".situation");
+  if(!button) return;
+  jumpTo(button.dataset.key);
+});
+
+document.querySelectorAll(".segment[data-jump]").forEach(card=>{
+  card.addEventListener("click", ()=>jumpTo(card.dataset.jump));
+});
+
+document.addEventListener("click", event=>{
+  const row = event.target.closest("#planRows tr[data-jump]");
+  if(row) jumpTo(row.dataset.jump);
+});
+
+const legal = {
+  terms:["이용약관","본 페이지는 다우수패밀리가 운영하는 VIVID 비비드의 LG U+ 요금제 안내 및 상담 신청하기 서비스입니다.\n\n본 페이지의 요금제, 혜택, 결합 안내는 고객님의 이해를 돕기 위한 정보이며, 최종 가입 조건은 상담 시점의 통신사 정책, 재고, 요금제, 할인 방식, 결합 가능 여부에 따라 달라질 수 있습니다."],
+  privacy:["개인정보처리방침","상담 신청하기 시 수집되는 개인정보는 상담 연락, 가입 조건 확인, 고객 문의 응대를 위해 사용됩니다.\n\n수집 항목과 보유 기간은 실제 상담 신청하기 페이지의 개인정보처리방침을 기준으로 안내됩니다."],
+  email:["이메일무단수집거부","본 사이트에 게시된 이메일 주소가 전자우편 수집 프로그램 또는 그 밖의 기술적 장치를 이용해 무단으로 수집되는 것을 거부합니다."]
+};
+
+document.querySelectorAll("[data-legal]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    legalTitle.textContent = legal[btn.dataset.legal][0];
+    legalBody.textContent = legal[btn.dataset.legal][1];
+    legalModal.classList.add("open");
+  });
+});
+modalClose.addEventListener("click", ()=>legalModal.classList.remove("open"));
+legalModal.addEventListener("click", event=>{
+  if(event.target === legalModal) legalModal.classList.remove("open");
+});
+</script>
+
+
+<script id="plan-nav-premium-fixed-v4">
+(function(){
+  const BENEFIT_PC_URL = "benefit_pc-s.html";
+  const BENEFIT_MOBILE_URL = "benefit_mobile-s.html";
+
+  function getBenefitUrl(){
+    return window.matchMedia("(max-width: 640px)").matches ? BENEFIT_MOBILE_URL : BENEFIT_PC_URL;
+  }
+
+  function scrollToSection(id){
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  document.addEventListener("click", function(e){
+    const scrollLink = e.target.closest("[data-scroll-target]");
+    if(scrollLink){
+      e.preventDefault();
+      const id = scrollLink.getAttribute("data-scroll-target");
+      scrollToSection(id);
+      return;
+    }
+
+    const benefitLink = e.target.closest("[data-benefit-link]");
+    if(benefitLink){
+      e.preventDefault();
+      window.location.href = getBenefitUrl();
+      return;
+    }
+  });
+
+  const menuLinks = Array.from(document.querySelectorAll(".nav-menu a[data-scroll-target]"));
+  const sections = menuLinks
+    .map(a => document.getElementById(a.getAttribute("data-scroll-target")))
+    .filter(Boolean);
+
+  function updateCurrent(){
+    let current = "";
+    const y = window.scrollY + 140;
+    sections.forEach(sec => {
+      if(sec.offsetTop <= y) current = sec.id;
+    });
+    menuLinks.forEach(a => {
+      a.classList.toggle("is-current", a.getAttribute("data-scroll-target") === current);
+    });
+  }
+
+  window.addEventListener("scroll", updateCurrent, {passive:true});
+  window.addEventListener("load", updateCurrent);
+  updateCurrent();
+})();
+</script>
+
+
+<style>
+.vivid-nav{position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-top:1px solid #E6EAF0;display:flex;justify-content:center;gap:8px;padding:8px 12px;}
+.vivid-nav a{display:inline-flex;align-items:center;gap:6px;height:36px;border-radius:999px;padding:0 14px;font-size:13px;font-weight:600;text-decoration:none;transition:.15s;}
+.vivid-nav .nav-benefit{background:#fff;border:1.5px solid var(--blue);color:var(--blue);}
+.vivid-nav .nav-consult{background:#fff;border:1.5px solid var(--blue);color:var(--blue);}
+.vivid-nav .nav-faq{background:#fff;border:1.5px solid var(--blue);color:var(--blue);}
+.vivid-nav .nav-hero{background:#fff;border:1.5px solid #E6EAF0;color:#667085;}
+</style>
+<div class="vivid-nav">
+  <a class="nav-hero" href="hero_pc.html" id="navHeroBtn">← 뒤로</a>
+  <a class="nav-benefit" href="benefit_pc-s.html" id="navBenefitBtn">📱 혜택 확인하기</a>
+  <a class="nav-faq" href="faq.html">🙋 궁금해요</a>
+  <a class="nav-consult" href="https://vivid-crm-buddy.lovable.app">💬 상담 신청하기</a>
+</div>
+<script>
+// PC/모바일 감지해서 링크 조정
+if(window.innerWidth <= 768){
+  document.getElementById('navBenefitBtn').href='benefit_mobile-s.html';
+  document.getElementById('navHeroBtn').href='hero_pc.html';
+}
+</script>
+
+<script>
+(function(){
+  function fixMobileCTA(){
+    if(window.innerWidth <= 768){
+      // 히어로 CTA 숨김 — 네비 메뉴로 대체
+      var actions = document.querySelector('.hero-actions');
+      if(actions){
+        actions.style.setProperty('display','none','important');
+      }
+    }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', fixMobileCTA);
+  } else {
+    fixMobileCTA();
+  }
+})();
+</script>
+</body>
+</html>
