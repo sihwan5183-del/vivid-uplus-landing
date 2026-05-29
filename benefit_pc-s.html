@@ -2841,20 +2841,22 @@ window.closeModalFn=closeModal;
 window.goConsult=function(){
   const prices=calcPrices();
   const params=new URLSearchParams();
+  const ri=v=>v?Math.round(Number(v)):0; // 반올림
+  const colorLabel=sel.color?.name?parseColor(sel.color.name).label||parseColor(sel.color.name).hex:"";
   if(currentDevice?.name)  params.set("device", currentDevice.name);
   if(sel.carrier)           params.set("carrier", sel.carrier);
   if(sel.joinType)          params.set("joinType", sel.joinType);
   if(sel.storage?.name)     params.set("storage", sel.storage.name);
-  if(sel.color?.name)       params.set("color", sel.color.name);
+  if(colorLabel)            params.set("color", colorLabel);
   if(sel.plan?.name)        params.set("plan", sel.plan.name);
-  if(sel.plan?.monthlyPrice)params.set("planPrice", sel.plan.monthlyPrice);
+  if(sel.plan?.monthlyPrice)params.set("planPrice", ri(sel.plan.monthlyPrice));
   if(sel.discount)          params.set("discount", sel.discount==="subsidy"?"공시지원금":"선택약정");
   if(prices){
-    if(prices.launchPrice)  params.set("launchPrice", prices.launchPrice);
-    if(prices.monthlyTotal) params.set("monthlyTotal", prices.monthlyTotal);
-    if(sel.discount==="subsidy"&&prices.pubSupport) params.set("pubSupport", prices.pubSupport);
-    if(sel.discount==="subsidy"&&prices.selfDiscount) params.set("selfDiscount", prices.selfDiscount);
-    if(sel.discount==="subsidy"&&prices.realPrice)   params.set("realPrice", prices.realPrice);
+    if(prices.launchPrice)  params.set("launchPrice", ri(prices.launchPrice));
+    if(prices.monthlyTotal) params.set("monthlyTotal", ri(prices.monthlyTotal));
+    if(sel.discount==="subsidy"&&prices.pubSupport) params.set("pubSupport", ri(prices.pubSupport));
+    if(sel.discount==="subsidy"&&prices.selfDiscount) params.set("selfDiscount", ri(prices.selfDiscount));
+    if(sel.discount==="subsidy"&&prices.realPrice)   params.set("realPrice", ri(prices.realPrice));
   }
   location.href = CONSULT_URL + "?" + params.toString();
 };
