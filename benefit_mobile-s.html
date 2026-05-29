@@ -3931,11 +3931,33 @@ function renderSummary(){
     <div class="total-box">${totalHtml}</div>
     <p class="s-note">${esc(uiTexts.summaryNote)}</p>
     ${sel.discount?`<div class="cta-stack">
-      <button class="btn-consult-main" onclick="location.href='${CONSULT_URL}'">💬 상담 신청하기</button>
+      <button class="btn-consult-main" onclick="goConsult()">💬 상담 신청하기</button>
       <button class="btn-other" onclick="closeModalFn()">다른 기기 보기</button>
     </div>`:""}`;
 }
 window.closeModalFn=closeModal;
+
+// ── 상담 신청: 선택 정보를 URL 파라미터로 전달 ──
+window.goConsult=function(){
+  const prices=calcPrices();
+  const params=new URLSearchParams();
+  if(currentDevice?.name)  params.set("device", currentDevice.name);
+  if(sel.carrier)           params.set("carrier", sel.carrier);
+  if(sel.joinType)          params.set("joinType", sel.joinType);
+  if(sel.storage?.name)     params.set("storage", sel.storage.name);
+  if(sel.color?.name)       params.set("color", sel.color.name);
+  if(sel.plan?.name)        params.set("plan", sel.plan.name);
+  if(sel.plan?.monthlyPrice)params.set("planPrice", sel.plan.monthlyPrice);
+  if(sel.discount)          params.set("discount", sel.discount==="subsidy"?"공시지원금":"선택약정");
+  if(prices){
+    if(prices.launchPrice)  params.set("launchPrice", prices.launchPrice);
+    if(prices.monthlyTotal) params.set("monthlyTotal", prices.monthlyTotal);
+    if(sel.discount==="subsidy"&&prices.pubSupport) params.set("pubSupport", prices.pubSupport);
+    if(sel.discount==="subsidy"&&prices.selfDiscount) params.set("selfDiscount", prices.selfDiscount);
+    if(sel.discount==="subsidy"&&prices.realPrice)   params.set("realPrice", prices.realPrice);
+  }
+  location.href = CONSULT_URL + "?" + params.toString();
+};
 
 // ── 랜딩 기기 카드 ──
 function dotHtml(name){return `<span class="dot${isWhite(name)?" white":""}" style="background:${colorHex(name)}"></span>`;}
