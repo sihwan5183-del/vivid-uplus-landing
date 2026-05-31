@@ -1352,23 +1352,23 @@ const isMobile = window.innerWidth < 900 || /Mobi|Android/i.test(navigator.userA
 // PC용 추가 JS
 // ── KPI ──
 function renderKPI(){
-  const today=allConsults.filter(c=>isToday(c.createdAt));
-  const thisMonth=allConsults.filter(c=>isThisMonth(c.createdAt));
+  const today=ALL.filter(c=>isToday(c.createdAt));
+  const thisMonth=ALL.filter(c=>isThisMonth(c.createdAt));
   const now=Date.now();
 
   $('kpi-today').textContent=today.length;
-  $('kpi-unassigned').textContent=allConsults.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
+  $('kpi-unassigned').textContent=ALL.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
 
-  const delay30=allConsults.filter(c=>{
+  const delay30=ALL.filter(c=>{
     if(['개통완료','실패'].includes(c.status))return false;
     const m=elapsedMs(c.createdAt)/60000;
     return m>=30;
   });
   $('kpi-delay30').textContent=delay30.length;
 
-  const recarePending=allConsults.filter(c=>c.status==='재케어');
+  const recarePending=ALL.filter(c=>c.status==='재케어');
   $('kpi-recare').textContent=recarePending.length;
-  $('kpi-absence').textContent=allConsults.filter(c=>c.status==='부재케어').length;
+  $('kpi-absence').textContent=ALL.filter(c=>c.status==='부재케어').length;
 
   const done=thisMonth.filter(c=>c.status==='개통완료');
   $('kpi-done').textContent=done.length;
@@ -1376,18 +1376,18 @@ function renderKPI(){
   $('kpi-done-rate').textContent=`개통률 ${rate}%`;
 
   // 긴급
-  $('urg-1h').textContent=allConsults.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=3600000).length;
-  $('urg-recare').textContent=allConsults.filter(c=>c.status==='재케어'&&c.nextContactAt&&c.nextContactAt<now).length;
-  $('urg-absence').textContent=allConsults.filter(c=>c.status==='부재케어'&&c.nextContactAt&&c.nextContactAt<now).length;
-  $('urg-unassign').textContent=allConsults.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
+  $('urg-1h').textContent=ALL.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=3600000).length;
+  $('urg-recare').textContent=ALL.filter(c=>c.status==='재케어'&&c.nextContactAt&&c.nextContactAt<now).length;
+  $('urg-absence').textContent=ALL.filter(c=>c.status==='부재케어'&&c.nextContactAt&&c.nextContactAt<now).length;
+  $('urg-unassign').textContent=ALL.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
 
   // 배지
-  const newCount=allConsults.filter(c=>c.status==='신규').length;
+  const newCount=ALL.filter(c=>c.status==='신규').length;
   $('nav-badge-new').textContent=newCount;
   $('nav-badge-urgent').textContent=delay30.length;
 
   // 총 건수
-  $('pc-total-count').textContent=`총 ${allConsults.length}건`;
+  $('pc-total-count').textContent=`총 ${ALL.length}건`;
 
   // 날짜
   const now2=new Date();
@@ -1420,7 +1420,7 @@ function makeRow(c){
 
 // ── 대시보드 테이블 ──
 function renderDashboard(){
-  const rows=allConsults.slice(0,10).map(c=>{
+  const rows=ALL.slice(0,10).map(c=>{
     const ms=elapsedMs(c.createdAt);
     const ec=elapsedClass(ms,c.status);
     const sc=statusColor(c.status);
@@ -1448,7 +1448,7 @@ function renderDbTable(){
   const staff=$('f-staff')?.value||'';
   const now=Date.now();
 
-  let list=allConsults.filter(c=>{
+  let list=ALL.filter(c=>{
     if(search&&!`${c.name}${c.phone}${c.device}`.toLowerCase().includes(search))return false;
     if(status&&c.status!==status)return false;
     if(store&&c.assignedStore!==store)return false;
@@ -1484,7 +1484,7 @@ function resetFilters(){
 
 // ── 기타 테이블들 ──
 function renderUrgentTable(){
-  const list=allConsults.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=600000);
+  const list=ALL.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=600000);
   $('urgentTbody').innerHTML=list.map(c=>{
     const ms=elapsedMs(c.createdAt);
     return`<tr onclick="selectConsult('${c._id}')" class="${ms>=1800000?'row-urgent':''}">
@@ -1500,7 +1500,7 @@ function renderUrgentTable(){
 }
 
 function renderRecareTable(){
-  const list=allConsults.filter(c=>c.status==='재케어');
+  const list=ALL.filter(c=>c.status==='재케어');
   $('recareTbody').innerHTML=list.map(c=>`
     <tr onclick="selectConsult('${c._id}')">
       <td>${fmtDate(c.createdAt)}</td><td style="font-weight:700;">${c.name||'-'}</td>
@@ -1512,7 +1512,7 @@ function renderRecareTable(){
 }
 
 function renderAbsenceTable(){
-  const list=allConsults.filter(c=>c.status==='부재케어');
+  const list=ALL.filter(c=>c.status==='부재케어');
   $('absenceTbody').innerHTML=list.map(c=>`
     <tr onclick="selectConsult('${c._id}')">
       <td>${fmtDate(c.createdAt)}</td><td style="font-weight:700;">${c.name||'-'}</td>
@@ -1525,7 +1525,7 @@ function renderAbsenceTable(){
 }
 
 function renderDoneTable(){
-  const list=allConsults.filter(c=>c.status==='개통완료');
+  const list=ALL.filter(c=>c.status==='개통완료');
   $('doneTbody').innerHTML=list.map(c=>`
     <tr onclick="selectConsult('${c._id}')">
       <td>${fmtDate(c.createdAt)}</td><td>${fmtDate(c.doneAt)}</td>
@@ -1538,7 +1538,7 @@ function renderDoneTable(){
 }
 
 function renderFailTable(){
-  const list=allConsults.filter(c=>c.status==='실패');
+  const list=ALL.filter(c=>c.status==='실패');
   $('failTbody').innerHTML=list.map(c=>`
     <tr onclick="selectConsult('${c._id}')">
       <td>${fmtDate(c.createdAt)}</td><td style="font-weight:700;">${c.name||'-'}</td>
@@ -1553,7 +1553,7 @@ function renderFailTable(){
 function renderStatStaff(){
   const staffs=['여인국','황제필','강용민'];
   $('statStaffTbody').innerHTML=staffs.map(s=>{
-    const mine=allConsults.filter(c=>c.assignedTo===s);
+    const mine=ALL.filter(c=>c.assignedTo===s);
     const done=mine.filter(c=>c.status==='개통완료');
     const rate=mine.length?Math.round(done.length/mine.length*100):0;
     const store=s==='여인국'?'남양시장점':s==='황제필'?'중곡점':'구미사점';
@@ -1573,7 +1573,7 @@ function renderStatStaff(){
 function renderStatStore(){
   const stores=['남양시장점','중곡점','구미사점'];
   $('statStoreTbody').innerHTML=stores.map(s=>{
-    const mine=allConsults.filter(c=>c.assignedStore===s);
+    const mine=ALL.filter(c=>c.assignedStore===s);
     const done=mine.filter(c=>c.status==='개통완료');
     const rate=mine.length?Math.round(done.length/mine.length*100):0;
     const todayCount=mine.filter(c=>isToday(c.createdAt)).length;
@@ -1590,7 +1590,7 @@ function renderStatStore(){
 // ── PC 고객 상세 ──
 function selectConsult(id){
   selectedId=id;
-  const c=allConsults.find(x=>x._id===id);
+  const c=ALL.find(x=>x._id===id);
   if(!c)return;
   if(isMobile){openMDetail(c);return;}
   const panel=$('pcDetailPanel');
@@ -1655,7 +1655,7 @@ window.pcNav=pcNav;
 // ── CSV 다운로드 ──
 function downloadCSV(){
   const headers=['접수시간','경과','고객명','전화번호','생년월일','현재통신사','가입유형','기기','용량','색상','요금제','할인방식','상담희망시간','인터넷TV','상태','매장','담당자','메모'];
-  const rows=allConsults.map(c=>[
+  const rows=ALL.map(c=>[
     fmtDate(c.createdAt),elapsedLabel(elapsedMs(c.createdAt)),
     c.name||'',c.phone||'',c.birthdate||'',c.carrier||'',c.joinType||'',
     c.device||'',c.storage||'',c.color||'',c.plan||'',c.discount||'',
