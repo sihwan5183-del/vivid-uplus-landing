@@ -1170,6 +1170,10 @@ const statusBadge=(s)=>{
   const map={신규:'blue',연락중:'blue',상담중:'blue',재케어:'purple',부재케어:'orange',확인필요:'pink',개통완료:'green',실패:'gray'};
   return`<span class="badge badge-${map[s]||'gray'}">${s||'신규'}</span>`;
 };
+const statusColor=(s)=>{
+  const map={신규:'blue',연락중:'blue',상담중:'blue',재케어:'purple',부재케어:'orange',확인필요:'pink',개통완료:'green',실패:'gray'};
+  return map[s]||'gray';
+};
 const calcNext=(val,customId)=>{
   const n=now();
   if(val==='30m')return n+1800000;
