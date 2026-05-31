@@ -836,9 +836,16 @@ input,select,textarea{font-family:inherit;outline:none;}
         <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#B91C1C;">
           ⚠️ 완전삭제는 복구가 불가능합니다. 완전삭제 시 <b>"완전삭제"</b>를 직접 입력해야 합니다.
         </div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;cursor:pointer;">
+            <input type="checkbox" id="trashChkAll" onchange="trashToggleAll(this)"> 전체선택
+          </label>
+          <button class="btn btn-red btn-sm" onclick="trashBulkDelete()" id="trashBulkBtn" style="display:none;">선택 완전삭제</button>
+          <button class="btn btn-gray btn-sm" onclick="trashBulkRestore()" id="trashBulkRestoreBtn" style="display:none;">선택 복구</button>
+        </div>
         <div class="table-wrap">
           <table class="data-table">
-            <thead><tr><th>삭제일시</th><th>삭제자</th><th>고객명</th><th>전화번호</th><th>기기</th><th>상태</th><th>담당자</th><th>관리</th></tr></thead>
+            <thead><tr><th><input type="checkbox" id="trashChkAllHead" onchange="trashToggleAll(this)"></th><th>삭제일시</th><th>삭제자</th><th>고객명</th><th>전화번호</th><th>기기</th><th>상태</th><th>담당자</th></tr></thead>
             <tbody id="trashTbody"></tbody>
           </table>
         </div>
@@ -1217,7 +1224,7 @@ input,select,textarea{font-family:inherit;outline:none;}
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import{getDatabase,ref,onValue,update}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import{getDatabase,ref,onValue,update,push as fbPush,remove as fbRemove}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 const FB={
@@ -1475,7 +1482,6 @@ window.addStaff=async function(){
   if(!name||!pw){alert('이름과 비밀번호를 입력해주세요.');return;}
   const existing=Object.values(allStaff).find(s=>s.name===name);
   if(existing){alert('이미 같은 이름의 직원이 있습니다.');return;}
-  const{push:fbPush}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
   await fbPush(ref(db,'staff'),{name,password:pw,role,store,active:true,createdAt:Date.now()});
   document.getElementById('newStaffName').value='';
   document.getElementById('newStaffPw').value='';
@@ -1503,7 +1509,6 @@ window.toggleStaffActive=async function(uid,active){
 window.deleteStaff=async function(uid,name){
   if(!canManagePerm()){alert('권한이 없습니다.');return;}
   if(!confirm(`${name}님을 삭제하시겠습니까?`))return;
-  const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
   await fbRemove(ref(db,`staff/${uid}`));
 };
 
@@ -1931,9 +1936,10 @@ function renderTrashTable(){
   const label=$('trash-count-label');
   if(label)label.textContent=`총 ${TRASH.length}건`;
   const badge=$('nav-badge-trash');
-  if(badge)badge.textContent=TRASH.length;
+  if(badge)badge.textContent=TRASH.length||'';
   tbody.innerHTML=TRASH.map(c=>`
     <tr>
+      <td><input type="checkbox" class="trash-chk" data-id="${c._id}" onchange="trashChkChange()"></td>
       <td style="font-size:11px;">${c.deletedAt?fmtDate(c.deletedAt):'-'}</td>
       <td style="font-size:11px;color:var(--muted);">${c.deletedBy||'-'}</td>
       <td style="font-weight:700;">${c.name||'-'}</td>
@@ -1941,31 +1947,57 @@ function renderTrashTable(){
       <td>${c.device||'-'} ${c.storage||''}</td>
       <td>${statusBadge(c.status||'신규')}</td>
       <td>${c.assignedTo||'-'}</td>
-      <td style="display:flex;gap:4px;">
-        <button class="btn btn-gray btn-sm" onclick="restoreConsult('${c._id}')">복구</button>
-        <button class="btn btn-red btn-sm" onclick="permanentDelete('${c._id}','${(c.name||'').replace(/'/g,'')}')">완전삭제</button>
-      </td>
     </tr>`).join('')||'<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">휴지통이 비어있습니다</td></tr>';
 }
 
+window.trashToggleAll=function(el){
+  document.querySelectorAll('.trash-chk').forEach(c=>c.checked=el.checked);
+  trashChkChange();
+};
+window.trashChkChange=function(){
+  const checked=document.querySelectorAll('.trash-chk:checked').length;
+  const bulkBtn=$('trashBulkBtn');
+  const restoreBtn=$('trashBulkRestoreBtn');
+  if(bulkBtn)bulkBtn.style.display=checked>0&&canDeletePermanent()?'inline-flex':'none';
+  if(restoreBtn)restoreBtn.style.display=checked>0?'inline-flex':'none';
+};
+window.trashBulkDelete=async function(){
+  if(!canDeletePermanent()){alert('완전삭제 권한이 없습니다.');return;}
+  const ids=[...document.querySelectorAll('.trash-chk:checked')].map(c=>c.dataset.id);
+  if(!ids.length)return;
+  const input=prompt(`선택된 ${ids.length}건을 완전삭제하려면 "완전삭제"를 입력하세요:`);
+  if(input!=='완전삭제'){alert('입력이 올바르지 않습니다. 취소됩니다.');return;}
+  await Promise.all(ids.map(id=>fbRemove(ref(db,`trash/${id}`))));
+  alert(`${ids.length}건이 완전삭제되었습니다.`);
+};
+window.trashBulkRestore=async function(){
+  const ids=[...document.querySelectorAll('.trash-chk:checked')].map(c=>c.dataset.id);
+  if(!ids.length)return;
+  if(!confirm(`선택된 ${ids.length}건을 복구하시겠습니까?`))return;
+  for(const id of ids){
+    const c=TRASH.find(x=>x._id===id);
+    if(!c)continue;
+    const{deletedAt,deletedBy,...restored}=c;
+    delete restored._id;
+    await fbPush(ref(db,'consultations'),restored);
+    await fbRemove(ref(db,`trash/${id}`));
+  }
+  alert(`${ids.length}건이 복구되었습니다.`);
+};
 window.restoreConsult=async function(tid){
   const c=TRASH.find(x=>x._id===tid);
   if(!c)return;
   if(!confirm(`${c.name||'이 고객'}님을 복구하시겠습니까?`))return;
-  const{push:fbPush}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
-  const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
   const{deletedAt,deletedBy,...restored}=c;
   delete restored._id;
   await fbPush(ref(db,'consultations'),restored);
   await fbRemove(ref(db,`trash/${tid}`));
   alert('복구되었습니다.');
 };
-
 window.permanentDelete=async function(tid,name){
   if(!canDeletePermanent()){alert('완전삭제 권한이 없습니다.');return;}
-  const input=prompt(`완전삭제하려면 아래에 "완전삭제"를 입력하세요.\n\n고객명: ${name}`);
+  const input=prompt(`완전삭제하려면 "완전삭제"를 입력하세요.\n\n고객명: ${name}`);
   if(input!=='완전삭제'){alert('입력이 올바르지 않습니다. 취소됩니다.');return;}
-  const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
   await fbRemove(ref(db,`trash/${tid}`));
   alert('완전삭제되었습니다.');
 };
@@ -2161,26 +2193,9 @@ window.deleteConsult=async function(){
   if(!selId)return;
   const c=ALL.find(x=>x._id===selId);
   if(!c)return;
-  if(canDeletePermanent()){
-    // 대표/대표관리자: 완전삭제 or 휴지통 선택
-    const choice=confirm(`${c.name||'이 고객'}님을 완전 삭제하시겠습니까?\n확인=완전삭제 / 취소=휴지통으로`);
-    if(choice){
-      const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
-      await fbRemove(ref(db,`consultations/${selId}`));
-    } else {
-      const{push:fbPush}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
-      const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
-      await fbPush(ref(db,'trash'),{...c,deletedAt:Date.now(),deletedBy:currentUser.name});
-      await fbRemove(ref(db,`consultations/${selId}`));
-    }
-  } else {
-    // 일반 직원: 휴지통으로만
-    if(!confirm(`${c.name||'이 고객'}님을 휴지통으로 이동하시겠습니까?`))return;
-    const{push:fbPush}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
-    const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
-    await fbPush(ref(db,'trash'),{...c,deletedAt:Date.now(),deletedBy:currentUser.name});
-    await fbRemove(ref(db,`consultations/${selId}`));
-  }
+  if(!confirm(`${c.name||'이 고객'}님을 휴지통으로 이동하시겠습니까?`))return;
+  await fbPush(ref(db,'trash'),{...c,deletedAt:Date.now(),deletedBy:currentUser.name||currentUser.email||'관리자'});
+  await fbRemove(ref(db,`consultations/${selId}`));
   closePcDetail();
 };
 window.submitEdit=async function(){
