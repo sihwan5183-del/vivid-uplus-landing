@@ -1397,6 +1397,28 @@ function makeCard(c){
 // ── PC/모바일 감지 ──
 const isMobile = window.innerWidth < 900 || /Mobi|Android/i.test(navigator.userAgent);
 
+// ── 날짜 유틸 ──
+function isToday(ts){
+  if(!ts)return false;
+  const d=new Date(ts),n=new Date();
+  return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();
+}
+function isThisMonth(ts){
+  if(!ts)return false;
+  const d=new Date(ts),n=new Date();
+  return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth();
+}
+function elapsedMs(ts){return ts?Date.now()-ts:0;}
+function fmtDate(ts){
+  if(!ts)return'-';
+  const d=new Date(ts);
+  return`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function initPCDate(){
+  const el=document.getElementById('pc-today-date');
+  if(el){const d=new Date();el.textContent=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} (${['일','월','화','수','목','금','토'][d.getDay()]})`;}
+}
+
 // PC용 추가 JS
 // ── KPI ──
 function renderKPI(){
@@ -1725,13 +1747,6 @@ window.toggleAllCheck=el=>{document.querySelectorAll('.row-chk').forEach(c=>c.ch
 // ══════════════════════════════════════════
 
 // PC 날짜
-function initPCDate(){
-  const now2=new Date();
-  const days=['일','월','화','수','목','금','토'];
-  const el=document.getElementById('pc-today-date');
-  if(el) el.textContent=`${now2.getFullYear()}.${String(now2.getMonth()+1).padStart(2,'0')}.${String(now2.getDate()).padStart(2,'0')} (${days[now2.getDay()]})`;
-}
-
 function pcSelectConsult(id){
   selId=id;
   const c=ALL.find(x=>x._id===id);
