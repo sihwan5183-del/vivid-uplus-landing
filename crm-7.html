@@ -1364,7 +1364,7 @@ function initApp(){
 onValue(ref(db,'staff'),snap=>{ allStaff=snap.val()||{}; if(document.getElementById('staffTbody')) renderStaffTable(); });
 onValue(ref(db,'trash'),snap=>{
   const raw=snap.val()||{};
-  TRASH=Object.entries(raw).map(([k,v])=>({_id:k,...v}))
+  TRASH=Object.entries(raw).map(([k,v])=>({...v,_tid:k}))
     .sort((a,b)=>(b.deletedAt||0)-(a.deletedAt||0));
   renderTrashTable();
   const badge=$('nav-badge-trash');
@@ -1947,7 +1947,7 @@ function renderTrashTable(){
   if(badge)badge.textContent=TRASH.length||'';
   tbody.innerHTML=TRASH.map(c=>`
     <tr>
-      <td><input type="checkbox" class="trash-chk" data-id="${c._id}" onchange="trashChkChange()"></td>
+      <td><input type="checkbox" class="trash-chk" data-id="${c._tid}" onchange="trashChkChange()"></td>
       <td style="font-size:11px;">${c.deletedAt?fmtDate(c.deletedAt):'-'}</td>
       <td style="font-size:11px;color:var(--muted);">${c.deletedBy||'-'}</td>
       <td style="font-weight:700;">${c.name||'-'}</td>
@@ -1970,23 +1970,22 @@ window.trashChkChange=function(){
 window.trashBulkDelete=async function(){
   if(!canDeletePermanent()){alert('완전삭제 권한이 없습니다.');return;}
   const ids=[...document.querySelectorAll('.trash-chk:checked')].map(c=>c.dataset.id);
-  if(!ids.length)return;
+  if(!ids.length){alert('삭제할 항목을 선택해주세요.');return;}
   const input=prompt(`선택된 ${ids.length}건을 완전삭제하려면 "완전삭제"를 입력하세요:`);
   if(input!=='완전삭제'){alert('입력이 올바르지 않습니다. 취소됩니다.');return;}
-  await Promise.all(ids.map(id=>fbRemove(ref(db,`trash/${id}`))));
+  await Promise.all(ids.map(tid=>fbRemove(ref(db,`trash/${tid}`))));
   alert(`${ids.length}건이 완전삭제되었습니다.`);
 };
 window.trashBulkRestore=async function(){
   const ids=[...document.querySelectorAll('.trash-chk:checked')].map(c=>c.dataset.id);
-  if(!ids.length)return;
+  if(!ids.length){alert('복구할 항목을 선택해주세요.');return;}
   if(!confirm(`선택된 ${ids.length}건을 복구하시겠습니까?`))return;
-  for(const id of ids){
-    const c=TRASH.find(x=>x._id===id);
+  for(const tid of ids){
+    const c=TRASH.find(x=>x._tid===tid);
     if(!c)continue;
-    const{deletedAt,deletedBy,...restored}=c;
-    delete restored._id;
+    const{deletedAt,deletedBy,_tid,...restored}=c;
     await fbPush(ref(db,'consultations'),restored);
-    await fbRemove(ref(db,`trash/${id}`));
+    await fbRemove(ref(db,`trash/${tid}`));
   }
   alert(`${ids.length}건이 복구되었습니다.`);
 };
