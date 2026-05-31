@@ -837,7 +837,28 @@ input,select,textarea{font-family:inherit;outline:none;}
           </div>
         </div>
       </div>
-      <div class="pc-page" id="page-set-perm"><h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">🔐 권한 관리</h1><div style="color:var(--muted);font-size:13px;">준비 중</div></div>
+      <div class="pc-page" id="page-set-perm">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">🔐 권한 관리</h1>
+        <div class="filter-bar">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">성과 분석 접근 비밀번호</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="password" id="newAnalyticsPw" placeholder="새 비밀번호 입력" style="flex:1;height:36px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;font-size:13px;">
+            <button class="btn btn-primary btn-sm" onclick="saveAnalyticsPw()">변경</button>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:8px;">성과 분석 탭(직원별/매장별/기기별/채널별) 접근 시 이 비밀번호가 필요합니다.</div>
+        </div>
+        <div class="filter-bar" style="margin-top:12px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">담당자 목록</div>
+          <table class="data-table">
+            <thead><tr><th>이름</th><th>매장</th><th>권한</th></tr></thead>
+            <tbody>
+              <tr><td>여인국</td><td>남양시장점</td><td><span class="badge badge-blue">일반</span></td></tr>
+              <tr><td>황제필</td><td>중곡점</td><td><span class="badge badge-blue">일반</span></td></tr>
+              <tr><td>강용민</td><td>구미사점</td><td><span class="badge badge-blue">일반</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -852,6 +873,10 @@ input,select,textarea{font-family:inherit;outline:none;}
       <button class="btn btn-outline" style="flex:1;" onclick="openPcStatusSheet()">상태 변경</button>
       <button class="btn btn-outline" style="flex:1;" onclick="openPcAssignSheet()">담당자 변경</button>
       <button class="btn btn-primary" style="flex:1;" onclick="openPcMemoSheet()">메모 추가</button>
+    </div>
+    <div style="display:flex;gap:8px;padding:0 18px 14px;">
+      <button class="btn btn-outline" style="flex:1;border-color:var(--blue);color:var(--blue);" onclick="openEditSheet()">✏️ 정보 수정</button>
+      <button class="btn btn-outline" style="flex:1;border-color:var(--red);color:var(--red);" onclick="deleteConsult()">🗑️ 삭제</button>
     </div>
   </div>
 </div>
@@ -1092,6 +1117,32 @@ input,select,textarea{font-family:inherit;outline:none;}
     <button class="sel-chip" data-v="|미배정" onclick="chip(this,'assignStaff')">미배정</button>
   </div>
   <button class="bs-submit blue" onclick="submitAssign()">배정 완료</button>
+</div>
+
+<!-- 고객 정보 수정 -->
+<div class="bs-ov" id="editOv" onclick="closeBS('edit')"></div>
+<div class="bs" id="editBS">
+  <div class="bs-handle"></div>
+  <div class="bs-title" style="position:relative;">✏️ 고객 정보 수정<button class="bs-close" onclick="closeBS('edit')">✕</button></div>
+  <div style="padding:12px 16px;display:flex;flex-direction:column;gap:10px;">
+    <div>
+      <div class="bs-sec" style="padding:0 0 4px;">고객명</div>
+      <input type="text" id="editName" style="width:100%;height:40px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+    </div>
+    <div>
+      <div class="bs-sec" style="padding:0 0 4px;">전화번호</div>
+      <input type="tel" id="editPhone" style="width:100%;height:40px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+    </div>
+    <div>
+      <div class="bs-sec" style="padding:0 0 4px;">생년월일</div>
+      <input type="text" id="editBirth" placeholder="예: 19900101" style="width:100%;height:40px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+    </div>
+    <div>
+      <div class="bs-sec" style="padding:0 0 4px;">메모</div>
+      <textarea id="editMemo" rows="3" style="width:100%;border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14px;resize:none;font-family:inherit;box-sizing:border-box;"></textarea>
+    </div>
+  </div>
+  <button class="bs-submit blue" onclick="submitEdit()">수정 완료</button>
 </div>
 
 <script type="module">
@@ -1729,7 +1780,25 @@ function closePcDetail(){$('pcDetailPanel').classList.remove('open');}
 window.closePcDetail=closePcDetail;
 
 // ── PC 네비 ──
+// ── 성과분석 잠금 ──
+let analyticsUnlocked=false;
+let analyticsPassword='';
+onValue(ref(db,'analyticsPassword'),snap=>{
+  analyticsPassword=snap.val()||'';
+});
+
+const STAT_PAGES=['stat-staff','stat-store','stat-device','stat-channel'];
+
 function pcNav(page){
+  if(STAT_PAGES.includes(page)&&!analyticsUnlocked){
+    const input=prompt('성과 분석 페이지는 권한이 필요합니다.\n비밀번호를 입력하세요:');
+    if(input===null)return;
+    if(input!==String(analyticsPassword)){
+      alert('비밀번호가 올바르지 않습니다.');
+      return;
+    }
+    analyticsUnlocked=true;
+  }
   document.querySelectorAll('.pc-nav-item').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.pc-page').forEach(el=>el.classList.remove('active'));
   const p=$(`page-${page}`);
@@ -1801,6 +1870,32 @@ window.toggleAllCheck=el=>{document.querySelectorAll('.row-chk').forEach(c=>c.ch
 window.openPcStatusSheet=function(){selId=selId;openBS('st');};
 window.openPcAssignSheet=function(){openBS('assign');};
 window.openPcMemoSheet=function(){openBS('memo');};
+window.openEditSheet=function(){openBS('edit');};
+window.deleteConsult=async function(){
+  if(!selId)return;
+  const c=ALL.find(x=>x._id===selId);
+  if(!c)return;
+  if(!confirm(`${c.name||'이 고객'}님의 데이터를 삭제하시겠습니까?\n삭제 후 복구할 수 없습니다.`))return;
+  const{remove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+  await remove(ref(db,`consultations/${selId}`));
+  closePcDetail();
+  alert('삭제되었습니다.');
+};
+window.submitEdit=async function(){
+  const name=$('editName').value.trim();
+  const phone=$('editPhone').value.trim();
+  const birth=$('editBirth').value.trim();
+  const memo=$('editMemo').value.trim();
+  if(!name||!phone){alert('고객명과 전화번호는 필수입니다.');return;}
+  const upd={};
+  upd[`consultations/${selId}/name`]=name;
+  upd[`consultations/${selId}/phone`]=phone;
+  if(birth)upd[`consultations/${selId}/birthdate`]=birth;
+  if(memo)upd[`consultations/${selId}/latestMemo`]=memo;
+  await update(ref(db),upd);
+  closeBS('edit');
+  alert('수정되었습니다.');
+};
 
 // ── 전화 ──
 function doCall(id,phone){
@@ -1963,6 +2058,16 @@ function openBS(key){
   else if(key==='fail'){resetChips('fail');$('failOv').classList.add('open');$('failBS').classList.add('open');}
   else if(key==='memo'){$('memoInp').value='';$('memoOv').classList.add('open');$('memoBS').classList.add('open');}
   else if(key==='assign'){resetChips('assign');$('assignOv').classList.add('open');$('assignBS').classList.add('open');}
+  else if(key==='edit'){
+    const c=ALL.find(x=>x._id===selId);
+    if(c){
+      $('editName').value=c.name||'';
+      $('editPhone').value=c.phone||'';
+      $('editBirth').value=c.birthdate||'';
+      $('editMemo').value=c.latestMemo||c.memo||'';
+    }
+    $('editOv').classList.add('open');$('editBS').classList.add('open');
+  }
 }
 function closeBS(key){
   $(`${key}Ov`).classList.remove('open');
@@ -2202,6 +2307,15 @@ window.resetFilters=function(){
   const fstf=document.getElementById('f-staff');
   if(s)s.value='';if(fp)fp.value='all';if(fs)fs.value='';if(fst)fst.value='';if(fstf)fstf.value='';
   renderDbTable();
+};
+
+window.saveAnalyticsPw=async function(){
+  const pw=$('newAnalyticsPw').value.trim();
+  if(!pw){alert('비밀번호를 입력해주세요.');return;}
+  await update(ref(db),{'analyticsPassword':pw});
+  analyticsPassword=pw;
+  $('newAnalyticsPw').value='';
+  alert('비밀번호가 변경되었습니다.');
 };
 
 window.openLocSheet=function(){
