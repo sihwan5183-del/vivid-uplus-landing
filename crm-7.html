@@ -1005,7 +1005,7 @@ input,select,textarea{font-family:inherit;outline:none;}
     <button class="sms-chip" data-v="not_sent" onclick="smsChip(this,'absSms')">미발송</button>
   </div>
   <div class="bs-memo">
-    <textarea id="absMemo" placeholder="메모 (선택)" maxlength="200" oninput="$('absMemoCnt').textContent=this.value.length+'/200'"></textarea>
+    <textarea id="absMemo" placeholder="메모 (선택)" maxlength="200" oninput="document.getElementById('absMemoCnt').textContent=this.value.length+'/200'"></textarea>
     <div class="bs-memo-cnt" id="absMemoCnt">0/200</div>
   </div>
   <button class="bs-submit pink" onclick="submitAbs()">부재케어 등록</button>
@@ -1035,7 +1035,7 @@ input,select,textarea{font-family:inherit;outline:none;}
   <div class="dt-preview" id="rcDtPreview">📅 <span id="rcDtText"></span></div>
   <div class="custom-dt" id="rcCustomDt"><input type="datetime-local" id="rcCustomInp"></div>
   <div class="bs-memo">
-    <textarea id="rcMemo" placeholder="메모 (선택)" maxlength="200" oninput="$('rcMemoCnt').textContent=this.value.length+'/200'"></textarea>
+    <textarea id="rcMemo" placeholder="메모 (선택)" maxlength="200" oninput="document.getElementById('rcMemoCnt').textContent=this.value.length+'/200'"></textarea>
     <div class="bs-memo-cnt" id="rcMemoCnt">0/200</div>
   </div>
   <button class="bs-submit blue" onclick="submitRc()">재케어 등록</button>
@@ -1074,7 +1074,7 @@ input,select,textarea{font-family:inherit;outline:none;}
   <div class="bs-handle"></div>
   <div class="bs-title" style="position:relative;">메모 추가<button class="bs-close" onclick="closeBS('memo')">✕</button></div>
   <div class="bs-memo" style="padding-top:12px;">
-    <textarea id="memoInp" placeholder="메모를 입력하세요" maxlength="200" style="height:100px;" oninput="$('memoInpCnt').textContent=this.value.length+'/200'"></textarea>
+    <textarea id="memoInp" placeholder="메모를 입력하세요" maxlength="200" style="height:100px;" oninput="document.getElementById('memoInpCnt').textContent=this.value.length+'/200'"></textarea>
     <div class="bs-memo-cnt" id="memoInpCnt">0/200</div>
   </div>
   <button class="bs-submit blue" onclick="submitMemo()">저장</button>
@@ -1173,6 +1173,18 @@ const statusBadge=(s)=>{
 const statusColor=(s)=>{
   const map={신규:'blue',연락중:'blue',상담중:'blue',재케어:'purple',부재케어:'orange',확인필요:'pink',개통완료:'green',실패:'gray'};
   return map[s]||'gray';
+};
+const barColor=(status,ms)=>{
+  if(status==='개통완료')return'green';
+  if(status==='실패')return'gray';
+  if(status==='재케어')return'purple';
+  if(status==='부재케어')return'orange';
+  if(status==='확인필요')return'blue';
+  const m=ms/60000;
+  if(m>=60)return'charcoal';
+  if(m>=30)return'red';
+  if(m>=10)return'yellow';
+  return'blue';
 };
 const calcNext=(val,customId)=>{
   const n=now();
