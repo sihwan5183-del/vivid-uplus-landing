@@ -2027,7 +2027,7 @@ function downloadCSV(){
   const headers=['접수시간','경과','고객명','전화번호','생년월일','현재통신사','가입유형','기기','용량','색상','요금제','할인방식','상담희망시간','인터넷TV','상태','매장','담당자','메모'];
   const rows=ALL.map(c=>[
     fmtDate(c.createdAt),elapsedLabel(elapsedMs(c.createdAt)),
-    c.name||'',c.phone||'',c.birthdate||'',c.carrier||'',c.joinType||'',
+    c.name||'',c.phone||'',c.birth||c.birthdate||'',c.carrier||'',c.joinType||'',
     c.device||'',c.storage||'',c.color||'',c.plan||'',c.discount||'',
     c.consultTime||'',c.internetTV||'',c.status||'신규',
     c.assignedStore||'',c.assignedTo||'',c.memo||''
@@ -2121,7 +2121,7 @@ window.submitEdit=async function(){
   const upd={};
   upd[`consultations/${selId}/name`]=name;
   upd[`consultations/${selId}/phone`]=phone;
-  if(birth)upd[`consultations/${selId}/birthdate`]=birth;
+  if(birth)upd[`consultations/${selId}/birth`]=birth;
   if(memo)upd[`consultations/${selId}/latestMemo`]=memo;
   await update(ref(db),upd);
   closeBS('edit');
@@ -2294,7 +2294,7 @@ function openBS(key){
     if(c){
       $('editName').value=c.name||'';
       $('editPhone').value=c.phone||'';
-      $('editBirth').value=c.birthdate||'';
+      $('editBirth').value=c.birth||c.birthdate||'';
       $('editMemo').value=c.latestMemo||c.memo||'';
     }
     $('editOv').classList.add('open');$('editBS').classList.add('open');
@@ -2519,7 +2519,7 @@ window.downloadCSV=function(){
   const headers=['접수시간','경과','고객명','전화번호','생년월일','현재통신사','가입유형','기기','용량','색상','요금제','할인방식','상담시간','인터넷TV','상태','매장','담당자','메모'];
   const rows=ALL.map(c=>[
     fmt(c.createdAt),elapsedLabel(elapsed(c.createdAt)),
-    c.name||'',c.phone||'',c.birthdate||'',c.carrier||'',c.joinType||'',
+    c.name||'',c.phone||'',c.birth||c.birthdate||'',c.carrier||'',c.joinType||'',
     c.device||'',c.storage||'',c.color||'',c.plan||'',c.discount||'',
     c.consultTime||'',c.internetTV||'',c.status||'신규',
     c.assignedStore||'',c.assignedTo||'',c.memo||''
