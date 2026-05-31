@@ -630,11 +630,11 @@ body{
       </div>
       <div class="form-group">
         <label class="form-label">연락처<span class="req">*</span></label>
-        <input class="form-input" id="inputPhone" placeholder="010-0000-0000" type="tel">
+        <input class="form-input" id="inputPhone" placeholder="010-0000-0000" type="tel" maxlength="13" oninput="formatPhone(this)" onkeydown="phoneKeydown(event,this)">
       </div>
       <div class="form-group">
         <label class="form-label">생년월일</label>
-        <input class="form-input" id="inputBirth" placeholder="예: 19900101" type="text" maxlength="8">
+        <input class="form-input" id="inputBirth" placeholder="예: 19900101" type="tel" maxlength="8" oninput="this.value=this.value.replace(/\D/g,'')">
       </div>
     </div>
   </div>
@@ -1264,6 +1264,33 @@ function syncAll(){
   const allChecked=['chk1','chk2','chk3'].every(id=>$(id).classList.contains('checked'));
   $('chkAll').classList.toggle('checked',allChecked);
 }
+
+// 전화번호 010 고정 + 자동 하이픈
+window.formatPhone=function(el){
+  let v=el.value.replace(/\D/g,''); // 숫자만
+  // 010으로 시작 강제
+  if(v.length>0&&v[0]!=='0') v='0'+v;
+  if(v.length>1&&v[1]!=='1') v=v[0]+'1'+v.slice(1);
+  if(v.length>2&&v[2]!=='0') v=v.slice(0,2)+'0'+v.slice(2);
+  // 숫자 최대 11자리
+  v=v.slice(0,11);
+  // 하이픈 포맷: 010-XXXX-XXXX
+  if(v.length<=3) el.value=v;
+  else if(v.length<=7) el.value=v.slice(0,3)+'-'+v.slice(3);
+  else el.value=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);
+  checkSubmit();
+};
+window.phoneKeydown=function(e,el){
+  // 백스페이스/삭제/방향키/탭은 허용
+  if([8,9,37,38,39,40,46].includes(e.keyCode))return;
+  // 숫자 아니면 차단
+  if(!/[0-9]/.test(e.key)&&!e.ctrlKey&&!e.metaKey){e.preventDefault();return;}
+  const nums=el.value.replace(/\D/g,'');
+  // 010 앞 3자리 고정: 0,1,0 순서대로만
+  if(nums.length===0&&e.key!=='0'){e.preventDefault();return;}
+  if(nums.length===1&&e.key!=='1'){e.preventDefault();return;}
+  if(nums.length===2&&e.key!=='0'){e.preventDefault();return;}
+};
 
 // 제출 가능 여부
 function checkSubmit(){
