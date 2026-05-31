@@ -547,6 +547,25 @@ input,select,textarea{font-family:inherit;outline:none;}
   <div style="font-size:12px;color:var(--muted);">데이터 불러오는 중...</div>
 </div>
 
+<!-- 로그인 -->
+<div id="loginWrap" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#e0ecff,#f7f9ff);z-index:999;display:none;place-items:center;">
+  <div style="background:#fff;border-radius:20px;padding:36px 32px;width:min(90vw,360px);box-shadow:0 20px 60px rgba(15,23,42,.12);">
+    <div style="font-size:28px;margin-bottom:12px;">🔐</div>
+    <div style="font-size:20px;font-weight:800;margin-bottom:4px;">VIVID CRM</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px;">관리자 계정으로 로그인하세요</div>
+    <div style="margin-bottom:12px;">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">이메일</div>
+      <input type="email" id="crmEmail" placeholder="이메일" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">비밀번호</div>
+      <input type="password" id="crmPassword" placeholder="비밀번호" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+    </div>
+    <div id="crmLoginError" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none;">이메일 또는 비밀번호가 올바르지 않습니다.</div>
+    <button id="crmLoginBtn" style="width:100%;height:44px;background:var(--blue);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">로그인</button>
+  </div>
+</div>
+
 <!-- ══ PC 관리자 ══ -->
 <div id="pcApp">
   <!-- 사이드바 -->
@@ -1078,18 +1097,20 @@ input,select,textarea{font-family:inherit;outline:none;}
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import{getDatabase,ref,onValue,update}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 const FB={
   apiKey:"AIzaSyBCaJiSuWRHMySOXfBPg2JB7UoE1XKQEqw",
   authDomain:"vivid-admin-1a34d.firebaseapp.com",
   databaseURL:"https://vivid-admin-1a34d-default-rtdb.firebaseio.com",
   projectId:"vivid-admin-1a34d",
-  storageBucket:"vivid-admin-1a34d.appspot.com",
-  messagingSenderId:"965617557821",
-  appId:"1:965617557821:web:crm-mobile"
+  storageBucket:"vivid-admin-1a34d.firebasestorage.app",
+  messagingSenderId:"560602626704",
+  appId:"1:560602626704:web:070534ced93a5f86247615"
 };
 const app=initializeApp(FB);
 const db=getDatabase(app);
+const auth=getAuth(app);
 
 // ── 상태 ──
 let ALL=[];
@@ -1159,7 +1180,7 @@ const calcNext=(val,customId)=>{
   return n+3600000;
 };
 
-// ── Firebase 로드 ──
+// ── Firebase Auth + 로드 ──
 function initApp(){
   $('appLoading').style.display='none';
   if(isMobile){
@@ -1177,20 +1198,47 @@ function initApp(){
   }
 }
 
-// 5초 안에 Firebase 응답 없으면 빈 화면으로라도 열기
-const loadTimeout=setTimeout(()=>{ if($('appLoading').style.display!=='none') initApp(); },5000);
-
-onValue(ref(db,'consultations'),snap=>{
-  clearTimeout(loadTimeout);
-  const raw=snap.val()||{};
-  ALL=Object.entries(raw).map(([k,v])=>({_id:k,...v}))
-    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  initApp();
-},(err)=>{
-  clearTimeout(loadTimeout);
-  console.warn('Firebase 연결 실패:', err.message);
-  initApp();
+onAuthStateChanged(auth, user=>{
+  if(user){
+    document.getElementById('loginWrap').style.display='none';
+    const pcUserName=document.getElementById('pc-user-name');
+    const pcHeaderName=document.getElementById('pc-header-name');
+    if(pcUserName)pcUserName.textContent=user.email;
+    if(pcHeaderName)pcHeaderName.textContent=user.email;
+    onValue(ref(db,'consultations'),snap=>{
+      const raw=snap.val()||{};
+      ALL=Object.entries(raw).map(([k,v])=>({_id:k,...v}))
+        .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      initApp();
+    },(err)=>{
+      console.warn('Firebase 연결 실패:',err.message);
+      initApp();
+    });
+  } else {
+    $('appLoading').style.display='none';
+    const lw=document.getElementById('loginWrap');
+    lw.style.display='grid';
+  }
 });
+
+document.getElementById('crmLoginBtn').onclick=async()=>{
+  const email=document.getElementById('crmEmail').value;
+  const pw=document.getElementById('crmPassword').value;
+  const err=document.getElementById('crmLoginError');
+  err.style.display='none';
+  try{
+    await signInWithEmailAndPassword(auth,email,pw);
+  }catch(e){
+    err.style.display='block';
+  }
+};
+
+window.logout=async function(){
+  if(confirm('로그아웃 하시겠습니까?')){
+    await signOut(auth);
+    location.reload();
+  }
+};
 
 setInterval(()=>{
   if(isMobile){renderAll();}
@@ -2153,8 +2201,11 @@ window.openLocSheet=function(){
   const el=document.getElementById('hdrLoc');
   if(el&&s&&n)el.textContent=`${s} · ${n}`;
 })();
-window.openMenuBS=function(){
-  if(confirm('로그아웃 하시겠습니까?'))location.reload();
+window.openMenuBS=async function(){
+  if(confirm('로그아웃 하시겠습니까?')){
+    await signOut(auth);
+    location.reload();
+  }
 };
 </script>
 </body>
