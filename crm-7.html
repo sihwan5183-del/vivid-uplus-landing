@@ -626,6 +626,11 @@ input,select,textarea{font-family:inherit;outline:none;}
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
         실패
       </div>
+      <div class="pc-nav-item" onclick="pcNav('trash')" id="nav-trash">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6m5 0V4h4v2"/></svg>
+        휴지통
+        <span class="pc-nav-badge" id="nav-badge-trash" style="background:var(--gray);">0</span>
+      </div>
 
       <div class="pc-nav-section" style="margin-top:8px;">성과 분석</div>
       <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-staff')">직원별 실적</div>
@@ -818,6 +823,23 @@ input,select,textarea{font-family:inherit;outline:none;}
           <table class="data-table">
             <thead><tr><th>접수</th><th>고객명</th><th>전화번호</th><th>실패사유</th><th>기기</th><th>담당자</th></tr></thead>
             <tbody id="failTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 휴지통 -->
+      <div class="pc-page" id="page-trash">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:16px;">
+          <h1 style="font-size:20px;font-weight:800;">🗑️ 휴지통</h1>
+          <span style="font-size:13px;color:var(--muted);" id="trash-count-label"></span>
+        </div>
+        <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#B91C1C;">
+          ⚠️ 완전삭제는 복구가 불가능합니다. 완전삭제 시 <b>"완전삭제"</b>를 직접 입력해야 합니다.
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>삭제일시</th><th>삭제자</th><th>고객명</th><th>전화번호</th><th>기기</th><th>상태</th><th>담당자</th><th>관리</th></tr></thead>
+            <tbody id="trashTbody"></tbody>
           </table>
         </div>
       </div>
@@ -1326,7 +1348,7 @@ function initApp(){
     initPCDate();
     renderKPI();renderDashboard();renderDbTable();renderUrgentTable();
     renderRecareTable();renderAbsenceTable();renderDoneTable();renderFailTable();
-    renderStatStaff();renderStatStore();
+    renderStatStaff();renderStatStore();renderTrashTable();
   }
 }
 
@@ -1334,7 +1356,11 @@ function initApp(){
 onValue(ref(db,'staff'),snap=>{ allStaff=snap.val()||{}; if(document.getElementById('staffTbody')) renderStaffTable(); });
 onValue(ref(db,'trash'),snap=>{
   const raw=snap.val()||{};
-  TRASH=Object.entries(raw).map(([k,v])=>({_id:k,...v}));
+  TRASH=Object.entries(raw).map(([k,v])=>({_id:k,...v}))
+    .sort((a,b)=>(b.deletedAt||0)-(a.deletedAt||0));
+  renderTrashTable();
+  const badge=$('nav-badge-trash');
+  if(badge)badge.textContent=TRASH.length||'';
 });
 
 // ── 앱 시작 ──
@@ -1898,6 +1924,51 @@ function renderFailTable(){
       <td>${c.assignedTo||'-'}</td>
     </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted);">실패 건 없음</td></tr>';
 }
+
+function renderTrashTable(){
+  const tbody=$('trashTbody');
+  if(!tbody)return;
+  const label=$('trash-count-label');
+  if(label)label.textContent=`총 ${TRASH.length}건`;
+  const badge=$('nav-badge-trash');
+  if(badge)badge.textContent=TRASH.length;
+  tbody.innerHTML=TRASH.map(c=>`
+    <tr>
+      <td style="font-size:11px;">${c.deletedAt?fmtDate(c.deletedAt):'-'}</td>
+      <td style="font-size:11px;color:var(--muted);">${c.deletedBy||'-'}</td>
+      <td style="font-weight:700;">${c.name||'-'}</td>
+      <td style="color:var(--blue);">${c.phone||'-'}</td>
+      <td>${c.device||'-'} ${c.storage||''}</td>
+      <td>${statusBadge(c.status||'신규')}</td>
+      <td>${c.assignedTo||'-'}</td>
+      <td style="display:flex;gap:4px;">
+        <button class="btn btn-gray btn-sm" onclick="restoreConsult('${c._id}')">복구</button>
+        <button class="btn btn-red btn-sm" onclick="permanentDelete('${c._id}','${(c.name||'').replace(/'/g,'')}')">완전삭제</button>
+      </td>
+    </tr>`).join('')||'<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">휴지통이 비어있습니다</td></tr>';
+}
+
+window.restoreConsult=async function(tid){
+  const c=TRASH.find(x=>x._id===tid);
+  if(!c)return;
+  if(!confirm(`${c.name||'이 고객'}님을 복구하시겠습니까?`))return;
+  const{push:fbPush}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+  const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+  const{deletedAt,deletedBy,...restored}=c;
+  delete restored._id;
+  await fbPush(ref(db,'consultations'),restored);
+  await fbRemove(ref(db,`trash/${tid}`));
+  alert('복구되었습니다.');
+};
+
+window.permanentDelete=async function(tid,name){
+  if(!canDeletePermanent()){alert('완전삭제 권한이 없습니다.');return;}
+  const input=prompt(`완전삭제하려면 아래에 "완전삭제"를 입력하세요.\n\n고객명: ${name}`);
+  if(input!=='완전삭제'){alert('입력이 올바르지 않습니다. 취소됩니다.');return;}
+  const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+  await fbRemove(ref(db,`trash/${tid}`));
+  alert('완전삭제되었습니다.');
+};
 
 // ── 실적 ──
 function renderStatStaff(){
