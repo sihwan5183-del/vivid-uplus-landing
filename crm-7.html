@@ -755,6 +755,7 @@ input,select,textarea{font-family:inherit;outline:none;}
             </select>
             <div class="filter-spacer"></div>
             <button class="btn btn-outline btn-sm" onclick="resetFilters()">초기화</button>
+            <button class="btn btn-outline btn-sm" style="border-color:var(--red);color:var(--red);" onclick="bulkMoveTrash()">선택 휴지통</button>
             <button class="btn btn-primary btn-sm" onclick="downloadCSV()">⬇ CSV</button>
           </div>
         </div>
@@ -2149,6 +2150,19 @@ function downloadCSV(){
 window.downloadCSV=downloadCSV;
 window.resetFilters=resetFilters;
 window.toggleAllCheck=el=>{document.querySelectorAll('.row-chk').forEach(c=>c.checked=el.checked);};
+window.bulkMoveTrash=async function(){
+  const ids=[...document.querySelectorAll(".row-chk:checked")].map(c=>c.dataset.id);
+  if(!ids.length){alert("선택된 항목이 없습니다.");return;}
+  if(!confirm(`선택된 ${ids.length}건을 휴지통으로 이동하시겠습니까?`))return;
+  for(const id of ids){
+    const c=ALL.find(x=>x._id===id);
+    if(!c)continue;
+    await fbPush(ref(db,"trash"),{...c,deletedAt:Date.now(),deletedBy:currentUser.name||currentUser.email||"관리자"});
+    await fbRemove(ref(db,`consultations/${id}`));
+  }
+  alert(`${ids.length}건이 휴지통으로 이동되었습니다.`);
+  document.getElementById("chkAll").checked=false;
+};
 
 // ══════════════════════════════════════════
 // 모바일
@@ -2189,7 +2203,6 @@ function pcSelectConsult(id){
 }
 window.selectConsult=pcSelectConsult;
 window.closePcDetail=function(){document.getElementById('pcDetailPanel')?.classList.remove('open');};
-window.toggleAllCheck=el=>{document.querySelectorAll('.row-chk').forEach(c=>c.checked=el.checked);};
 window.openPcStatusSheet=function(){selId=selId;openBS('st');};
 window.openPcAssignSheet=function(){openBS('assign');};
 window.openPcMemoSheet=function(){openBS('memo');};
