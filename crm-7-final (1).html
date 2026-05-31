@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VIVID CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --blue:#074BF4;--blue-light:#EEF3FF;--blue-mid:#C7D7FD;
+  --pink:#E6007E;--pink-light:#FFF0F7;
+  --ink:#111827;--sub:#374151;--muted:#6B7280;--line:#E5E7EB;--bg:#F4F6FB;
+  --green:#10B981;--yellow:#F59E0B;--orange:#F97316;--red:#EF4444;
+  --purple:#8B5CF6;--gray:#9CA3AF;--charcoal:#1F2937;
+  font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;
+}
+body{background:var(--bg);color:var(--ink);font-size:14px;overflow:hidden;height:100vh;}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none;}
+input,select,textarea{font-family:inherit;outline:none;}
+
+/* ── 공통 ── */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:700;white-space:nowrap;}
+.badge-blue{background:#EEF3FF;color:var(--blue);}
+.badge-green{background:#ECFDF5;color:var(--green);}
+.badge-yellow{background:#FFFBEB;color:#B45309;}
+.badge-orange{background:#FFF7ED;color:var(--orange);}
+.badge-red{background:#FEF2F2;color:var(--red);}
+.badge-purple{background:#F5F3FF;color:var(--purple);}
+.badge-gray{background:#F3F4F6;color:var(--gray);}
+.badge-pink{background:var(--pink-light);color:var(--pink);}
+.badge-charcoal{background:var(--charcoal);color:#fff;}
+
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.35;}}
+.blink{animation:blink 1s ease-in-out infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── 로딩 ── */
+#appLoading{
+  position:fixed;inset:0;background:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:999;gap:14px;
+}
+.spinner{width:36px;height:36px;border:3px solid var(--blue-light);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
+
+/* ── 앱 래퍼 ── */
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+
+/* ── 헤더 ── */
+.hdr{
+  background:#fff;border-bottom:1px solid var(--line);
+  padding:10px 16px 8px;flex-shrink:0;
+}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;}
+.hdr-logo{font-size:17px;font-weight:800;color:var(--blue);}
+.hdr-loc{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);margin-top:1px;cursor:pointer;}
+.hdr-icons{display:flex;gap:4px;}
+.hdr-btn{
+  width:34px;height:34px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--sub);position:relative;
+}
+.hdr-btn:active{background:var(--bg);}
+.notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid #fff;}
+
+/* ── 탭 ── */
+.tabs{
+  display:flex;background:#fff;border-bottom:1px solid var(--line);
+  overflow-x:auto;flex-shrink:0;
+  -ms-overflow-style:none;scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  flex-shrink:0;padding:9px 12px;font-size:12px;font-weight:600;
+  color:var(--muted);cursor:pointer;position:relative;white-space:nowrap;
+  display:flex;align-items:center;gap:4px;
+}
+.tab.on{color:var(--blue);}
+.tab.on::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--blue);border-radius:2px 2px 0 0;}
+.tcnt{
+  min-width:16px;height:16px;padding:0 4px;
+  border-radius:999px;font-size:9px;font-weight:800;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.tcnt-red{background:var(--red);color:#fff;}
+.tcnt-blue{background:var(--blue);color:#fff;}
+.tcnt-purple{background:var(--purple);color:#fff;}
+.tcnt-orange{background:var(--orange);color:#fff;}
+
+/* ── 긴급 요약바 ── */
+.urg-bar{
+  background:#FEF3CD;border-bottom:1px solid #FDE68A;
+  padding:7px 14px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;flex-shrink:0;
+}
+.urg-bar.hide{display:none;}
+.urg-bar-text{font-size:11px;color:#92400E;font-weight:600;}
+.urg-bar-arrow{font-size:11px;color:#92400E;}
+
+/* ── 검색/정렬 ── */
+.searchbar{
+  background:#fff;border-bottom:1px solid var(--line);
+  padding:8px 14px;display:flex;gap:7px;align-items:center;flex-shrink:0;
+}
+.search-inp{
+  flex:1;height:34px;border:1.5px solid var(--line);border-radius:8px;
+  padding:0 10px 0 32px;font-size:13px;background:#F9FAFB;
+}
+.search-wrap{flex:1;position:relative;}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);}
+.filter-btn{
+  height:34px;padding:0 10px;border:1.5px solid var(--line);border-radius:8px;
+  background:#fff;font-size:11px;font-weight:600;color:var(--sub);display:flex;align-items:center;gap:4px;
+}
+
+/* ── 카드 목록 ── */
+.card-list{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
+
+/* ── 고객 카드 ── */
+.ccard{
+  background:#fff;border-radius:12px;border:1px solid var(--line);
+  overflow:hidden;position:relative;
+}
+.ccard.urg-bg{background:#FFFBF9;}
+.cbar{position:absolute;left:0;top:0;bottom:0;width:4px;}
+.cbar-blue{background:var(--blue);}
+.cbar-yellow{background:var(--yellow);}
+.cbar-orange{background:var(--orange);}
+.cbar-red{background:var(--red);}
+.cbar-charcoal{background:var(--charcoal);}
+.cbar-purple{background:var(--purple);}
+.cbar-green{background:var(--green);}
+.cbar-gray{background:var(--gray);}
+
+.cbody{padding:11px 44px 9px 18px;}
+.ctop{display:flex;align-items:center;gap:5px;margin-bottom:5px;flex-wrap:wrap;}
+.celapsed{font-size:10px;font-weight:700;margin-left:auto;white-space:nowrap;}
+.cel-green{color:var(--green);}
+.cel-yellow{color:#B45309;}
+.cel-orange{color:var(--orange);}
+.cel-red{color:var(--red);}
+.cel-charcoal{color:var(--charcoal);}
+
+.cname{font-size:15px;font-weight:800;color:var(--ink);}
+.cphone{font-size:12px;color:var(--blue);font-weight:600;margin-top:1px;}
+.cinfo{font-size:11px;color:var(--sub);margin-top:5px;line-height:1.65;}
+.cmeta{font-size:10px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:4px;}
+
+/* 전화 버튼 (우측 상단 플로팅) */
+.ccall-btn{
+  position:absolute;right:10px;top:12px;
+  width:34px;height:34px;border-radius:999px;
+  background:var(--blue);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(7,75,244,.3);
+}
+.ccall-btn:active{transform:scale(.93);}
+
+/* 카드 액션 버튼 */
+.cactions{
+  display:flex;gap:6px;padding:7px 12px 9px 18px;
+  border-top:1px solid var(--line);background:#FAFAFA;
+}
+.ca-btn{
+  flex:1;height:32px;border-radius:7px;font-size:11px;font-weight:700;
+  border:1.5px solid var(--line);background:#fff;color:var(--sub);
+}
+.ca-btn:active{opacity:.75;}
+.ca-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+.ca-btn.pink{background:var(--pink);color:#fff;border-color:var(--pink);}
+.ca-btn.outline-blue{border-color:var(--blue);color:var(--blue);}
+.ca-btn.outline-purple{border-color:var(--purple);color:var(--purple);}
+
+/* 빈 상태 */
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-icon{font-size:36px;margin-bottom:10px;}
+.empty-text{font-size:14px;font-weight:600;}
+
+/* ── 하단 네비 ── */
+.btmnav{
+  display:flex;background:#fff;border-top:1px solid var(--line);flex-shrink:0;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.bnav{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:7px 4px 6px;gap:2px;cursor:pointer;
+  font-size:10px;font-weight:600;color:var(--muted);
+}
+.bnav.on{color:var(--blue);}
+
+/* ── 고객 상세 (전체화면) ── */
+.detail{
+  position:fixed;inset:0;background:#F4F6FB;z-index:40;
+  display:none;flex-direction:column;overflow:hidden;
+}
+.detail.open{display:flex;}
+
+.det-hdr{
+  background:#fff;border-bottom:1px solid var(--line);
+  padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.det-hdr-title{font-size:15px;font-weight:800;flex:1;}
+.det-back{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;}
+.det-back:active{background:var(--bg);}
+
+/* 상단 고객 정보 */
+.det-top{
+  background:#fff;padding:14px 16px 10px;border-bottom:1px solid var(--line);flex-shrink:0;
+}
+.det-name{font-size:20px;font-weight:800;margin-bottom:3px;}
+.det-phone-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.det-phone{font-size:15px;color:var(--blue);font-weight:700;}
+.det-call-btn{
+  width:36px;height:36px;border-radius:999px;background:var(--blue);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(7,75,244,.3);margin-left:auto;
+}
+.det-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.det-meta{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;}
+.det-meta-item{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.det-meta-val{font-weight:700;color:var(--ink);}
+.det-assign-btn{
+  font-size:10px;font-weight:700;color:var(--blue);
+  border:1px solid var(--blue);border-radius:4px;padding:1px 5px;margin-left:4px;
+}
+
+/* 상세 탭 */
+.det-tabs{
+  display:flex;background:#fff;border-bottom:1px solid var(--line);flex-shrink:0;
+}
+.det-tab{
+  flex:1;padding:9px 4px;font-size:12px;font-weight:600;
+  color:var(--muted);text-align:center;cursor:pointer;position:relative;
+}
+.det-tab.on{color:var(--blue);}
+.det-tab.on::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--blue);}
+
+/* 상세 바디 */
+.det-body{flex:1;overflow-y:auto;padding:10px 12px;}
+
+.info-card{background:#fff;border-radius:10px;border:1px solid var(--line);margin-bottom:8px;}
+.info-row{display:flex;padding:9px 14px;border-bottom:1px solid var(--line);gap:10px;}
+.info-row:last-child{border-bottom:none;}
+.info-key{font-size:12px;color:var(--muted);width:90px;flex-shrink:0;padding-top:1px;}
+.info-val{font-size:12px;font-weight:600;color:var(--ink);flex:1;}
+
+/* 연락/상태 이력 타임라인 */
+.timeline{padding:12px 14px;}
+.tl-item{display:flex;gap:10px;padding-bottom:14px;position:relative;}
+.tl-item:not(:last-child)::before{
+  content:'';position:absolute;left:15px;top:28px;bottom:0;width:1px;background:var(--line);
+}
+.tl-icon{
+  width:30px;height:30px;border-radius:999px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+}
+.tl-icon-call{background:#EEF3FF;}
+.tl-icon-sms{background:#ECFDF5;}
+.tl-icon-status{background:#F5F3FF;}
+.tl-content{flex:1;}
+.tl-time{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.tl-result{font-size:13px;font-weight:700;}
+.tl-memo{font-size:11px;color:var(--sub);margin-top:2px;}
+
+/* 하단 고정 액션 */
+.det-footer{
+  background:#fff;border-top:1px solid var(--line);
+  padding:10px 14px;display:flex;gap:8px;flex-shrink:0;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom));
+}
+.det-foot-btn{
+  flex:1;height:44px;border-radius:10px;font-size:14px;font-weight:700;
+  border:1.5px solid var(--line);background:#fff;color:var(--sub);
+}
+.det-foot-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+/* ── 오버레이 + 바텀시트 ── */
+.bs-ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none;}
+.bs-ov.open{display:block;}
+.bs{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#fff;border-radius:20px 20px 0 0;z-index:51;
+  transform:translateY(100%);transition:.24s cubic-bezier(.32,.72,0,1);
+  max-height:88vh;overflow-y:auto;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.bs.open{transform:translateY(0);}
+.bs-handle{width:36px;height:4px;background:var(--line);border-radius:2px;margin:10px auto 2px;}
+.bs-title{font-size:15px;font-weight:800;padding:8px 18px 12px;border-bottom:1px solid var(--line);}
+.bs-close{
+  position:absolute;right:14px;top:14px;
+  width:28px;height:28px;border-radius:999px;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);
+}
+
+/* 통화결과 아이템 */
+.cr-item{
+  display:flex;align-items:center;gap:12px;padding:13px 18px;cursor:pointer;
+  border-bottom:1px solid var(--line);
+}
+.cr-item:last-child{border-bottom:none;}
+.cr-item:active{background:var(--bg);}
+.cr-icon{width:38px;height:38px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.cr-label{font-size:14px;font-weight:700;}
+.cr-desc{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* 선택 칩 */
+.chip-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:12px 16px;}
+.chip-grid-3{grid-template-columns:1fr 1fr 1fr;}
+.sel-chip{
+  height:40px;border:1.5px solid var(--line);border-radius:8px;
+  background:#fff;font-size:13px;font-weight:600;color:var(--sub);
+  cursor:pointer;transition:.1s;
+}
+.sel-chip:active{transform:scale(.96);}
+.sel-chip.on{border-color:var(--blue);background:var(--blue-light);color:var(--blue);}
+.sel-chip.on-pink{border-color:var(--pink);background:var(--pink-light);color:var(--pink);}
+
+/* 날짜/시간 표시 */
+.dt-preview{
+  margin:0 16px 10px;padding:10px 12px;
+  background:var(--blue-light);border-radius:8px;
+  font-size:12px;color:var(--blue);font-weight:700;
+  display:none;
+}
+.dt-preview.show{display:flex;align-items:center;gap:6px;}
+
+/* 직접선택 datetime */
+.custom-dt{margin:0 16px 12px;display:none;}
+.custom-dt.show{display:block;}
+.custom-dt input{
+  width:100%;height:42px;border:1.5px solid var(--line);border-radius:8px;
+  padding:0 12px;font-size:13px;
+}
+
+/* 섹션 라벨 */
+.bs-sec{padding:12px 16px 6px;font-size:11px;font-weight:700;color:var(--muted);}
+
+/* 전송 버튼 */
+.bs-submit{
+  margin:8px 16px 14px;width:calc(100% - 32px);height:46px;
+  border-radius:10px;font-size:15px;font-weight:700;color:#fff;
+  border:none;cursor:pointer;
+}
+.bs-submit.blue{background:var(--blue);}
+.bs-submit.pink{background:var(--pink);}
+.bs-submit.red{background:var(--red);}
+
+/* 메모 입력 */
+.bs-memo{margin:0 16px 8px;}
+.bs-memo textarea{
+  width:100%;border:1.5px solid var(--line);border-radius:8px;
+  padding:10px;font-size:13px;resize:none;height:72px;
+  font-family:inherit;
+}
+.bs-memo-cnt{font-size:10px;color:var(--muted);text-align:right;margin-top:3px;}
+
+/* 문자 발송 토글 */
+.sms-toggle{display:flex;gap:7px;padding:0 16px 12px;}
+.sms-chip{
+  flex:1;height:38px;border-radius:8px;border:1.5px solid var(--line);
+  background:#fff;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;
+}
+.sms-chip.on{border-color:var(--green);background:#ECFDF5;color:var(--green);}
+
+/* 상태 변경 목록 */
+.status-list{padding:8px 0;}
+.status-item{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 18px;cursor:pointer;
+}
+.status-item:active{background:var(--bg);}
+.status-dot{width:10px;height:10px;border-radius:50%;}
+/* ══════════════════════════════════════════
+   PC 관리자 레이아웃
+══════════════════════════════════════════ */
+#pcApp{display:none;height:100vh;overflow:hidden;}
+#pcApp.show{display:flex;}
+
+/* 사이드바 */
+.pc-sidebar{
+  width:220px;min-width:220px;height:100vh;
+  background:#fff;border-right:1px solid var(--line);
+  display:flex;flex-direction:column;overflow-y:auto;
+}
+.pc-sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--line);}
+.pc-sidebar-logo .logo-text{font-size:18px;font-weight:800;color:var(--blue);}
+.pc-sidebar-logo .logo-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+.pc-nav{flex:1;padding:12px 0;}
+.pc-nav-section{padding:8px 18px 4px;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em;}
+.pc-nav-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 18px;font-size:13px;font-weight:500;
+  color:var(--sub);cursor:pointer;transition:.12s;border-radius:0;
+  position:relative;
+}
+.pc-nav-item:hover{background:var(--bg);color:var(--ink);}
+.pc-nav-item.active{background:var(--blue-light);color:var(--blue);font-weight:700;}
+.pc-nav-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--blue);border-radius:0 3px 3px 0;}
+.pc-nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;}
+.pc-nav-sub{padding-left:36px;}
+
+.pc-sidebar-footer{padding:14px 18px;border-top:1px solid var(--line);}
+.pc-sidebar-footer .user-name{font-size:13px;font-weight:700;}
+.pc-sidebar-footer .user-role{font-size:11px;color:var(--muted);}
+
+/* 메인 */
+.pc-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.pc-header{
+  height:52px;background:#fff;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0;
+}
+.pc-header-date{font-size:13px;color:var(--muted);}
+.pc-header-spacer{flex:1;}
+.pc-header-bell{position:relative;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;}
+.pc-header-bell:hover{background:var(--bg);}
+.pc-header-bell-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid #fff;}
+.pc-header-admin{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;}
+
+.pc-content{flex:1;overflow-y:auto;padding:24px;}
+.pc-page{display:none;}
+.pc-page.active{display:block;}
+
+/* KPI 카드 */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px;}
+.kpi-card{
+  background:#fff;border-radius:var(--radius);padding:16px;
+  border:1px solid var(--line);cursor:pointer;transition:.15s;
+}
+.kpi-card:hover{border-color:var(--blue);box-shadow:0 2px 12px rgba(7,75,244,.08);}
+.kpi-label{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:8px;}
+.kpi-value{font-size:26px;font-weight:800;color:var(--ink);line-height:1;}
+.kpi-prev{font-size:11px;color:var(--muted);margin-top:6px;}
+.kpi-card.urgent .kpi-value{color:var(--red);}
+.kpi-card.warning .kpi-value{color:var(--orange);}
+
+/* 긴급 처리 영역 */
+.urgent-section{margin-bottom:20px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.section-title{font-size:15px;font-weight:700;}
+.urgent-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.urgent-card{
+  background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:14px;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:.15s;
+}
+.urgent-card:hover{border-color:var(--red);box-shadow:0 2px 8px rgba(239,68,68,.1);}
+.urgent-card.type-red{border-left:3px solid var(--red);}
+.urgent-card.type-orange{border-left:3px solid var(--orange);}
+.urgent-card.type-purple{border-left:3px solid var(--purple);}
+.urgent-card.type-gray{border-left:3px solid var(--gray);}
+.urgent-card-label{font-size:11px;color:var(--muted);font-weight:600;}
+.urgent-card-count{font-size:22px;font-weight:800;}
+
+/* 검색/필터 */
+.filter-bar{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px;margin-bottom:16px;
+}
+.filter-search{
+  display:flex;align-items:center;gap:8px;padding:0 12px;
+  border:1.5px solid var(--line);border-radius:8px;height:36px;
+  background:#fff;margin-bottom:12px;
+}
+.filter-search input{flex:1;font-size:13px;background:transparent;}
+.filter-search input::placeholder{color:var(--muted);}
+.filter-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.filter-select{
+  height:32px;padding:0 10px;border:1.5px solid var(--line);border-radius:7px;
+  font-size:12px;background:#fff;color:var(--sub);cursor:pointer;
+}
+.filter-spacer{flex:1;}
+
+/* 테이블 */
+.table-wrap{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{
+  background:#F9FAFB;padding:10px 12px;text-align:left;
+  font-size:11px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+.data-table td{
+  padding:10px 12px;border-bottom:1px solid var(--line);
+  font-size:12px;color:var(--sub);vertical-align:middle;white-space:nowrap;
+}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:#FAFAFA;}
+.data-table tr.row-urgent td{background:#FEF9F9;}
+.data-table tr.row-selected td{background:var(--blue-light);}
+.data-table tr{cursor:pointer;}
+
+/* 상태 바 */
+.row-bar{display:flex;align-items:center;gap:8px;}
+.status-bar{width:3px;height:28px;border-radius:2px;flex-shrink:0;}
+
+/* 경과시간 배지 */
+.elapsed-ok{color:var(--green);font-weight:700;}
+.elapsed-warn{color:var(--yellow);font-weight:700;}
+.elapsed-urgent{color:var(--orange);font-weight:700;}
+.elapsed-critical{color:var(--red);font-weight:700;}
+.elapsed-done{color:var(--gray);}
+
+/* 우측 패널 */
+.pc-detail-panel{
+  width:340px;min-width:340px;height:100vh;
+  background:#fff;border-left:1px solid var(--line);
+  display:none;flex-direction:column;overflow:hidden;
+  position:sticky;top:0;
+}
+.pc-detail-panel.open{display:flex;}
+.detail-header{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+.detail-header h3{font-size:15px;font-weight:800;}
+.detail-body{flex:1;overflow-y:auto;padding:16px 18px;}
+.detail-footer{padding:14px 18px;border-top:1px solid var(--line);display:flex;gap:8px;}
+
+.detail-name{font-size:20px;font-weight:800;margin-bottom:4px;}
+.detail-phone{font-size:15px;font-weight:600;color:var(--blue);}
+.detail-phone-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.detail-section{margin-bottom:16px;}
+.detail-section-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-bottom:8px;}
+.detail-row{display:flex;padding:7px 0;border-bottom:1px solid var(--line);gap:12px;}
+.detail-row:last-child{border-bottom:none;}
+.detail-key{font-size:12px;color:var(--muted);width:100px;flex-shrink:0;}
+.detail-val{font-size:12px;font-weight:600;color:var(--ink);flex:1;}
+
+.accordion-btn{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;font-size:13px;font-weight:600;background:transparent;
+  cursor:pointer;border-bottom:1px solid var(--line);
+}
+.accordion-body{display:none;padding:10px 0;}
+.accordion-body.open{display:block;}
+
+/* 페이지네이션 */
+.pagination{display:flex;align-items:center;justify-content:center;gap:4px;padding:16px;}
+.page-btn{width:30px;height:30px;border-radius:6px;font-size:12px;font-weight:600;background:transparent;color:var(--sub);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.page-btn:hover{background:var(--bg);}
+.page-btn.active{background:var(--blue);color:#fff;}
+</style>
+</head>
+<body>
+
+<!-- 로딩 -->
+<div id="appLoading">
+  <div style="font-size:22px;font-weight:800;color:var(--blue);">VIVID CRM</div>
+  <div class="spinner"></div>
+  <div style="font-size:12px;color:var(--muted);">데이터 불러오는 중...</div>
+</div>
+
+<!-- ══ PC 관리자 ══ -->
+<div id="pcApp">
+  <!-- 사이드바 -->
+  <div class="pc-sidebar">
+    <div class="pc-sidebar-logo">
+      <div class="logo-text">VIVID CRM</div>
+      <div class="logo-sub">LG U+ 공식 인증 매장</div>
+    </div>
+    <nav class="pc-nav">
+      <div class="pc-nav-item active" onclick="pcNav('dashboard')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        오늘의 현황
+      </div>
+      <div class="pc-nav-item" onclick="pcNav('db')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+        상담 DB
+        <span class="pc-nav-badge" id="nav-badge-new">0</span>
+      </div>
+      <div class="pc-nav-item" onclick="pcNav('urgent')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        긴급·연락지연
+        <span class="pc-nav-badge" id="nav-badge-urgent">0</span>
+      </div>
+      <div class="pc-nav-item" onclick="pcNav('recare')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        재케어
+      </div>
+      <div class="pc-nav-item" onclick="pcNav('absence')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+        부재케어
+      </div>
+      <div class="pc-nav-item" onclick="pcNav('done')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        개통완료
+      </div>
+      <div class="pc-nav-item" onclick="pcNav('fail')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+        실패
+      </div>
+
+      <div class="pc-nav-section" style="margin-top:8px;">성과 분석</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-staff')">직원별 실적</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-store')">매장별 실적</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-device')">기기별 실적</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-channel')">유입 채널별</div>
+
+      <div class="pc-nav-section" style="margin-top:8px;">설정</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-staff')">직원 관리</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-store')">매장 관리</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-template')">문자 템플릿</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-perm')">권한 관리</div>
+    </nav>
+    <div class="pc-sidebar-footer">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:30px;height:30px;border-radius:999px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;">관</div>
+        <div>
+          <div class="user-name" id="pc-user-name">관리자</div>
+          <div class="user-role">최고 관리자</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="logout()">로그아웃</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인 -->
+  <div class="pc-main" id="pcMain">
+    <div class="pc-header">
+      <span class="pc-header-date" id="pc-today-date"></span>
+      <div class="pc-header-spacer"></div>
+      <div class="pc-header-bell">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="pc-header-bell-dot"></div>
+      </div>
+      <div class="pc-header-admin">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 3a4 4 0 100 8 4 4 0 000-8z"/></svg>
+        <span id="pc-header-name">관리자</span>
+      </div>
+    </div>
+
+    <div class="pc-content" id="pcContent">
+      <!-- 오늘의 현황 -->
+      <div class="pc-page active" id="page-dashboard">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:20px;">
+          <h1 style="font-size:20px;font-weight:800;">오늘의 현황</h1>
+          <span style="font-size:13px;color:var(--muted);" id="pc-total-count"></span>
+        </div>
+        <div class="kpi-grid" id="kpiGrid">
+          <div class="kpi-card" onclick="pcNav('db')"><div class="kpi-label">오늘 신규 접수</div><div class="kpi-value" id="kpi-today">0</div><div class="kpi-prev" id="kpi-today-prev">어제 0건</div></div>
+          <div class="kpi-card warning" onclick="pcNav('db')"><div class="kpi-label">미배정</div><div class="kpi-value" id="kpi-unassigned">0</div><div class="kpi-prev">즉시 배정 필요</div></div>
+          <div class="kpi-card urgent" onclick="pcNav('urgent')"><div class="kpi-label">30분 이상 연락지연</div><div class="kpi-value" id="kpi-delay30">0</div><div class="kpi-prev kpi-delay-prev"></div></div>
+          <div class="kpi-card" onclick="pcNav('recare')"><div class="kpi-label">재케어 예정</div><div class="kpi-value" id="kpi-recare">0</div><div class="kpi-prev"></div></div>
+          <div class="kpi-card" onclick="pcNav('absence')"><div class="kpi-label">부재케어 재시도</div><div class="kpi-value" id="kpi-absence">0</div><div class="kpi-prev"></div></div>
+          <div class="kpi-card" style="border-left:3px solid var(--green);" onclick="pcNav('done')"><div class="kpi-label">이번 달 개통완료</div><div class="kpi-value" style="color:var(--green);" id="kpi-done">0</div><div class="kpi-prev" id="kpi-done-rate"></div></div>
+        </div>
+
+        <div class="urgent-section">
+          <div class="section-header">
+            <div class="section-title">⚡ 긴급 처리 필요</div>
+            <button class="btn btn-outline btn-sm" onclick="pcNav('urgent')">전체 보기</button>
+          </div>
+          <div class="urgent-grid">
+            <div class="urgent-card type-red"><div class="urgent-card-label">1시간 이상 지연</div><div class="urgent-card-count" id="urg-1h">0</div></div>
+            <div class="urgent-card type-orange"><div class="urgent-card-label">재케어 시간 초과</div><div class="urgent-card-count" id="urg-recare">0</div></div>
+            <div class="urgent-card type-purple"><div class="urgent-card-label">부재케어 재시도 누락</div><div class="urgent-card-count" id="urg-absence">0</div></div>
+            <div class="urgent-card type-gray"><div class="urgent-card-label">담당자 미배정</div><div class="urgent-card-count" id="urg-unassign">0</div></div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title">최근 접수</div>
+          <button class="btn btn-outline btn-sm" onclick="pcNav('db')">전체 보기</button>
+        </div>
+        <div class="table-wrap" id="dashboard-table-wrap">
+          <table class="data-table" id="dashboard-table">
+            <thead><tr>
+              <th>접수시간</th><th>경과</th><th>고객명</th><th>전화번호</th>
+              <th>상태</th><th>기기</th><th>요금제</th><th>매장·담당자</th>
+            </tr></thead>
+            <tbody id="dashboard-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 상담 DB -->
+      <div class="pc-page" id="page-db">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:16px;">
+          <h1 style="font-size:20px;font-weight:800;">상담 DB</h1>
+          <span style="font-size:13px;color:var(--muted);" id="db-count-label"></span>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-search">
+            <svg width="14" height="14" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" placeholder="고객명, 전화번호, 기기 검색" id="dbSearch" oninput="renderDbTable()">
+          </div>
+          <div class="filter-row">
+            <select class="filter-select" id="f-period" onchange="renderDbTable()">
+              <option value="all">기간 전체</option>
+              <option value="today" selected>오늘</option>
+              <option value="yesterday">어제</option>
+              <option value="week">최근 7일</option>
+              <option value="month">이번 달</option>
+            </select>
+            <select class="filter-select" id="f-status" onchange="renderDbTable()">
+              <option value="">상태 전체</option>
+              <option value="신규">신규</option>
+              <option value="연락중">연락중</option>
+              <option value="상담중">상담중</option>
+              <option value="재케어">재케어</option>
+              <option value="부재케어">부재케어</option>
+              <option value="확인필요">확인필요</option>
+              <option value="개통완료">개통완료</option>
+              <option value="실패">실패</option>
+            </select>
+            <select class="filter-select" id="f-store" onchange="renderDbTable()">
+              <option value="">매장 전체</option>
+              <option>남양시장점</option><option>중곡점</option><option>구미사점</option>
+            </select>
+            <select class="filter-select" id="f-staff" onchange="renderDbTable()">
+              <option value="">담당자 전체</option>
+              <option>여인국</option><option>황제필</option><option>강용민</option>
+            </select>
+            <div class="filter-spacer"></div>
+            <button class="btn btn-outline btn-sm" onclick="resetFilters()">초기화</button>
+            <button class="btn btn-primary btn-sm" onclick="downloadCSV()">⬇ CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="dbTable">
+            <thead><tr>
+              <th><input type="checkbox" id="chkAll" onchange="toggleAllCheck(this)"></th>
+              <th>접수</th><th>경과</th><th>고객명</th><th>전화번호</th>
+              <th>상태</th><th>다음연락</th><th>기기</th><th>요금제</th>
+              <th>매장·담당</th><th>최근메모</th>
+            </tr></thead>
+            <tbody id="dbTbody"></tbody>
+          </table>
+          <div class="pagination" id="dbPagination"></div>
+        </div>
+      </div>
+
+      <!-- 긴급·연락지연 -->
+      <div class="pc-page" id="page-urgent">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">⚡ 긴급·연락지연</h1>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>접수</th><th>경과</th><th>고객명</th><th>전화번호</th><th>상태</th><th>매장·담당</th><th>기기</th></tr></thead>
+            <tbody id="urgentTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 재케어 -->
+      <div class="pc-page" id="page-recare">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">🔄 재케어</h1>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>접수</th><th>고객명</th><th>전화번호</th><th>재케어 사유</th><th>다음연락</th><th>담당자</th></tr></thead>
+            <tbody id="recareTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 부재케어 -->
+      <div class="pc-page" id="page-absence">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">📵 부재케어</h1>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>접수</th><th>고객명</th><th>전화번호</th><th>부재사유</th><th>시도횟수</th><th>다음연락</th><th>담당자</th></tr></thead>
+            <tbody id="absenceTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 개통완료 -->
+      <div class="pc-page" id="page-done">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">✅ 개통완료</h1>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>접수</th><th>완료일시</th><th>고객명</th><th>기기</th><th>요금제</th><th>할인방식</th><th>담당자</th></tr></thead>
+            <tbody id="doneTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 실패 -->
+      <div class="pc-page" id="page-fail">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">❌ 실패</h1>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>접수</th><th>고객명</th><th>전화번호</th><th>실패사유</th><th>기기</th><th>담당자</th></tr></thead>
+            <tbody id="failTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 직원별 실적 -->
+      <div class="pc-page" id="page-stat-staff">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">👤 직원별 실적</h1>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>담당자</th><th>매장</th><th>배정</th><th>연락완료</th><th>상담중</th><th>재케어</th><th>개통완료</th><th>실패</th><th>개통률</th></tr></thead>
+            <tbody id="statStaffTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 매장별 실적 -->
+      <div class="pc-page" id="page-stat-store">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">🏪 매장별 실적</h1>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>매장</th><th>오늘접수</th><th>미배정</th><th>긴급지연</th><th>개통완료</th><th>개통률</th></tr></thead>
+            <tbody id="statStoreTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 기기별, 채널별 등 나머지 -->
+      <div class="pc-page" id="page-stat-device"><h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">📱 기기별 실적</h1><div style="color:var(--muted);font-size:13px;">준비 중</div></div>
+      <div class="pc-page" id="page-stat-channel"><h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">📊 유입 채널별</h1><div style="color:var(--muted);font-size:13px;">준비 중</div></div>
+      <div class="pc-page" id="page-set-staff"><h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">👥 직원 관리</h1><div style="color:var(--muted);font-size:13px;">준비 중</div></div>
+      <div class="pc-page" id="page-set-store"><h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">🏪 매장 관리</h1><div style="color:var(--muted);font-size:13px;">준비 중</div></div>
+      <div class="pc-page" id="page-set-template">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">💬 문자 템플릿</h1>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="filter-bar">
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px;">부재케어 문자</div>
+            <textarea style="width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px;font-size:13px;resize:vertical;min-height:80px;">안녕하세요. LG U+ 공식 인증 매장 VIVID입니다.\n신청해주신 상담 내용 확인 후 연락드렸으나 연결되지 않아 문자 남겨드립니다.\n편하신 시간에 회신 주시면 확인 후 다시 연락드리겠습니다.</textarea>
+          </div>
+        </div>
+      </div>
+      <div class="pc-page" id="page-set-perm"><h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">🔐 권한 관리</h1><div style="color:var(--muted);font-size:13px;">준비 중</div></div>
+    </div>
+  </div>
+
+  <!-- 우측 상세 패널 -->
+  <div class="pc-detail-panel" id="pcDetailPanel">
+    <div class="detail-header">
+      <h3>고객 상세 정보</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closePcDetail()">✕</button>
+    </div>
+    <div class="detail-body" id="pcDetailBody"></div>
+    <div class="detail-footer">
+      <button class="btn btn-outline" style="flex:1;" onclick="openPcStatusSheet()">상태 변경</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="openPcAssignSheet()">담당자 변경</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="openPcMemoSheet()">메모 추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- 앱 -->
+<div id="app" style="display:none;">
+
+  <!-- 헤더 -->
+  <div class="hdr">
+    <div class="hdr-top">
+      <div>
+        <div class="hdr-logo">VIVID 현황판</div>
+        <div class="hdr-loc" onclick="openLocSheet()">
+          <span id="hdrLoc">남양시장점 · 박대리</span>
+          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="hdr-icons">
+        <div class="hdr-btn" id="notifBtn">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <div class="notif-dot" id="notifDot" style="display:none;"></div>
+        </div>
+        <div class="hdr-btn" onclick="doRefresh()">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 탭 -->
+  <div class="tabs" id="tabBar">
+    <div class="tab on" data-tab="urgent" onclick="switchTab('urgent')">긴급 <span class="tcnt tcnt-red" id="tc-urgent">0</span></div>
+    <div class="tab" data-tab="new" onclick="switchTab('new')">신규 <span class="tcnt tcnt-blue" id="tc-new">0</span></div>
+    <div class="tab" data-tab="recare" onclick="switchTab('recare')">재케어 <span class="tcnt tcnt-purple" id="tc-recare">0</span></div>
+    <div class="tab" data-tab="absence" onclick="switchTab('absence')">부재케어 <span class="tcnt tcnt-orange" id="tc-absence">0</span></div>
+    <div class="tab" data-tab="mine" onclick="switchTab('mine')">내 고객</div>
+    <div class="tab" data-tab="store" onclick="switchTab('store')">우리 매장</div>
+  </div>
+
+  <!-- 긴급 요약바 -->
+  <div class="urg-bar hide" id="urgBar" onclick="switchTab('urgent')">
+    <span class="urg-bar-text" id="urgBarText">⚠️ 긴급 고객 확인 중...</span>
+    <span class="urg-bar-arrow">→</span>
+  </div>
+
+  <!-- 검색 -->
+  <div class="searchbar">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="search-inp" type="search" placeholder="고객명 또는 전화번호" id="searchInp" oninput="renderList()">
+    </div>
+    <button class="filter-btn" onclick="toggleSort()">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+      <span id="sortLabel">긴급순</span>
+    </button>
+  </div>
+
+  <!-- 카드 목록 -->
+  <div class="card-list" id="cardList"></div>
+
+  <!-- 하단 메뉴 -->
+  <div class="btmnav">
+    <div class="bnav on" onclick="bottomNav('home')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      홈
+    </div>
+    <div class="bnav" onclick="bottomNav('mine')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      내 고객
+    </div>
+    <div class="bnav" onclick="bottomNav('recare')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      재케어
+    </div>
+    <div class="bnav" onclick="bottomNav('menu')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      메뉴
+    </div>
+  </div>
+</div>
+
+<!-- ══ 고객 상세 ══ -->
+<div class="detail" id="detailView">
+  <div class="det-hdr">
+    <div class="det-back" onclick="closeDetail()">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </div>
+    <div class="det-hdr-title">고객 상세</div>
+  </div>
+
+  <!-- 상단 고객 정보 고정 -->
+  <div class="det-top" id="detTop"></div>
+
+  <!-- 탭 -->
+  <div class="det-tabs">
+    <div class="det-tab on" onclick="detTab('info')">신청 조건</div>
+    <div class="det-tab" onclick="detTab('history')">연락 이력 <span id="dt-hist-cnt"></span></div>
+    <div class="det-tab" onclick="detTab('status')">상태 이력 <span id="dt-stat-cnt"></span></div>
+    <div class="det-tab" onclick="detTab('memo')">메모</div>
+  </div>
+
+  <div class="det-body" id="detBody"></div>
+
+  <div class="det-footer">
+    <button class="det-foot-btn" onclick="openStatusBS()">상태 변경</button>
+    <button class="det-foot-btn primary" id="detCallBtn" onclick="detCall()">📞 전화 걸기</button>
+  </div>
+</div>
+
+<!-- ══ 바텀시트들 ══ -->
+
+<!-- 통화 결과 -->
+<div class="bs-ov" id="crOv" onclick="closeBS('cr')"></div>
+<div class="bs" id="crBS">
+  <div class="bs-handle"></div>
+  <div class="bs-title" style="position:relative;">통화 결과를 선택해주세요<button class="bs-close" onclick="closeBS('cr')">✕</button></div>
+  <div class="cr-item" onclick="onCallResult('connected')"><div class="cr-icon" style="background:#ECFDF5;">📞</div><div><div class="cr-label">상담 연결</div><div class="cr-desc">고객과 통화했어요</div></div></div>
+  <div class="cr-item" onclick="onCallResult('absence')"><div class="cr-icon" style="background:#FFF7ED;">📵</div><div><div class="cr-label">부재</div><div class="cr-desc">전화를 받지 않았어요</div></div></div>
+  <div class="cr-item" onclick="onCallResult('recare')"><div class="cr-icon" style="background:#F5F3FF;">🔄</div><div><div class="cr-label">재케어 요청</div><div class="cr-desc">나중에 다시 연락 원해요</div></div></div>
+  <div class="cr-item" onclick="onCallResult('rejected')"><div class="cr-icon" style="background:#FEF2F2;">✋</div><div><div class="cr-label">거절 / 구매 의사 없음</div><div class="cr-desc">구매 거절 의사 확인</div></div></div>
+  <div class="cr-item" onclick="onCallResult('invalid_number')"><div class="cr-icon" style="background:#F3F4F6;">❓</div><div><div class="cr-label">잘못된 번호</div><div class="cr-desc">번호 오류 및 기타</div></div></div>
+</div>
+
+<!-- 부재케어 등록 -->
+<div class="bs-ov" id="absOv" onclick="closeBS('abs')"></div>
+<div class="bs" id="absBS">
+  <div class="bs-handle"></div>
+  <div class="bs-title" style="position:relative;">부재케어 등록<button class="bs-close" onclick="closeBS('abs')">✕</button></div>
+  <div class="bs-sec">부재 사유 (필수)</div>
+  <div class="chip-grid" id="absReasonGrid">
+    <button class="sel-chip" data-v="no_answer" onclick="chip(this,'absReason')">전화 미수신</button>
+    <button class="sel-chip" data-v="busy" onclick="chip(this,'absReason')">통화중</button>
+    <button class="sel-chip" data-v="power_off" onclick="chip(this,'absReason')">전원 꺼짐</button>
+    <button class="sel-chip" data-v="call_reject" onclick="chip(this,'absReason')">수신 거부</button>
+    <button class="sel-chip" data-v="invalid_number" onclick="chip(this,'absReason')">잘못된 번호</button>
+    <button class="sel-chip" data-v="sms_after_retry" onclick="chip(this,'absReason')">문자 후 재시도</button>
+    <button class="sel-chip" data-v="etc" onclick="chip(this,'absReason')" style="grid-column:span 2;">기타</button>
+  </div>
+  <div class="bs-sec">다음 연락 예정 (필수)</div>
+  <div class="chip-grid chip-grid-3" id="absTimeGrid" style="grid-template-columns:1fr 1fr 1fr;">
+    <button class="sel-chip" data-v="30m" onclick="chip(this,'absTime')">30분 뒤</button>
+    <button class="sel-chip" data-v="1h" onclick="chip(this,'absTime')">1시간 뒤</button>
+    <button class="sel-chip" data-v="afternoon" onclick="chip(this,'absTime')">오늘 오후</button>
+    <button class="sel-chip" data-v="custom" onclick="chip(this,'absTime')" style="grid-column:span 3;">직접 선택</button>
+  </div>
+  <div class="dt-preview" id="absDtPreview">📅 <span id="absDtText"></span></div>
+  <div class="custom-dt" id="absCustomDt"><input type="datetime-local" id="absCustomInp"></div>
+  <div class="bs-sec">문자 발송 여부</div>
+  <div class="sms-toggle">
+    <button class="sms-chip" data-v="sent" onclick="smsChip(this,'absSms')">✅ 발송 완료</button>
+    <button class="sms-chip" data-v="not_sent" onclick="smsChip(this,'absSms')">미발송</button>
+  </div>
+  <div class="bs-memo">
+    <textarea id="absMemo" placeholder="메모 (선택)" maxlength="200" oninput="$('absMemoCnt').textContent=this.value.length+'/200'"></textarea>
+    <div class="bs-memo-cnt" id="absMemoCnt">0/200</div>
+  </div>
+  <button class="bs-submit pink" onclick="submitAbs()">부재케어 등록</button>
+</div>
+
+<!-- 재케어 등록 -->
+<div class="bs-ov" id="rcOv" onclick="closeBS('rc')"></div>
+<div class="bs" id="rcBS">
+  <div class="bs-handle"></div>
+  <div class="bs-title" style="position:relative;">재케어 등록<button class="bs-close" onclick="closeBS('rc')">✕</button></div>
+  <div class="bs-sec">재케어 사유 (필수)</div>
+  <div class="chip-grid" id="rcReasonGrid">
+    <button class="sel-chip" data-v="family_discussion" onclick="chip(this,'rcReason')">가족과 상의</button>
+    <button class="sel-chip" data-v="customer_request" onclick="chip(this,'rcReason')">고객 요청</button>
+    <button class="sel-chip" data-v="policy_check" onclick="chip(this,'rcReason')">정책 확인</button>
+    <button class="sel-chip" data-v="stock_check" onclick="chip(this,'rcReason')">재고 확인</button>
+    <button class="sel-chip" data-v="visit_scheduled" onclick="chip(this,'rcReason')">방문 예정</button>
+    <button class="sel-chip" data-v="etc" onclick="chip(this,'rcReason')">기타</button>
+  </div>
+  <div class="bs-sec">다음 연락 예정 (필수)</div>
+  <div class="chip-grid" id="rcTimeGrid">
+    <button class="sel-chip" data-v="1h" onclick="chip(this,'rcTime')">1시간 뒤</button>
+    <button class="sel-chip" data-v="afternoon" onclick="chip(this,'rcTime')">오늘 오후</button>
+    <button class="sel-chip" data-v="tomorrow" onclick="chip(this,'rcTime')">내일</button>
+    <button class="sel-chip" data-v="custom" onclick="chip(this,'rcTime')">직접 선택</button>
+  </div>
+  <div class="dt-preview" id="rcDtPreview">📅 <span id="rcDtText"></span></div>
+  <div class="custom-dt" id="rcCustomDt"><input type="datetime-local" id="rcCustomInp"></div>
+  <div class="bs-memo">
+    <textarea id="rcMemo" placeholder="메모 (선택)" maxlength="200" oninput="$('rcMemoCnt').textContent=this.value.length+'/200'"></textarea>
+    <div class="bs-memo-cnt" id="rcMemoCnt">0/200</div>
+  </div>
+  <button class="bs-submit blue" onclick="submitRc()">재케어 등록</button>
+</div>
+
+<!-- 상태 변경 -->
+<div class="bs-ov" id="stOv" onclick="closeBS('st')"></div>
+<div class="bs" id="stBS">
+  <div class="bs-handle"></div>
+  <div class="bs-title" style="position:relative;">상태 변경<button class="bs-close" onclick="closeBS('st')">✕</button></div>
+  <div class="status-list" id="statusList"></div>
+</div>
+
+<!-- 실패 사유 -->
+<div class="bs-ov" id="failOv" onclick="closeBS('fail')"></div>
+<div class="bs" id="failBS">
+  <div class="bs-handle"></div>
+  <div class="bs-title" style="position:relative;">실패 사유 선택<button class="bs-close" onclick="closeBS('fail')">✕</button></div>
+  <div class="chip-grid" id="failReasonGrid">
+    <button class="sel-chip" data-v="price" onclick="chip(this,'failReason')">가격 이유</button>
+    <button class="sel-chip" data-v="no_device" onclick="chip(this,'failReason')">원하는 기기 없음</button>
+    <button class="sel-chip" data-v="competitor" onclick="chip(this,'failReason')">타사로 결정</button>
+    <button class="sel-chip" data-v="no_response" onclick="chip(this,'failReason')">연락 두절</button>
+    <button class="sel-chip" data-v="delay" onclick="chip(this,'failReason')">개통 보류</button>
+    <button class="sel-chip" data-v="etc" onclick="chip(this,'failReason')">기타</button>
+  </div>
+  <div class="bs-memo">
+    <textarea id="failMemo" placeholder="메모 (선택)" maxlength="200"></textarea>
+  </div>
+  <button class="bs-submit red" onclick="submitFail()">실패 처리</button>
+</div>
+
+<!-- 메모 -->
+<div class="bs-ov" id="memoOv" onclick="closeBS('memo')"></div>
+<div class="bs" id="memoBS">
+  <div class="bs-handle"></div>
+  <div class="bs-title" style="position:relative;">메모 추가<button class="bs-close" onclick="closeBS('memo')">✕</button></div>
+  <div class="bs-memo" style="padding-top:12px;">
+    <textarea id="memoInp" placeholder="메모를 입력하세요" maxlength="200" style="height:100px;" oninput="$('memoInpCnt').textContent=this.value.length+'/200'"></textarea>
+    <div class="bs-memo-cnt" id="memoInpCnt">0/200</div>
+  </div>
+  <button class="bs-submit blue" onclick="submitMemo()">저장</button>
+</div>
+
+<!-- 담당자 배정 -->
+<div class="bs-ov" id="assignOv" onclick="closeBS('assign')"></div>
+<div class="bs" id="assignBS">
+  <div class="bs-handle"></div>
+  <div class="bs-title" style="position:relative;">담당자 배정<button class="bs-close" onclick="closeBS('assign')">✕</button></div>
+  <div class="chip-grid" id="assignGrid">
+    <button class="sel-chip" data-v="여인국|남양시장점" onclick="chip(this,'assignStaff')">여인국<br><span style="font-size:10px;color:var(--muted);">남양시장점</span></button>
+    <button class="sel-chip" data-v="황제필|중곡점" onclick="chip(this,'assignStaff')">황제필<br><span style="font-size:10px;color:var(--muted);">중곡점</span></button>
+    <button class="sel-chip" data-v="강용민|구미사점" onclick="chip(this,'assignStaff')">강용민<br><span style="font-size:10px;color:var(--muted);">구미사점</span></button>
+    <button class="sel-chip" data-v="|미배정" onclick="chip(this,'assignStaff')">미배정</button>
+  </div>
+  <button class="bs-submit blue" onclick="submitAssign()">배정 완료</button>
+</div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import{getDatabase,ref,onValue,update}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const FB={
+  apiKey:"AIzaSyBCaJiSuWRHMySOXfBPg2JB7UoE1XKQEqw",
+  authDomain:"vivid-admin-1a34d.firebaseapp.com",
+  databaseURL:"https://vivid-admin-1a34d-default-rtdb.firebaseio.com",
+  projectId:"vivid-admin-1a34d",
+  storageBucket:"vivid-admin-1a34d.appspot.com",
+  messagingSenderId:"965617557821",
+  appId:"1:965617557821:web:crm-mobile"
+};
+const app=initializeApp(FB);
+const db=getDatabase(app);
+
+// ── 상태 ──
+let ALL=[];
+let selId=null;
+let curTab='urgent';
+let sortMode='urgent';
+let detCurTab='info';
+
+const $=id=>document.getElementById(id);
+
+const bsState={
+  absReason:null,absTime:null,absSms:null,
+  rcReason:null,rcTime:null,
+  failReason:null,assignStaff:null,
+};
+
+// ── 시간 유틸 ──
+const now=()=>Date.now();
+const elapsed=ts=>ts?now()-ts:0;
+const fmt=ts=>{
+  if(!ts)return'-';
+  const d=new Date(ts);
+  const mo=d.getMonth()+1,da=d.getDate();
+  const h=String(d.getHours()).padStart(2,'0'),mi=String(d.getMinutes()).padStart(2,'0');
+  const today=new Date();
+  if(d.toDateString()===today.toDateString())return`오늘 ${h}:${mi}`;
+  return`${mo}/${da} ${h}:${mi}`;
+};
+const elapsedLabel=ms=>{
+  if(ms<0)return'-';
+  const m=Math.floor(ms/60000);
+  if(m<60)return m+'분 전';
+  const h=Math.floor(m/60);
+  if(h<24)return h+'시간 '+(m%60?m%60+'분 ':'')+'전';
+  return Math.floor(h/24)+'일 전';
+};
+const elapsedClass=ms=>{
+  const m=ms/60000;
+  if(m>=60)return'cel-charcoal blink';
+  if(m>=30)return'cel-red';
+  if(m>=10)return'cel-orange';
+  return'cel-green';
+};
+const barClass=(status,ms)=>{
+  if(status==='개통완료')return'cbar-green';
+  if(status==='실패')return'cbar-gray';
+  if(status==='재케어')return'cbar-purple';
+  if(status==='부재케어')return'cbar-orange';
+  if(status==='확인필요')return'cbar-blue';
+  const m=ms/60000;
+  if(m>=60)return'cbar-charcoal';
+  if(m>=30)return'cbar-red';
+  if(m>=10)return'cbar-yellow';
+  return'cbar-blue';
+};
+const statusBadge=(s)=>{
+  const map={신규:'blue',연락중:'blue',상담중:'blue',재케어:'purple',부재케어:'orange',확인필요:'pink',개통완료:'green',실패:'gray'};
+  return`<span class="badge badge-${map[s]||'gray'}">${s||'신규'}</span>`;
+};
+const calcNext=(val,customId)=>{
+  const n=now();
+  if(val==='30m')return n+1800000;
+  if(val==='1h')return n+3600000;
+  if(val==='afternoon'){const d=new Date();d.setHours(17,0,0,0);return d.getTime();}
+  if(val==='tomorrow'){const d=new Date();d.setDate(d.getDate()+1);d.setHours(10,0,0,0);return d.getTime();}
+  if(val==='custom'){const v=$(customId)?.value;return v?new Date(v).getTime():n+3600000;}
+  return n+3600000;
+};
+
+// ── Firebase 로드 ──
+function initApp(){
+  $('appLoading').style.display='none';
+  if(isMobile){
+    $('app').style.display='flex';
+    $('app').style.flexDirection='column';
+    $('app').style.height='100vh';
+    renderAll();
+  } else {
+    const pcApp=document.getElementById('pcApp');
+    if(pcApp){pcApp.classList.add('show');}
+    initPCDate();
+    renderKPI();renderDashboard();renderDbTable();renderUrgentTable();
+    renderRecareTable();renderAbsenceTable();renderDoneTable();renderFailTable();
+    renderStatStaff();renderStatStore();
+  }
+}
+
+// 5초 안에 Firebase 응답 없으면 빈 화면으로라도 열기
+const loadTimeout=setTimeout(()=>{ if($('appLoading').style.display!=='none') initApp(); },5000);
+
+onValue(ref(db,'consultations'),snap=>{
+  clearTimeout(loadTimeout);
+  const raw=snap.val()||{};
+  ALL=Object.entries(raw).map(([k,v])=>({_id:k,...v}))
+    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  initApp();
+},(err)=>{
+  clearTimeout(loadTimeout);
+  console.warn('Firebase 연결 실패:', err.message);
+  initApp();
+});
+
+setInterval(()=>{
+  if(isMobile){renderAll();}
+  else{renderKPI();renderDashboard();renderDbTable();renderUrgentTable();}
+}, 30000);
+
+function renderAll(){
+  renderTabs();
+  renderUrgBar();
+  renderList();
+}
+
+// ── 탭 카운트 ──
+function renderTabs(){
+  const urgent=ALL.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsed(c.createdAt)>=600000);
+  const newList=ALL.filter(c=>['신규','연락중'].includes(c.status)||(!c.status));
+  const recare=ALL.filter(c=>c.status==='재케어');
+  const absence=ALL.filter(c=>c.status==='부재케어');
+  $('tc-urgent').textContent=urgent.length;
+  $('tc-new').textContent=newList.length;
+  $('tc-recare').textContent=recare.length;
+  $('tc-absence').textContent=absence.length;
+}
+
+// ── 긴급 요약바 ──
+function renderUrgBar(){
+  const over1h=ALL.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsed(c.createdAt)>=3600000);
+  const over30=ALL.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsed(c.createdAt)>=1800000&&elapsed(c.createdAt)<3600000);
+  const rcOver=ALL.filter(c=>c.status==='재케어'&&c.nextContactAt&&c.nextContactAt<now());
+  const total=over1h.length+over30.length+rcOver.length;
+  const bar=$('urgBar');
+  if(!total){bar.classList.add('hide');return;}
+  bar.classList.remove('hide');
+  const parts=[];
+  if(over1h.length)parts.push(`1시간 이상 ${over1h.length}건`);
+  if(over30.length)parts.push(`30분 이상 ${over30.length}건`);
+  if(rcOver.length)parts.push(`재케어 초과 ${rcOver.length}건`);
+  $('urgBarText').textContent=`⚠️ 지금 처리할 고객 ${total}건 · `+parts.join(' · ');
+}
+
+// ── 목록 필터 ──
+function getList(){
+  const q=$('searchInp').value.toLowerCase();
+  const myName=localStorage.getItem('crm_staff')||'';
+  const myStore=localStorage.getItem('crm_store')||'';
+  let list;
+  switch(curTab){
+    case'urgent': list=ALL.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsed(c.createdAt)>=600000); break;
+    case'new':    list=ALL.filter(c=>['신규','연락중'].includes(c.status)||(!c.status)); break;
+    case'recare': list=ALL.filter(c=>c.status==='재케어'); break;
+    case'absence':list=ALL.filter(c=>c.status==='부재케어'); break;
+    case'mine':   list=myName?ALL.filter(c=>c.assignedTo===myName):ALL; break;
+    case'store':  list=myStore?ALL.filter(c=>c.assignedStore===myStore):ALL; break;
+    default:      list=ALL;
+  }
+  if(q)list=list.filter(c=>`${c.name||''}${c.phone||''}`.toLowerCase().includes(q));
+  if(sortMode==='urgent')list.sort((a,b)=>elapsed(b.createdAt)-elapsed(a.createdAt));
+  return list;
+}
+
+function renderList(){
+  const list=getList();
+  if(!list.length){
+    $('cardList').innerHTML=`<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">처리할 고객이 없습니다</div></div>`;
+    return;
+  }
+  $('cardList').innerHTML=list.map(c=>makeCard(c)).join('');
+}
+
+// ── 카드 생성 ──
+function makeCard(c){
+  const ms=elapsed(c.createdAt);
+  const bc=barClass(c.status,ms);
+  const ec=elapsedClass(ms);
+  const isUrg=ms>=1800000&&!['개통완료','실패'].includes(c.status);
+
+  // 지연 배지
+  let delayBadge='';
+  if(!['개통완료','실패','재케어','부재케어'].includes(c.status)){
+    if(ms>=3600000)delayBadge='<span class="badge badge-charcoal blink">1시간+ 지연</span>';
+    else if(ms>=1800000)delayBadge='<span class="badge badge-red">30분 지연</span>';
+    else if(ms>=600000)delayBadge='<span class="badge badge-yellow">10분+</span>';
+  }
+  if(c.status==='재케어'&&c.nextContactAt&&c.nextContactAt<now())delayBadge='<span class="badge badge-orange">재케어 시간 초과</span>';
+  if(c.status==='부재케어'&&c.nextContactAt&&c.nextContactAt<now())delayBadge='<span class="badge badge-orange">재시도 필요</span>';
+
+  // 부재케어 횟수 배지
+  const absCnt=c.absenceCount?`<span class="badge badge-orange">부재케어 ${c.absenceCount}회</span>`:'';
+  const rcCnt=c.recareCount?`<span class="badge badge-purple">재케어 ${c.recareCount}회</span>`:'';
+
+  // 정보 2단
+  let info='';
+  if(c.status==='재케어'){
+    const reasons={family_discussion:'가족과 상의',customer_request:'고객 요청',policy_check:'정책 확인',stock_check:'재고 확인',visit_scheduled:'방문 예정',etc:'기타'};
+    info=`<div class="cinfo">${reasons[c.recareReason]||c.recareReason||'재케어 사유 없음'}<br>다음 연락: ${fmt(c.nextContactAt)}</div>`;
+  } else if(c.status==='부재케어'){
+    const reasons={no_answer:'전화 미수신',busy:'통화중',power_off:'전원 꺼짐',call_reject:'수신 거부',invalid_number:'잘못된 번호',sms_after_retry:'문자 후 재시도',etc:'기타'};
+    info=`<div class="cinfo">마지막 연락: ${fmt(c.lastContactAt)} · ${reasons[c.absenceReason]||'미수신'}<br>다음 연락 예정: ${fmt(c.nextContactAt)}</div>`;
+  } else {
+    const parts=[];
+    if(c.device)parts.push(c.device+(c.storage?' '+c.storage:'')+(c.color?' / '+c.color:''));
+    if(c.discount)parts.push(c.discount);
+    if(c.plan)parts.push(c.plan);
+    info=`<div class="cinfo">${parts.join(' · ')||'-'}</div>`;
+  }
+
+  // 액션 버튼
+  let actions='';
+  const unassigned=!c.assignedTo;
+  if(unassigned){
+    actions=`
+      <button class="ca-btn outline-blue" onclick="event.stopPropagation();selId='${c._id}';openBS('assign')">👤 담당자 배정</button>
+      <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">연락 시작</button>
+      <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+  } else if(c.status==='재케어'){
+    actions=`
+      <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">전화</button>
+      <button class="ca-btn outline-purple" onclick="event.stopPropagation();selId='${c._id}';openBS('rc')">재케어 연장</button>
+      <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+  } else if(c.status==='부재케어'){
+    actions=`
+      <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">전화</button>
+      <button class="ca-btn" onclick="event.stopPropagation();selId='${c._id}';openBS('abs')">부재 추가</button>
+      <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+  } else {
+    actions=`
+      <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">연락 시작</button>
+      <button class="ca-btn" onclick="event.stopPropagation();selId='${c._id}';openBS('abs')">부재</button>
+      <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+  }
+
+  return`<div class="ccard${isUrg?' urg-bg':''}" onclick="openDet('${c._id}')">
+    <div class="cbar ${bc}"></div>
+    <div class="cbody">
+      <div class="ctop">
+        ${statusBadge(c.status||'신규')}${absCnt}${rcCnt}${delayBadge}
+        <span class="celapsed ${ec}">${elapsedLabel(ms)}</span>
+      </div>
+      <div class="cname">${c.name||'-'}</div>
+      <div class="cphone">${c.phone||'-'}</div>
+      ${info}
+      <div class="cmeta">
+        <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        ${c.assignedStore||'매장 미배정'} · ${c.assignedTo||'<span style="color:var(--red);font-weight:700;">담당자 미지정</span>'}
+        ${c.nextContactAt&&!['개통완료','실패'].includes(c.status)?`<span style="margin-left:4px;">· 다음: ${fmt(c.nextContactAt)}</span>`:''}
+      </div>
+    </div>
+    <button class="ccall-btn" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">
+      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+    </button>
+    <div class="cactions">${actions}</div>
+  </div>`;
+}
+
+
+// ── PC/모바일 감지 ──
+const isMobile = window.innerWidth < 900 || /Mobi|Android/i.test(navigator.userAgent);
+
+// PC용 추가 JS
+// ── KPI ──
+function renderKPI(){
+  const today=allConsults.filter(c=>isToday(c.createdAt));
+  const thisMonth=allConsults.filter(c=>isThisMonth(c.createdAt));
+  const now=Date.now();
+
+  $('kpi-today').textContent=today.length;
+  $('kpi-unassigned').textContent=allConsults.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
+
+  const delay30=allConsults.filter(c=>{
+    if(['개통완료','실패'].includes(c.status))return false;
+    const m=elapsedMs(c.createdAt)/60000;
+    return m>=30;
+  });
+  $('kpi-delay30').textContent=delay30.length;
+
+  const recarePending=allConsults.filter(c=>c.status==='재케어');
+  $('kpi-recare').textContent=recarePending.length;
+  $('kpi-absence').textContent=allConsults.filter(c=>c.status==='부재케어').length;
+
+  const done=thisMonth.filter(c=>c.status==='개통완료');
+  $('kpi-done').textContent=done.length;
+  const rate=thisMonth.length?Math.round(done.length/thisMonth.length*100):0;
+  $('kpi-done-rate').textContent=`개통률 ${rate}%`;
+
+  // 긴급
+  $('urg-1h').textContent=allConsults.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=3600000).length;
+  $('urg-recare').textContent=allConsults.filter(c=>c.status==='재케어'&&c.nextContactAt&&c.nextContactAt<now).length;
+  $('urg-absence').textContent=allConsults.filter(c=>c.status==='부재케어'&&c.nextContactAt&&c.nextContactAt<now).length;
+  $('urg-unassign').textContent=allConsults.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
+
+  // 배지
+  const newCount=allConsults.filter(c=>c.status==='신규').length;
+  $('nav-badge-new').textContent=newCount;
+  $('nav-badge-urgent').textContent=delay30.length;
+
+  // 총 건수
+  $('pc-total-count').textContent=`총 ${allConsults.length}건`;
+
+  // 날짜
+  const now2=new Date();
+  const days=['일','월','화','수','목','금','토'];
+  $('pc-today-date').textContent=`${now2.getFullYear()}.${String(now2.getMonth()+1).padStart(2,'0')}.${String(now2.getDate()).padStart(2,'0')} (${days[now2.getDay()]})`;
+}
+
+// ── 테이블 공통 행 생성 ──
+function makeRow(c){
+  const ms=elapsedMs(c.createdAt);
+  const ec=elapsedClass(ms,c.status);
+  const sc=statusColor(c.status);
+  const bc=barColor(c.status,ms);
+  const barStyle=`background:var(--${bc.replace('bar-','')});width:3px;height:28px;border-radius:2px;display:inline-block;margin-right:6px;vertical-align:middle;`;
+  return `
+    <tr onclick="selectConsult('${c._id}')" ${ms>=1800000&&!['개통완료','실패'].includes(c.status)?'class="row-urgent"':''}>
+      <td><input type="checkbox" class="row-chk" data-id="${c._id}" onclick="event.stopPropagation()"></td>
+      <td>${fmtDate(c.createdAt)}</td>
+      <td><span class="${ec}">${elapsedLabel(ms)}</span></td>
+      <td style="font-weight:700;">${c.name||'-'}</td>
+      <td style="color:var(--blue);">${c.phone||'-'}</td>
+      <td><span class="badge badge-${sc}">${c.status||'신규'}</span></td>
+      <td style="color:var(--muted);">${c.nextContactAt?fmtDate(c.nextContactAt):'-'}</td>
+      <td>${c.device||'-'} ${c.storage?'·'+c.storage:''}</td>
+      <td style="font-size:11px;">${c.plan||'-'}</td>
+      <td style="font-size:11px;">${c.assignedStore||'미배정'} ${c.assignedTo?'·'+c.assignedTo:''}</td>
+      <td style="font-size:11px;color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis;">${c.latestMemo||''}</td>
+    </tr>`;
+}
+
+// ── 대시보드 테이블 ──
+function renderDashboard(){
+  const rows=allConsults.slice(0,10).map(c=>{
+    const ms=elapsedMs(c.createdAt);
+    const ec=elapsedClass(ms,c.status);
+    const sc=statusColor(c.status);
+    return `<tr onclick="selectConsult('${c._id}')">
+      <td>${fmtDate(c.createdAt)}</td>
+      <td><span class="${ec}">${elapsedLabel(ms)}</span></td>
+      <td style="font-weight:700;">${c.name||'-'}</td>
+      <td style="color:var(--blue);">${c.phone||'-'}</td>
+      <td><span class="badge badge-${sc}">${c.status||'신규'}</span></td>
+      <td>${c.device||'-'}</td>
+      <td style="font-size:11px;">${c.plan||'-'}</td>
+      <td style="font-size:11px;">${c.assignedStore||'미배정'} ${c.assignedTo?'·'+c.assignedTo:''}</td>
+    </tr>`;
+  }).join('');
+  $('dashboard-tbody').innerHTML=rows||'<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">접수된 상담이 없습니다</td></tr>';
+}
+
+// ── 상담 DB 테이블 ──
+let dbPage=1;const DB_PER_PAGE=20;
+function renderDbTable(){
+  const search=$('dbSearch')?.value.toLowerCase()||'';
+  const period=$('f-period')?.value||'all';
+  const status=$('f-status')?.value||'';
+  const store=$('f-store')?.value||'';
+  const staff=$('f-staff')?.value||'';
+  const now=Date.now();
+
+  let list=allConsults.filter(c=>{
+    if(search&&!`${c.name}${c.phone}${c.device}`.toLowerCase().includes(search))return false;
+    if(status&&c.status!==status)return false;
+    if(store&&c.assignedStore!==store)return false;
+    if(staff&&c.assignedTo!==staff)return false;
+    if(period==='today'&&!isToday(c.createdAt))return false;
+    if(period==='yesterday'){const d=new Date(c.createdAt),n=new Date();d.setDate(d.getDate()+1);if(!isToday(d.getTime()))return false;}
+    if(period==='week'&&now-c.createdAt>7*86400000)return false;
+    if(period==='month'&&!isThisMonth(c.createdAt))return false;
+    return true;
+  });
+
+  $('db-count-label').textContent=`총 ${list.length}건`;
+  const start=(dbPage-1)*DB_PER_PAGE;
+  const page=list.slice(start,start+DB_PER_PAGE);
+  $('dbTbody').innerHTML=page.map(c=>makeRow(c)).join('')||'<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--muted);">결과 없음</td></tr>';
+
+  // 페이지네이션
+  const total=Math.ceil(list.length/DB_PER_PAGE);
+  let pg='';
+  for(let i=1;i<=Math.min(total,10);i++)pg+=`<button class="page-btn${i===dbPage?' active':''}" onclick="dbGoPage(${i})">${i}</button>`;
+  $('dbPagination').innerHTML=pg;
+}
+window.dbGoPage=p=>{dbPage=p;renderDbTable();};
+
+function resetFilters(){
+  $('dbSearch').value='';
+  $('f-period').value='all';
+  $('f-status').value='';
+  $('f-store').value='';
+  $('f-staff').value='';
+  renderDbTable();
+}
+
+// ── 기타 테이블들 ──
+function renderUrgentTable(){
+  const list=allConsults.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=600000);
+  $('urgentTbody').innerHTML=list.map(c=>{
+    const ms=elapsedMs(c.createdAt);
+    return`<tr onclick="selectConsult('${c._id}')" class="${ms>=1800000?'row-urgent':''}">
+      <td>${fmtDate(c.createdAt)}</td>
+      <td><span class="${elapsedClass(ms,c.status)} blink">${elapsedLabel(ms)}</span></td>
+      <td style="font-weight:700;">${c.name||'-'}</td>
+      <td style="color:var(--blue);">${c.phone||'-'}</td>
+      <td><span class="badge badge-${statusColor(c.status)}">${c.status||'신규'}</span></td>
+      <td style="font-size:11px;">${c.assignedStore||'미배정'} ${c.assignedTo?'·'+c.assignedTo:''}</td>
+      <td>${c.device||'-'}</td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">긴급 건 없음</td></tr>';
+}
+
+function renderRecareTable(){
+  const list=allConsults.filter(c=>c.status==='재케어');
+  $('recareTbody').innerHTML=list.map(c=>`
+    <tr onclick="selectConsult('${c._id}')">
+      <td>${fmtDate(c.createdAt)}</td><td style="font-weight:700;">${c.name||'-'}</td>
+      <td style="color:var(--blue);">${c.phone||'-'}</td>
+      <td style="font-size:11px;">${c.recareReason||'-'}</td>
+      <td>${c.nextContactAt?fmtDate(c.nextContactAt):'-'}</td>
+      <td>${c.assignedTo||'미지정'}</td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted);">재케어 건 없음</td></tr>';
+}
+
+function renderAbsenceTable(){
+  const list=allConsults.filter(c=>c.status==='부재케어');
+  $('absenceTbody').innerHTML=list.map(c=>`
+    <tr onclick="selectConsult('${c._id}')">
+      <td>${fmtDate(c.createdAt)}</td><td style="font-weight:700;">${c.name||'-'}</td>
+      <td style="color:var(--blue);">${c.phone||'-'}</td>
+      <td style="font-size:11px;">${c.absenceReason||'-'}</td>
+      <td style="text-align:center;">${c.absenceCount||1}회</td>
+      <td>${c.nextContactAt?fmtDate(c.nextContactAt):'-'}</td>
+      <td>${c.assignedTo||'미지정'}</td>
+    </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">부재케어 건 없음</td></tr>';
+}
+
+function renderDoneTable(){
+  const list=allConsults.filter(c=>c.status==='개통완료');
+  $('doneTbody').innerHTML=list.map(c=>`
+    <tr onclick="selectConsult('${c._id}')">
+      <td>${fmtDate(c.createdAt)}</td><td>${fmtDate(c.doneAt)}</td>
+      <td style="font-weight:700;">${c.name||'-'}</td>
+      <td>${c.device||'-'}</td>
+      <td style="font-size:11px;">${c.plan||'-'}</td>
+      <td>${c.discount||'-'}</td>
+      <td>${c.assignedTo||'-'}</td>
+    </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">개통완료 건 없음</td></tr>';
+}
+
+function renderFailTable(){
+  const list=allConsults.filter(c=>c.status==='실패');
+  $('failTbody').innerHTML=list.map(c=>`
+    <tr onclick="selectConsult('${c._id}')">
+      <td>${fmtDate(c.createdAt)}</td><td style="font-weight:700;">${c.name||'-'}</td>
+      <td style="color:var(--blue);">${c.phone||'-'}</td>
+      <td>${c.failReason||'-'}</td>
+      <td>${c.device||'-'}</td>
+      <td>${c.assignedTo||'-'}</td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted);">실패 건 없음</td></tr>';
+}
+
+// ── 실적 ──
+function renderStatStaff(){
+  const staffs=['여인국','황제필','강용민'];
+  $('statStaffTbody').innerHTML=staffs.map(s=>{
+    const mine=allConsults.filter(c=>c.assignedTo===s);
+    const done=mine.filter(c=>c.status==='개통완료');
+    const rate=mine.length?Math.round(done.length/mine.length*100):0;
+    const store=s==='여인국'?'남양시장점':s==='황제필'?'중곡점':'구미사점';
+    return`<tr>
+      <td style="font-weight:700;">${s}</td><td style="font-size:11px;">${store}</td>
+      <td>${mine.length}</td>
+      <td>${mine.filter(c=>c.firstContactAt).length}</td>
+      <td>${mine.filter(c=>c.status==='상담중').length}</td>
+      <td>${mine.filter(c=>c.status==='재케어').length}</td>
+      <td style="color:var(--green);font-weight:700;">${done.length}</td>
+      <td>${mine.filter(c=>c.status==='실패').length}</td>
+      <td style="font-weight:700;">${rate}%</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderStatStore(){
+  const stores=['남양시장점','중곡점','구미사점'];
+  $('statStoreTbody').innerHTML=stores.map(s=>{
+    const mine=allConsults.filter(c=>c.assignedStore===s);
+    const done=mine.filter(c=>c.status==='개통완료');
+    const rate=mine.length?Math.round(done.length/mine.length*100):0;
+    const todayCount=mine.filter(c=>isToday(c.createdAt)).length;
+    return`<tr>
+      <td style="font-weight:700;">${s}</td><td>${todayCount}</td>
+      <td>${mine.filter(c=>!c.assignedTo).length}</td>
+      <td style="color:var(--red);">${mine.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=1800000).length}</td>
+      <td style="color:var(--green);font-weight:700;">${done.length}</td>
+      <td style="font-weight:700;">${rate}%</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── PC 고객 상세 ──
+function selectConsult(id){
+  selectedId=id;
+  const c=allConsults.find(x=>x._id===id);
+  if(!c)return;
+  if(isMobile){openMDetail(c);return;}
+  const panel=$('pcDetailPanel');
+  panel.classList.add('open');
+  const ms=elapsedMs(c.createdAt);
+  $('pcDetailBody').innerHTML=`
+    <div class="detail-name">${c.name||'-'}</div>
+    <div class="detail-phone-row">
+      <div class="detail-phone">${c.phone||'-'}</div>
+      <a href="tel:${(c.phone||'').replace(/-/g,'')}" class="btn btn-primary btn-sm">📞 전화</a>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:14px;">
+      <span class="badge badge-${statusColor(c.status)}">${c.status||'신규'}</span>
+      ${ms>=1800000?`<span class="badge badge-red blink">${elapsedLabel(ms)} 경과</span>`:`<span class="badge badge-gray">${elapsedLabel(ms)} 경과</span>`}
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">기본 정보</div>
+      <div class="detail-row"><div class="detail-key">매장</div><div class="detail-val">${c.assignedStore||'미배정'}</div></div>
+      <div class="detail-row"><div class="detail-key">담당자</div><div class="detail-val">${c.assignedTo||'미지정'}</div></div>
+      <div class="detail-row"><div class="detail-key">접수</div><div class="detail-val">${fmtDate(c.createdAt)}</div></div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">신청 조건</div>
+      <div class="detail-row"><div class="detail-key">현재 통신사</div><div class="detail-val">${c.carrier||'-'}</div></div>
+      <div class="detail-row"><div class="detail-key">가입 유형</div><div class="detail-val">${c.joinType||'-'}</div></div>
+      <div class="detail-row"><div class="detail-key">기기</div><div class="detail-val">${c.device||'-'}</div></div>
+      <div class="detail-row"><div class="detail-key">용량</div><div class="detail-val">${c.storage||'-'}</div></div>
+      <div class="detail-row"><div class="detail-key">색상</div><div class="detail-val">${c.color||'-'}</div></div>
+      <div class="detail-row"><div class="detail-key">요금제</div><div class="detail-val">${c.plan||'-'}</div></div>
+      <div class="detail-row"><div class="detail-key">할인 방식</div><div class="detail-val">${c.discount||'-'}</div></div>
+      <div class="detail-row"><div class="detail-key">상담 시간</div><div class="detail-val">${c.consultTime||'-'}</div></div>
+      <div class="detail-row"><div class="detail-key">인터넷/TV</div><div class="detail-val">${c.internetTV||'아니요'}</div></div>
+      <div class="detail-row"><div class="detail-key">고객 메모</div><div class="detail-val">${c.memo||'-'}</div></div>
+    </div>
+    <button class="accordion-btn" onclick="toggleAccordion('acc-history')">연락 이력 (${(c.contactHistory||[]).length}) <span>▼</span></button>
+    <div class="accordion-body" id="acc-history">
+      ${(c.contactHistory||[]).map(h=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--line);">${fmtDate(h.at)} · ${h.result||'-'} · ${h.by||'-'}</div>`).join('')||'<div style="font-size:12px;color:var(--muted);">이력 없음</div>'}
+    </div>
+    <button class="accordion-btn" onclick="toggleAccordion('acc-status')">상태 변경 이력 (${(c.statusHistory||[]).length}) <span>▼</span></button>
+    <div class="accordion-body" id="acc-status">
+      ${(c.statusHistory||[]).map(h=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--line);">${fmtDate(h.at)} · ${h.from||'-'} → ${h.to||'-'}</div>`).join('')||'<div style="font-size:12px;color:var(--muted);">이력 없음</div>'}
+    </div>
+  `;
+}
+window.selectConsult=selectConsult;
+window.toggleAccordion=id=>{$$(id)?.classList.toggle('open');};
+function $$(id){return document.getElementById(id);}
+
+function closePcDetail(){$('pcDetailPanel').classList.remove('open');}
+window.closePcDetail=closePcDetail;
+
+// ── PC 네비 ──
+function pcNav(page){
+  document.querySelectorAll('.pc-nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.pc-page').forEach(el=>el.classList.remove('active'));
+  const p=$(`page-${page}`);
+  if(p)p.classList.add('active');
+  event?.target?.classList.add('active');
+}
+window.pcNav=pcNav;
+
+// ── CSV 다운로드 ──
+function downloadCSV(){
+  const headers=['접수시간','경과','고객명','전화번호','생년월일','현재통신사','가입유형','기기','용량','색상','요금제','할인방식','상담희망시간','인터넷TV','상태','매장','담당자','메모'];
+  const rows=allConsults.map(c=>[
+    fmtDate(c.createdAt),elapsedLabel(elapsedMs(c.createdAt)),
+    c.name||'',c.phone||'',c.birthdate||'',c.carrier||'',c.joinType||'',
+    c.device||'',c.storage||'',c.color||'',c.plan||'',c.discount||'',
+    c.consultTime||'',c.internetTV||'',c.status||'신규',
+    c.assignedStore||'',c.assignedTo||'',c.memo||''
+  ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv='\uFEFF'+[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`VIVID_CRM_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+window.downloadCSV=downloadCSV;
+window.resetFilters=resetFilters;
+window.toggleAllCheck=el=>{document.querySelectorAll('.row-chk').forEach(c=>c.checked=el.checked);};
+
+// ══════════════════════════════════════════
+// 모바일
+// ══════════════════════════════════════════
+
+// PC 날짜
+function initPCDate(){
+  const now2=new Date();
+  const days=['일','월','화','수','목','금','토'];
+  const el=document.getElementById('pc-today-date');
+  if(el) el.textContent=`${now2.getFullYear()}.${String(now2.getMonth()+1).padStart(2,'0')}.${String(now2.getDate()).padStart(2,'0')} (${days[now2.getDay()]})`;
+}
+
+function pcSelectConsult(id){
+  selId=id;
+  const c=ALL.find(x=>x._id===id);
+  if(!c)return;
+  const panel=document.getElementById('pcDetailPanel');
+  panel.classList.add('open');
+  const ms=elapsed(c.createdAt);
+  const ec=elapsedClass(ms);
+  document.getElementById('pcDetailBody').innerHTML=`
+    <div class="detail-name">${c.name||'-'}</div>
+    <div class="detail-phone-row">
+      <div class="detail-phone">${c.phone||'-'}</div>
+      <a href="tel:${(c.phone||'').replace(/-/g,'')}" class="btn btn-primary btn-sm" style="padding:0 12px;height:30px;border-radius:6px;background:var(--blue);color:#fff;display:inline-flex;align-items:center;text-decoration:none;font-size:12px;font-weight:700;">📞 전화</a>
+    </div>
+    <div style="display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap;">
+      ${statusBadge(c.status||'신규')}
+      <span class="badge badge-gray">${elapsedLabel(ms)} 경과</span>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;">기본 정보</div>
+    ${[
+      ['매장',c.assignedStore||'미배정'],['담당자',c.assignedTo||'미지정'],
+      ['접수',fmt(c.createdAt)],['통신사',c.carrier||'-'],
+      ['가입유형',c.joinType||'-'],['기기',c.device||'-'],
+      ['용량',c.storage||'-'],['색상',c.color||'-'],
+      ['요금제',c.plan||'-'],['할인방식',c.discount||'-'],
+      ['상담시간',c.consultTime||'-'],['인터넷TV',c.internetTV||'아니요'],
+      ['고객메모',c.memo||'-']
+    ].map(([k,v])=>`<div class="detail-row"><div class="detail-key">${k}</div><div class="detail-val">${v}</div></div>`).join('')}
+    <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;">연락 이력 (${(c.contactHistory||[]).length})</div>
+    ${(c.contactHistory||[]).slice().reverse().map(h=>`<div style="font-size:11px;padding:4px 0;border-bottom:1px solid var(--line);">${fmt(h.at)} · ${h.result||'-'} · ${h.by||'-'}</div>`).join('')||'<div style="font-size:11px;color:var(--muted);">없음</div>'}
+  `;
+}
+window.selectConsult=pcSelectConsult;
+window.closePcDetail=function(){document.getElementById('pcDetailPanel')?.classList.remove('open');};
+window.toggleAllCheck=el=>{document.querySelectorAll('.row-chk').forEach(c=>c.checked=el.checked);};
+window.openPcStatusSheet=function(){selId=selId;openBS('st');};
+window.openPcAssignSheet=function(){openBS('assign');};
+window.openPcMemoSheet=function(){openBS('memo');};
+
+// ── 전화 ──
+function doCall(id,phone){
+  selId=id;
+  window.location.href=`tel:${phone}`;
+  setTimeout(()=>openBS('cr'),1200);
+}
+window.doCall=doCall;
+
+// ── 탭 전환 ──
+function switchTab(tab){
+  curTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));
+  renderList();
+}
+window.switchTab=switchTab;
+
+function toggleSort(){
+  sortMode=sortMode==='urgent'?'latest':'urgent';
+  $('sortLabel').textContent=sortMode==='urgent'?'긴급순':'최신순';
+  renderList();
+}
+window.toggleSort=toggleSort;
+
+function bottomNav(n){
+  if(n==='home')switchTab('urgent');
+  else if(n==='mine')switchTab('mine');
+  else if(n==='recare')switchTab('recare');
+  else if(n==='menu')openMenuBS();
+  document.querySelectorAll('.bnav').forEach((b,i)=>b.classList.toggle('on',['home','mine','recare','menu'][i]===n));
+}
+window.bottomNav=bottomNav;
+
+function doRefresh(){renderAll();}
+window.doRefresh=doRefresh;
+
+// ── 고객 상세 ──
+function openDet(id){
+  selId=id;
+  const c=ALL.find(x=>x._id===id);
+  if(!c)return;
+  detCurTab='info';
+  document.querySelectorAll('.det-tab').forEach((t,i)=>t.classList.toggle('on',i===0));
+  renderDetTop(c);
+  renderDetBody(c,'info');
+  $('detCallBtn').onclick=()=>doCall(id,(c.phone||'').replace(/-/g,''));
+  $('detailView').classList.add('open');
+}
+window.openDet=openDet;
+
+function closeDetail(){$('detailView').classList.remove('open');}
+window.closeDetail=closeDetail;
+
+function renderDetTop(c){
+  const ms=elapsed(c.createdAt);
+  const ec=elapsedClass(ms);
+  let delayBadge='';
+  if(ms>=3600000)delayBadge='<span class="badge badge-charcoal blink">1시간+ 지연</span>';
+  else if(ms>=1800000)delayBadge='<span class="badge badge-red">30분 지연</span>';
+  if(c.status==='재케어'&&c.nextContactAt&&c.nextContactAt<now())delayBadge='<span class="badge badge-orange">재케어 시간 초과</span>';
+  if(c.status==='부재케어'&&c.nextContactAt&&c.nextContactAt<now())delayBadge='<span class="badge badge-orange">재시도 필요</span>';
+
+  $('detTop').innerHTML=`
+    <div class="det-name">${c.name||'-'}</div>
+    <div class="det-phone-row">
+      <div class="det-phone">${c.phone||'-'}</div>
+      <button class="det-call-btn" onclick="doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">
+        <svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+      </button>
+    </div>
+    <div class="det-badges">
+      ${statusBadge(c.status||'신규')}
+      ${delayBadge}
+      <span class="badge badge-gray ${ec.includes('blink')?'blink':''}">${elapsedLabel(ms)} 경과</span>
+    </div>
+    <div class="det-meta">
+      <div class="det-meta-item">🏪 <span class="det-meta-val">${c.assignedStore||'미배정'}</span></div>
+      <div class="det-meta-item">👤 <span class="det-meta-val">${c.assignedTo||'미지정'}</span>
+        <button class="det-assign-btn" onclick="selId='${c._id}';openBS('assign')">변경</button>
+      </div>
+      <div class="det-meta-item">📅 <span class="det-meta-val">${fmt(c.createdAt)}</span></div>
+      ${c.nextContactAt?`<div class="det-meta-item">⏰ <span class="det-meta-val${c.nextContactAt<now()?' blink':''}">${fmt(c.nextContactAt)}</span></div>`:''}
+    </div>`;
+
+  // 탭 카운트 업데이트
+  $('dt-hist-cnt').textContent=(c.contactHistory||[]).length?`(${c.contactHistory.length})`:'';
+  $('dt-stat-cnt').textContent=(c.statusHistory||[]).length?`(${c.statusHistory.length})`:'';
+}
+
+function detTab(tab){
+  detCurTab=tab;
+  document.querySelectorAll('.det-tab').forEach((t,i)=>t.classList.toggle('on',['info','history','status','memo'][i]===tab));
+  const c=ALL.find(x=>x._id===selId);
+  if(c)renderDetBody(c,tab);
+}
+window.detTab=detTab;
+
+function renderDetBody(c,tab){
+  if(tab==='info'){
+    $('detBody').innerHTML=`
+      <div class="info-card">
+        <div class="info-row"><div class="info-key">현재 통신사</div><div class="info-val">${c.carrier||'-'}</div></div>
+        <div class="info-row"><div class="info-key">가입 유형</div><div class="info-val">${c.joinType||'-'}</div></div>
+        <div class="info-row"><div class="info-key">기기</div><div class="info-val">${c.device||'-'}</div></div>
+        <div class="info-row"><div class="info-key">용량</div><div class="info-val">${c.storage||'-'}</div></div>
+        <div class="info-row"><div class="info-key">색상</div><div class="info-val">${c.color||'-'}</div></div>
+        <div class="info-row"><div class="info-key">요금제</div><div class="info-val">${c.plan||'-'}</div></div>
+        <div class="info-row"><div class="info-key">할인 방식</div><div class="info-val">${c.discount||'-'}</div></div>
+        <div class="info-row"><div class="info-key">상담 시간</div><div class="info-val">${c.consultTime||'-'}</div></div>
+        <div class="info-row"><div class="info-key">인터넷/TV</div><div class="info-val">${c.internetTV||'아니요'}</div></div>
+        ${c.memo?`<div class="info-row"><div class="info-key">고객 메모</div><div class="info-val">${c.memo}</div></div>`:''}
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--sub);" onclick="selId='${c._id}';openBS('memo')">메모 추가</button>
+        <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--purple);background:#F5F3FF;font-size:12px;font-weight:700;color:var(--purple);" onclick="selId='${c._id}';openBS('rc')">재케어 예약</button>
+        <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--orange);background:#FFF7ED;font-size:12px;font-weight:700;color:var(--orange);" onclick="selId='${c._id}';openBS('abs')">부재 기록</button>
+      </div>`;
+  } else if(tab==='history'){
+    const hist=(c.contactHistory||[]).slice().reverse();
+    const icons={전화:'📞',부재:'📵',상담연결:'📞',재케어:'🔄',SMS:'💬'};
+    $('detBody').innerHTML=hist.length?`<div class="info-card"><div class="timeline">${hist.map(h=>`
+      <div class="tl-item">
+        <div class="tl-icon tl-icon-call">${icons[h.result]||'📞'}</div>
+        <div class="tl-content">
+          <div class="tl-time">${fmt(h.at)} · ${h.by||'담당자'}</div>
+          <div class="tl-result">${h.result||'-'}</div>
+          ${h.memo?`<div class="tl-memo">${h.memo}</div>`:''}
+          ${h.reason?`<div class="tl-memo">사유: ${h.reason}</div>`:''}
+        </div>
+      </div>`).join('')}</div></div>`:
+    '<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">연락 이력이 없습니다</div></div>';
+  } else if(tab==='status'){
+    const hist=(c.statusHistory||[]).slice().reverse();
+    $('detBody').innerHTML=hist.length?`<div class="info-card"><div class="timeline">${hist.map(h=>`
+      <div class="tl-item">
+        <div class="tl-icon tl-icon-status">🔄</div>
+        <div class="tl-content">
+          <div class="tl-time">${fmt(h.at)} · ${h.by||'담당자'}</div>
+          <div class="tl-result">${h.from||'-'} → ${h.to||'-'}</div>
+          ${h.reason?`<div class="tl-memo">사유: ${h.reason}</div>`:''}
+        </div>
+      </div>`).join('')}</div></div>`:
+    '<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">상태 이력이 없습니다</div></div>';
+  } else if(tab==='memo'){
+    $('detBody').innerHTML=`
+      <div class="info-card">
+        ${c.latestMemo?`<div class="info-row"><div class="info-key">최근 메모</div><div class="info-val">${c.latestMemo}</div></div>`:''}
+        ${c.adminMemo?`<div class="info-row"><div class="info-key">관리자 메모</div><div class="info-val">${c.adminMemo}</div></div>`:''}
+      </div>
+      <button style="width:100%;height:42px;border-radius:8px;border:1.5px solid var(--blue);background:var(--blue-light);font-size:13px;font-weight:700;color:var(--blue);" onclick="openBS('memo')">+ 메모 추가</button>`;
+  }
+}
+
+// ── 바텀시트 ──
+function openBS(key){
+  if(key==='abs'){resetChips('abs');$('absOv').classList.add('open');$('absBS').classList.add('open');}
+  else if(key==='rc'){resetChips('rc');$('rcOv').classList.add('open');$('rcBS').classList.add('open');}
+  else if(key==='cr'){$('crOv').classList.add('open');$('crBS').classList.add('open');}
+  else if(key==='st'){renderStatusList();$('stOv').classList.add('open');$('stBS').classList.add('open');}
+  else if(key==='fail'){resetChips('fail');$('failOv').classList.add('open');$('failBS').classList.add('open');}
+  else if(key==='memo'){$('memoInp').value='';$('memoOv').classList.add('open');$('memoBS').classList.add('open');}
+  else if(key==='assign'){resetChips('assign');$('assignOv').classList.add('open');$('assignBS').classList.add('open');}
+}
+function closeBS(key){
+  $(`${key}Ov`).classList.remove('open');
+  $(`${key}BS`).classList.remove('open');
+}
+window.openBS=openBS;
+window.closeBS=closeBS;
+
+function resetChips(prefix){
+  if(prefix==='abs'){
+    bsState.absReason=null;bsState.absTime=null;bsState.absSms=null;
+    ['absReasonGrid','absTimeGrid'].forEach(id=>document.querySelectorAll(`#${id} .sel-chip`).forEach(c=>c.classList.remove('on')));
+    document.querySelectorAll('.sms-chip').forEach(c=>c.classList.remove('on'));
+    $('absMemo').value='';$('absMemoCnt').textContent='0/200';
+    $('absDtPreview').classList.remove('show');$('absCustomDt').classList.remove('show');
+  } else if(prefix==='rc'){
+    bsState.rcReason=null;bsState.rcTime=null;
+    ['rcReasonGrid','rcTimeGrid'].forEach(id=>document.querySelectorAll(`#${id} .sel-chip`).forEach(c=>c.classList.remove('on')));
+    $('rcMemo').value='';$('rcMemoCnt').textContent='0/200';
+    $('rcDtPreview').classList.remove('show');$('rcCustomDt').classList.remove('show');
+  } else if(prefix==='fail'){
+    bsState.failReason=null;
+    document.querySelectorAll('#failReasonGrid .sel-chip').forEach(c=>c.classList.remove('on'));
+    $('failMemo').value='';
+  } else if(prefix==='assign'){
+    bsState.assignStaff=null;
+    document.querySelectorAll('#assignGrid .sel-chip').forEach(c=>c.classList.remove('on'));
+  }
+}
+
+// ── 칩 선택 ──
+window.chip=function(el,key){
+  el.closest('.chip-grid').querySelectorAll('.sel-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  bsState[key]=el.dataset.v;
+  // 시간 미리보기
+  if(key==='absTime'||key==='rcTime'){
+    const isAbs=key==='absTime';
+    const dt=calcNext(el.dataset.v,isAbs?'absCustomInp':'rcCustomInp');
+    const preview=isAbs?$('absDtPreview'):$('rcDtPreview');
+    const text=isAbs?$('absDtText'):$('rcDtText');
+    const custom=isAbs?$('absCustomDt'):$('rcCustomDt');
+    if(el.dataset.v==='custom'){
+      custom.classList.add('show');preview.classList.remove('show');
+    } else {
+      custom.classList.remove('show');
+      text.textContent=fmt(dt);
+      preview.classList.add('show');
+    }
+  }
+};
+window.smsChip=function(el,key){
+  el.closest('.sms-toggle').querySelectorAll('.sms-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  bsState[key]=el.dataset.v;
+};
+
+// ── 통화결과 ──
+window.onCallResult=async function(result){
+  closeBS('cr');
+  const c=ALL.find(x=>x._id===selId);
+  if(!c)return;
+  const n=now();
+  const histEntry={at:n,result,by:'담당자'};
+
+  if(result==='connected'){
+    const upd={};
+    upd[`consultations/${selId}/status`]='상담중';
+    upd[`consultations/${selId}/firstContactAt`]=c.firstContactAt||n;
+    upd[`consultations/${selId}/lastContactAt`]=n;
+    upd[`consultations/${selId}/contactHistory`]=[...(c.contactHistory||[]),histEntry];
+    pushStatHist(c,'상담중',upd);
+    await update(ref(db),upd);
+  } else if(result==='absence'){
+    openBS('abs');
+  } else if(result==='recare'){
+    openBS('rc');
+  } else if(result==='rejected'){
+    if(!confirm('거절로 처리하시겠습니까?'))return;
+    const upd={};
+    upd[`consultations/${selId}/status`]='실패';
+    upd[`consultations/${selId}/failReason`]='rejected';
+    upd[`consultations/${selId}/lastContactAt`]=n;
+    upd[`consultations/${selId}/contactHistory`]=[...(c.contactHistory||[]),histEntry];
+    pushStatHist(c,'실패',upd);
+    await update(ref(db),upd);
+  } else if(result==='invalid_number'){
+    const upd={};
+    upd[`consultations/${selId}/status`]='확인필요';
+    upd[`consultations/${selId}/lastContactAt`]=n;
+    upd[`consultations/${selId}/contactHistory`]=[...(c.contactHistory||[]),histEntry];
+    pushStatHist(c,'확인필요',upd);
+    await update(ref(db),upd);
+  }
+};
+
+// ── 부재케어 ──
+window.submitAbs=async function(){
+  if(!bsState.absReason){alert('부재 사유를 선택해주세요.');return;}
+  if(!bsState.absTime){alert('다음 연락 시간을 선택해주세요.');return;}
+  const c=ALL.find(x=>x._id===selId);if(!c)return;
+  const n=now();
+  const nextAt=calcNext(bsState.absTime,'absCustomInp');
+  const reasons={no_answer:'전화 미수신',busy:'통화중',power_off:'전원 꺼짐',call_reject:'수신 거부',invalid_number:'잘못된 번호',sms_after_retry:'문자 후 재시도',etc:'기타'};
+  const histEntry={at:n,result:'부재',reason:bsState.absReason,memo:$('absMemo').value,by:'담당자'};
+  const upd={};
+  upd[`consultations/${selId}/status`]='부재케어';
+  upd[`consultations/${selId}/absenceReason`]=bsState.absReason;
+  upd[`consultations/${selId}/absenceCount`]=(c.absenceCount||0)+1;
+  upd[`consultations/${selId}/nextContactAt`]=nextAt;
+  upd[`consultations/${selId}/lastContactAt`]=n;
+  upd[`consultations/${selId}/smsSent`]=bsState.absSms==='sent';
+  if($('absMemo').value)upd[`consultations/${selId}/latestMemo`]=$('absMemo').value;
+  upd[`consultations/${selId}/contactHistory`]=[...(c.contactHistory||[]),histEntry];
+  pushStatHist(c,'부재케어',upd,reasons[bsState.absReason]);
+  await update(ref(db),upd);
+  closeBS('abs');
+  const fresh=ALL.find(x=>x._id===selId);if(fresh)renderDetTop(fresh);
+};
+
+// ── 재케어 ──
+window.submitRc=async function(){
+  if(!bsState.rcReason){alert('재케어 사유를 선택해주세요.');return;}
+  if(!bsState.rcTime){alert('다음 연락 시간을 선택해주세요.');return;}
+  const c=ALL.find(x=>x._id===selId);if(!c)return;
+  const n=now();
+  const nextAt=calcNext(bsState.rcTime,'rcCustomInp');
+  const reasons={family_discussion:'가족과 상의',customer_request:'고객 요청',policy_check:'정책 확인',stock_check:'재고 확인',visit_scheduled:'방문 예정',etc:'기타'};
+  const histEntry={at:n,result:'재케어',reason:bsState.rcReason,memo:$('rcMemo').value,by:'담당자'};
+  const upd={};
+  upd[`consultations/${selId}/status`]='재케어';
+  upd[`consultations/${selId}/recareReason`]=bsState.rcReason;
+  upd[`consultations/${selId}/recareCount`]=(c.recareCount||0)+1;
+  upd[`consultations/${selId}/nextContactAt`]=nextAt;
+  upd[`consultations/${selId}/lastContactAt`]=n;
+  if($('rcMemo').value)upd[`consultations/${selId}/latestMemo`]=$('rcMemo').value;
+  upd[`consultations/${selId}/contactHistory`]=[...(c.contactHistory||[]),histEntry];
+  pushStatHist(c,'재케어',upd,reasons[bsState.rcReason]);
+  await update(ref(db),upd);
+  closeBS('rc');
+  const fresh=ALL.find(x=>x._id===selId);if(fresh)renderDetTop(fresh);
+};
+
+// ── 실패 ──
+window.submitFail=async function(){
+  if(!bsState.failReason){alert('실패 사유를 선택해주세요.');return;}
+  if(!confirm('실패 처리하시겠습니까?'))return;
+  const c=ALL.find(x=>x._id===selId);if(!c)return;
+  const upd={};
+  upd[`consultations/${selId}/status`]='실패';
+  upd[`consultations/${selId}/failReason`]=bsState.failReason;
+  if($('failMemo').value)upd[`consultations/${selId}/latestMemo`]=$('failMemo').value;
+  pushStatHist(c,'실패',upd);
+  await update(ref(db),upd);
+  closeBS('fail');
+};
+
+// ── 상태 변경 ──
+function renderStatusList(){
+  const statuses=[
+    {v:'신규',c:'blue'},{v:'연락중',c:'blue'},{v:'상담중',c:'blue'},
+    {v:'재케어',c:'purple'},{v:'부재케어',c:'orange'},{v:'확인필요',c:'pink'},
+    {v:'개통완료',c:'green'},{v:'실패',c:'gray'}
+  ];
+  const dotColors={blue:'#074BF4',purple:'#8B5CF6',orange:'#F97316',pink:'#E6007E',green:'#10B981',gray:'#9CA3AF'};
+  $('statusList').innerHTML=statuses.map(s=>`
+    <div class="status-item" onclick="onStatusChange('${s.v}')">
+      <div class="status-dot" style="background:${dotColors[s.c]};"></div>
+      <span style="font-size:14px;font-weight:600;">${s.v}</span>
+    </div>`).join('');
+}
+window.openStatusBS=()=>openBS('st');
+
+window.onStatusChange=async function(newStatus){
+  closeBS('st');
+  if(newStatus==='부재케어'){openBS('abs');return;}
+  if(newStatus==='재케어'){openBS('rc');return;}
+  if(newStatus==='실패'){openBS('fail');return;}
+  const c=ALL.find(x=>x._id===selId);if(!c)return;
+  const upd={};
+  upd[`consultations/${selId}/status`]=newStatus;
+  if(newStatus==='개통완료')upd[`consultations/${selId}/doneAt`]=now();
+  pushStatHist(c,newStatus,upd);
+  await update(ref(db),upd);
+  const fresh=ALL.find(x=>x._id===selId);if(fresh)renderDetTop(fresh);
+};
+
+// ── 메모 ──
+window.submitMemo=async function(){
+  const memo=$('memoInp').value.trim();
+  if(!memo)return;
+  await update(ref(db),{[`consultations/${selId}/latestMemo`]:memo});
+  closeBS('memo');
+  const c=ALL.find(x=>x._id===selId);if(c)renderDetBody(c,'memo');
+};
+
+// ── 담당자 배정 ──
+window.submitAssign=async function(){
+  if(!bsState.assignStaff)return;
+  const [name,store]=bsState.assignStaff.split('|');
+  const upd={};
+  upd[`consultations/${selId}/assignedTo`]=name||'';
+  upd[`consultations/${selId}/assignedStore`]=store||'';
+  await update(ref(db),upd);
+  closeBS('assign');
+  const c=ALL.find(x=>x._id===selId);if(c)renderDetTop(c);
+};
+
+// ── 상태 이력 누적 ──
+function pushStatHist(c,newStatus,upd,reason=''){
+  const entry={at:now(),from:c.status||'신규',to:newStatus,by:'담당자',reason};
+  upd[`consultations/${selId}/statusHistory`]=[...(c.statusHistory||[]),entry];
+}
+
+// ── 정리 ──
+
+window.downloadCSV=function(){
+  const headers=['접수시간','경과','고객명','전화번호','생년월일','현재통신사','가입유형','기기','용량','색상','요금제','할인방식','상담시간','인터넷TV','상태','매장','담당자','메모'];
+  const rows=ALL.map(c=>[
+    fmt(c.createdAt),elapsedLabel(elapsed(c.createdAt)),
+    c.name||'',c.phone||'',c.birthdate||'',c.carrier||'',c.joinType||'',
+    c.device||'',c.storage||'',c.color||'',c.plan||'',c.discount||'',
+    c.consultTime||'',c.internetTV||'',c.status||'신규',
+    c.assignedStore||'',c.assignedTo||'',c.memo||''
+  ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  const csv='\uFEFF'+[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`VIVID_CRM_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+};
+window.resetFilters=function(){
+  const s=document.getElementById('dbSearch');
+  const fp=document.getElementById('f-period');
+  const fs=document.getElementById('f-status');
+  const fst=document.getElementById('f-store');
+  const fstf=document.getElementById('f-staff');
+  if(s)s.value='';if(fp)fp.value='all';if(fs)fs.value='';if(fst)fst.value='';if(fstf)fstf.value='';
+  renderDbTable();
+};
+
+window.openLocSheet=function(){
+  const stores=['남양시장점','중곡점','구미사점'];
+  const staffMap={'남양시장점':['여인국'],'중곡점':['황제필'],'구미사점':['강용민']};
+  const curStore=localStorage.getItem('crm_store')||'';
+  const storeChoice=prompt(`매장을 선택하세요 (현재: ${curStore||'미설정'})\n1. 남양시장점\n2. 중곡점\n3. 구미사점`);
+  if(!storeChoice)return;
+  const storeIdx=parseInt(storeChoice)-1;
+  if(storeIdx<0||storeIdx>=stores.length)return;
+  const store=stores[storeIdx];
+  const staffList=staffMap[store];
+  let staff=staffList[0];
+  if(staffList.length>1){
+    const sc=prompt(`담당자를 선택하세요:\n${staffList.map((s,i)=>`${i+1}. ${s}`).join('\n')}`);
+    if(!sc)return;
+    staff=staffList[parseInt(sc)-1]||sc;
+  }
+  localStorage.setItem('crm_store',store);
+  localStorage.setItem('crm_staff',staff);
+  const el=$('hdrLoc');
+  if(el)el.textContent=`${store} · ${staff}`;
+  renderList();
+};
+(function(){
+  const s=localStorage.getItem('crm_store');
+  const n=localStorage.getItem('crm_staff');
+  const el=document.getElementById('hdrLoc');
+  if(el&&s&&n)el.textContent=`${s} · ${n}`;
+})();
+window.openMenuBS=function(){
+  if(confirm('로그아웃 하시겠습니까?'))location.reload();
+};
+</script>
+</body>
+</html>
