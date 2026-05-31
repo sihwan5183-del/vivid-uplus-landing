@@ -548,21 +548,42 @@ input,select,textarea{font-family:inherit;outline:none;}
 </div>
 
 <!-- 로그인 -->
-<div id="loginWrap" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#e0ecff,#f7f9ff);z-index:999;display:none;place-items:center;">
-  <div style="background:#fff;border-radius:20px;padding:36px 32px;width:min(90vw,360px);box-shadow:0 20px 60px rgba(15,23,42,.12);">
+<div id="loginWrap" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#e0ecff,#f7f9ff);z-index:999;place-items:center;">
+  <div style="background:#fff;border-radius:20px;padding:36px 32px;width:min(90vw,380px);box-shadow:0 20px 60px rgba(15,23,42,.12);">
     <div style="font-size:28px;margin-bottom:12px;">🔐</div>
     <div style="font-size:20px;font-weight:800;margin-bottom:4px;">VIVID CRM</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:24px;">관리자 계정으로 로그인하세요</div>
-    <div style="margin-bottom:12px;">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">이메일</div>
-      <input type="email" id="crmEmail" placeholder="이메일" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">로그인 유형을 선택하세요</div>
+    <!-- 탭 -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;">
+      <button id="tabAdmin" onclick="switchLoginTab('admin')" style="flex:1;height:36px;border-radius:8px;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">관리자</button>
+      <button id="tabStaff" onclick="switchLoginTab('staff')" style="flex:1;height:36px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;">직원</button>
     </div>
-    <div style="margin-bottom:16px;">
-      <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">비밀번호</div>
-      <input type="password" id="crmPassword" placeholder="비밀번호" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+    <!-- 관리자 로그인 -->
+    <div id="loginAdmin">
+      <div style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">이메일</div>
+        <input type="email" id="crmEmail" placeholder="이메일" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">비밀번호</div>
+        <input type="password" id="crmPassword" placeholder="비밀번호" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+      </div>
+      <div id="crmLoginError" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none;">이메일 또는 비밀번호가 올바르지 않습니다.</div>
+      <button id="crmLoginBtn" style="width:100%;height:44px;background:var(--blue);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">로그인</button>
     </div>
-    <div id="crmLoginError" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none;">이메일 또는 비밀번호가 올바르지 않습니다.</div>
-    <button id="crmLoginBtn" style="width:100%;height:44px;background:var(--blue);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">로그인</button>
+    <!-- 직원 로그인 -->
+    <div id="loginStaff" style="display:none;">
+      <div style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">이름</div>
+        <input type="text" id="staffName" placeholder="본인 이름 입력" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">비밀번호</div>
+        <input type="password" id="staffPassword" placeholder="발급받은 비밀번호" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;box-sizing:border-box;">
+      </div>
+      <div id="staffLoginError" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none;">이름 또는 비밀번호가 올바르지 않습니다.</div>
+      <button onclick="staffLogin()" style="width:100%;height:44px;background:var(--blue);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">로그인</button>
+    </div>
   </div>
 </div>
 
@@ -698,7 +719,7 @@ input,select,textarea{font-family:inherit;outline:none;}
         <div class="filter-bar">
           <div class="filter-search">
             <svg width="14" height="14" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input type="text" placeholder="고객명, 전화번호, 기기 검색" id="dbSearch" oninput="renderDbTable()">
+            <input type="text" placeholder="고객명, 전화번호, 기기 검색" id="dbSearch" oninput="debounceFilter()">
           </div>
           <div class="filter-row">
             <select class="filter-select" id="f-period" onchange="renderDbTable()">
@@ -838,24 +859,51 @@ input,select,textarea{font-family:inherit;outline:none;}
         </div>
       </div>
       <div class="pc-page" id="page-set-perm">
-        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">🔐 권한 관리</h1>
-        <div class="filter-bar">
-          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">성과 분석 접근 비밀번호</div>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <input type="password" id="newAnalyticsPw" placeholder="새 비밀번호 입력" style="flex:1;height:36px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;font-size:13px;">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:20px;">
+          <h1 style="font-size:20px;font-weight:800;">🔐 권한 관리</h1>
+          <span style="font-size:12px;color:var(--muted);">대표·대표관리자만 접근 가능</span>
+        </div>
+        <div class="filter-bar" style="margin-bottom:16px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:10px;">성과 분석 접근 비밀번호</div>
+          <div style="display:flex;gap:8px;">
+            <input type="password" id="newAnalyticsPw" placeholder="새 비밀번호" style="flex:1;height:36px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;font-size:13px;">
             <button class="btn btn-primary btn-sm" onclick="saveAnalyticsPw()">변경</button>
           </div>
-          <div style="font-size:11px;color:var(--muted);margin-top:8px;">성과 분석 탭(직원별/매장별/기기별/채널별) 접근 시 이 비밀번호가 필요합니다.</div>
         </div>
-        <div class="filter-bar" style="margin-top:12px;">
-          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">담당자 목록</div>
+        <div class="filter-bar" style="margin-bottom:16px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:10px;">직원 추가</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:end;">
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">이름</div>
+              <input type="text" id="newStaffName" placeholder="이름" style="width:100%;height:36px;border:1.5px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px;box-sizing:border-box;">
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">비밀번호</div>
+              <input type="password" id="newStaffPw" placeholder="비밀번호" style="width:100%;height:36px;border:1.5px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px;box-sizing:border-box;">
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">직급</div>
+              <select id="newStaffRole" style="width:100%;height:36px;border:1.5px solid var(--line);border-radius:8px;padding:0 8px;font-size:13px;">
+                <option value="부사장">부사장</option>
+                <option value="팀장">팀장</option>
+                <option value="플래너">플래너</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">매장</div>
+              <select id="newStaffStore" style="width:100%;height:36px;border:1.5px solid var(--line);border-radius:8px;padding:0 8px;font-size:13px;">
+                <option>남양시장점</option>
+                <option>중곡점</option>
+                <option>구미사점</option>
+              </select>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="addStaff()" style="height:36px;">추가</button>
+          </div>
+        </div>
+        <div class="table-wrap">
           <table class="data-table">
-            <thead><tr><th>이름</th><th>매장</th><th>권한</th></tr></thead>
-            <tbody>
-              <tr><td>여인국</td><td>남양시장점</td><td><span class="badge badge-blue">일반</span></td></tr>
-              <tr><td>황제필</td><td>중곡점</td><td><span class="badge badge-blue">일반</span></td></tr>
-              <tr><td>강용민</td><td>구미사점</td><td><span class="badge badge-blue">일반</span></td></tr>
-            </tbody>
+            <thead><tr><th>이름</th><th>직급</th><th>매장</th><th>상태</th><th>비밀번호 변경</th><th>관리</th></tr></thead>
+            <tbody id="staffTbody"></tbody>
           </table>
         </div>
       </div>
@@ -1165,10 +1213,27 @@ const auth=getAuth(app);
 
 // ── 상태 ──
 let ALL=[];
+let TRASH=[];
 let selId=null;
 let curTab='urgent';
 let sortMode='urgent';
 let detCurTab='info';
+
+// ── 현재 로그인 사용자 ──
+let currentUser={
+  type:'none', // 'admin' | 'staff'
+  name:'',
+  role:'', // '대표'|'대표관리자'|'부사장'|'팀장'|'플래너'
+  store:'',
+  uid:''
+};
+let allStaff={};
+
+// 권한 체크
+const canDeletePermanent=()=>['대표','대표관리자'].includes(currentUser.role)||currentUser.type==='admin';
+const canAccessStats=()=>['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+const canAddStaff=()=>['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+const canManagePerm=()=>['대표','대표관리자'].includes(currentUser.role)||currentUser.type==='admin';
 
 const $=id=>document.getElementById(id);
 
@@ -1265,22 +1330,65 @@ function initApp(){
   }
 }
 
+// ── staff DB 구독 ──
+onValue(ref(db,'staff'),snap=>{ allStaff=snap.val()||{}; if(document.getElementById('staffTbody')) renderStaffTable(); });
+onValue(ref(db,'trash'),snap=>{
+  const raw=snap.val()||{};
+  TRASH=Object.entries(raw).map(([k,v])=>({_id:k,...v}));
+});
+
+// ── 앱 시작 ──
+function startApp(userData){
+  currentUser=userData;
+  document.getElementById('loginWrap').style.display='none';
+  const pcUserName=document.getElementById('pc-user-name');
+  const pcHeaderName=document.getElementById('pc-header-name');
+  const roleLabel=userData.role||'관리자';
+  if(pcUserName)pcUserName.textContent=`${userData.name||userData.email} (${roleLabel})`;
+  if(pcHeaderName)pcHeaderName.textContent=userData.name||userData.email;
+  // 권한별 메뉴 숨기기
+  applyPermUI();
+  onValue(ref(db,'consultations'),snap=>{
+    const raw=snap.val()||{};
+    ALL=Object.entries(raw).map(([k,v])=>({_id:k,...v}))
+      .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    initApp();
+  },(err)=>{
+    console.warn('Firebase 연결 실패:',err.message);
+    initApp();
+  });
+}
+
+function applyPermUI(){
+  // 성과분석 - 부사장 이상만
+  if(!canAccessStats()){
+    document.querySelectorAll('.pc-nav-item').forEach(el=>{
+      if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes('stat-')){
+        el.style.display='none';
+      }
+    });
+  }
+  // 권한관리 - 대표/대표관리자만
+  if(!canManagePerm()){
+    document.querySelectorAll('.pc-nav-item').forEach(el=>{
+      if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes('set-perm')){
+        el.style.display='none';
+      }
+    });
+  }
+  // 삭제 버튼 - 대표/대표관리자만 완전삭제 표시
+  const delBtn=document.querySelector('[onclick="deleteConsult()"]');
+  if(delBtn){
+    if(!canDeletePermanent()) delBtn.textContent='🗑️ 휴지통';
+  }
+}
+
+// ── Firebase Auth 로그인 ──
 onAuthStateChanged(auth, user=>{
   if(user){
-    document.getElementById('loginWrap').style.display='none';
-    const pcUserName=document.getElementById('pc-user-name');
-    const pcHeaderName=document.getElementById('pc-header-name');
-    if(pcUserName)pcUserName.textContent=user.email;
-    if(pcHeaderName)pcHeaderName.textContent=user.email;
-    onValue(ref(db,'consultations'),snap=>{
-      const raw=snap.val()||{};
-      ALL=Object.entries(raw).map(([k,v])=>({_id:k,...v}))
-        .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-      initApp();
-    },(err)=>{
-      console.warn('Firebase 연결 실패:',err.message);
-      initApp();
-    });
+    // 이메일로 역할 판단
+    const role=user.email==='ssgvivid2026@gmail.com'?'대표관리자':'대표';
+    startApp({type:'admin',name:role==='대표관리자'?'김시환':'이승환',role,email:user.email});
   } else {
     $('appLoading').style.display='none';
     const lw=document.getElementById('loginWrap');
@@ -1293,24 +1401,129 @@ document.getElementById('crmLoginBtn').onclick=async()=>{
   const pw=document.getElementById('crmPassword').value;
   const err=document.getElementById('crmLoginError');
   err.style.display='none';
-  try{
-    await signInWithEmailAndPassword(auth,email,pw);
-  }catch(e){
-    err.style.display='block';
-  }
+  try{ await signInWithEmailAndPassword(auth,email,pw); }
+  catch(e){ err.style.display='block'; }
+};
+
+// ── 직원 로그인 ──
+window.switchLoginTab=function(tab){
+  document.getElementById('loginAdmin').style.display=tab==='admin'?'block':'none';
+  document.getElementById('loginStaff').style.display=tab==='staff'?'block':'none';
+  document.getElementById('tabAdmin').style.background=tab==='admin'?'var(--blue)':'#fff';
+  document.getElementById('tabAdmin').style.color=tab==='admin'?'#fff':'var(--muted)';
+  document.getElementById('tabAdmin').style.borderColor=tab==='admin'?'var(--blue)':'var(--line)';
+  document.getElementById('tabStaff').style.background=tab==='staff'?'var(--blue)':'#fff';
+  document.getElementById('tabStaff').style.color=tab==='staff'?'#fff':'var(--muted)';
+  document.getElementById('tabStaff').style.borderColor=tab==='staff'?'var(--blue)':'var(--line)';
+};
+
+window.staffLogin=async function(){
+  const name=document.getElementById('staffName').value.trim();
+  const pw=document.getElementById('staffPassword').value;
+  const err=document.getElementById('staffLoginError');
+  err.style.display='none';
+  if(!name||!pw){err.style.display='block';return;}
+  // staff DB에서 조회
+  const snap=await new Promise(res=>onValue(ref(db,'staff'),s=>{res(s);},{onlyOnce:true}));
+  const staffData=snap.val()||{};
+  const found=Object.entries(staffData).find(([k,v])=>v.name===name&&v.password===pw&&v.active!==false);
+  if(!found){err.style.display='block';return;}
+  const [sid,sdata]=found;
+  startApp({type:'staff',name:sdata.name,role:sdata.role,store:sdata.store,uid:sid});
 };
 
 window.logout=async function(){
-  if(confirm('로그아웃 하시겠습니까?')){
-    await signOut(auth);
-    location.reload();
-  }
+  if(!confirm('로그아웃 하시겠습니까?'))return;
+  if(currentUser.type==='admin') await signOut(auth);
+  currentUser={type:'none',name:'',role:'',store:'',uid:''};
+  location.reload();
 };
+
+// ── 직원 관리 함수 ──
+window.addStaff=async function(){
+  if(!canManagePerm()){alert('권한이 없습니다.');return;}
+  const name=document.getElementById('newStaffName').value.trim();
+  const pw=document.getElementById('newStaffPw').value.trim();
+  const role=document.getElementById('newStaffRole').value;
+  const store=document.getElementById('newStaffStore').value;
+  if(!name||!pw){alert('이름과 비밀번호를 입력해주세요.');return;}
+  const existing=Object.values(allStaff).find(s=>s.name===name);
+  if(existing){alert('이미 같은 이름의 직원이 있습니다.');return;}
+  const{push:fbPush}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+  await fbPush(ref(db,'staff'),{name,password:pw,role,store,active:true,createdAt:Date.now()});
+  document.getElementById('newStaffName').value='';
+  document.getElementById('newStaffPw').value='';
+  alert(`${name}님이 추가되었습니다.`);
+};
+
+window.updateStaff=async function(uid){
+  const role=document.getElementById(`role_${uid}`).value;
+  const store=document.getElementById(`store_${uid}`).value;
+  await update(ref(db,`staff/${uid}`),{role,store});
+  alert('수정되었습니다.');
+};
+
+window.resetStaffPw=async function(uid){
+  const newPw=prompt('새 비밀번호를 입력하세요:');
+  if(!newPw)return;
+  await update(ref(db,`staff/${uid}`),{password:newPw});
+  alert('비밀번호가 변경되었습니다.');
+};
+
+window.toggleStaffActive=async function(uid,active){
+  await update(ref(db,`staff/${uid}`),{active});
+};
+
+window.deleteStaff=async function(uid,name){
+  if(!canManagePerm()){alert('권한이 없습니다.');return;}
+  if(!confirm(`${name}님을 삭제하시겠습니까?`))return;
+  const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+  await fbRemove(ref(db,`staff/${uid}`));
+};
+
+function renderStaffTable(){
+  const tbody=document.getElementById('staffTbody');
+  if(!tbody)return;
+  const stores=['남양시장점','중곡점','구미사점'];
+  const roles=['부사장','팀장','플래너'];
+  tbody.innerHTML=Object.entries(allStaff).map(([uid,s])=>`
+    <tr>
+      <td style="font-weight:700;">${s.name}</td>
+      <td>
+        <select id="role_${uid}" style="height:30px;border:1px solid var(--line);border-radius:6px;font-size:12px;padding:0 6px;">
+          ${roles.map(r=>`<option${s.role===r?' selected':''}>${r}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <select id="store_${uid}" style="height:30px;border:1px solid var(--line);border-radius:6px;font-size:12px;padding:0 6px;">
+          ${stores.map(st=>`<option${s.store===st?' selected':''}>${st}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+          <input type="checkbox" ${s.active!==false?'checked':''} onchange="toggleStaffActive('${uid}',this.checked)">
+          <span style="font-size:12px;">${s.active!==false?'활성':'비활성'}</span>
+        </label>
+      </td>
+      <td><button class="btn btn-gray btn-sm" onclick="resetStaffPw('${uid}')">비번변경</button></td>
+      <td style="display:flex;gap:4px;">
+        <button class="btn btn-primary btn-sm" onclick="updateStaff('${uid}')">저장</button>
+        <button class="btn btn-red btn-sm" onclick="deleteStaff('${uid}','${s.name}')">삭제</button>
+      </td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">등록된 직원이 없습니다</td></tr>';
+}
 
 setInterval(()=>{
   if(isMobile){renderAll();}
   else{renderKPI();renderDashboard();renderDbTable();renderUrgentTable();}
 }, 30000);
+
+// ── 필터 즉시반응 (debounce) ──
+let _filterTimer=null;
+window.debounceFilter=function(){
+  clearTimeout(_filterTimer);
+  _filterTimer=setTimeout(()=>renderDbTable(),150);
+};
 
 function renderAll(){
   renderTabs();
@@ -1783,21 +1996,23 @@ window.closePcDetail=closePcDetail;
 // ── 성과분석 잠금 ──
 let analyticsUnlocked=false;
 let analyticsPassword='';
-onValue(ref(db,'analyticsPassword'),snap=>{
-  analyticsPassword=snap.val()||'';
-});
+onValue(ref(db,'analyticsPassword'),snap=>{ analyticsPassword=snap.val()||''; });
 
 const STAT_PAGES=['stat-staff','stat-store','stat-device','stat-channel'];
 
 function pcNav(page){
-  if(STAT_PAGES.includes(page)&&!analyticsUnlocked){
-    const input=prompt('성과 분석 페이지는 권한이 필요합니다.\n비밀번호를 입력하세요:');
-    if(input===null)return;
-    if(input!==String(analyticsPassword)){
-      alert('비밀번호가 올바르지 않습니다.');
-      return;
+  // 성과분석: 부사장 이상은 바로 접근, 팀장/플래너는 비밀번호
+  if(STAT_PAGES.includes(page)){
+    if(!canAccessStats()&&!analyticsUnlocked){
+      const input=prompt('성과 분석 페이지 접근 비밀번호를 입력하세요:');
+      if(input===null)return;
+      if(input!==String(analyticsPassword)){alert('비밀번호가 올바르지 않습니다.');return;}
+      analyticsUnlocked=true;
     }
-    analyticsUnlocked=true;
+  }
+  // 권한관리: 대표/대표관리자만
+  if(page==='set-perm'&&!canManagePerm()){
+    alert('접근 권한이 없습니다.');return;
   }
   document.querySelectorAll('.pc-nav-item').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.pc-page').forEach(el=>el.classList.remove('active'));
@@ -1875,11 +2090,27 @@ window.deleteConsult=async function(){
   if(!selId)return;
   const c=ALL.find(x=>x._id===selId);
   if(!c)return;
-  if(!confirm(`${c.name||'이 고객'}님의 데이터를 삭제하시겠습니까?\n삭제 후 복구할 수 없습니다.`))return;
-  const{remove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
-  await remove(ref(db,`consultations/${selId}`));
+  if(canDeletePermanent()){
+    // 대표/대표관리자: 완전삭제 or 휴지통 선택
+    const choice=confirm(`${c.name||'이 고객'}님을 완전 삭제하시겠습니까?\n확인=완전삭제 / 취소=휴지통으로`);
+    if(choice){
+      const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+      await fbRemove(ref(db,`consultations/${selId}`));
+    } else {
+      const{push:fbPush}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+      const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+      await fbPush(ref(db,'trash'),{...c,deletedAt:Date.now(),deletedBy:currentUser.name});
+      await fbRemove(ref(db,`consultations/${selId}`));
+    }
+  } else {
+    // 일반 직원: 휴지통으로만
+    if(!confirm(`${c.name||'이 고객'}님을 휴지통으로 이동하시겠습니까?`))return;
+    const{push:fbPush}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+    const{remove:fbRemove}=await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+    await fbPush(ref(db,'trash'),{...c,deletedAt:Date.now(),deletedBy:currentUser.name});
+    await fbRemove(ref(db,`consultations/${selId}`));
+  }
   closePcDetail();
-  alert('삭제되었습니다.');
 };
 window.submitEdit=async function(){
   const name=$('editName').value.trim();
