@@ -1655,7 +1655,7 @@ function startApp(userData){
   applyPermUI();
   onValue(ref(db,'consultations'),snap=>{
     const raw=snap.val()||{};
-    ALL=Object.entries(raw).filter(([k])=>k&&k!=='null').map(([k,v])=>({_id:k,...v}))
+    ALL=Object.entries(raw).filter(([k])=>k&&k!=='null').map(([k,v])=>({...v,_id:k}))
       .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
     initApp();
   },(err)=>{
