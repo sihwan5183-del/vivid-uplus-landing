@@ -3807,6 +3807,7 @@ window.pickColor=function(id){
 };
 
 // ── STEP 4: 요금제 ──
+function renderPlanList(){ renderPlanOptions(); }
 function renderPlanOptions(){
   const plans=allPlans.filter(p=>p.visible!==false);
   $("so-plan").innerHTML=`<div style="display:grid;gap:7px;width:100%">`+plans.map(p=>
