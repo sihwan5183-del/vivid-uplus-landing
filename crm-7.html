@@ -863,14 +863,14 @@ input,select,textarea{font-family:inherit;outline:none;}
             <input type="text" placeholder="고객명, 전화번호, 기기 검색" id="dbSearch" oninput="debounceFilter()">
           </div>
           <div class="filter-row">
-            <select class="filter-select" id="f-period" onchange="renderDbTable()">
+            <select class="filter-select" id="f-period" onchange="debounceFilter()">
               <option value="all">기간 전체</option>
               <option value="today" selected>오늘</option>
               <option value="yesterday">어제</option>
               <option value="week">최근 7일</option>
               <option value="month">이번 달</option>
             </select>
-            <select class="filter-select" id="f-status" onchange="renderDbTable()">
+            <select class="filter-select" id="f-status" onchange="debounceFilter()">
               <option value="">상태 전체</option>
               <option value="신규">신규</option>
               <option value="연락중">연락중</option>
@@ -881,11 +881,11 @@ input,select,textarea{font-family:inherit;outline:none;}
               <option value="개통완료">개통완료</option>
               <option value="실패">실패</option>
             </select>
-            <select class="filter-select" id="f-store" onchange="renderDbTable()">
+            <select class="filter-select" id="f-store" onchange="debounceFilter()">
               <option value="">매장 전체</option>
               <option>남양시장점</option><option>중곡점</option><option>구미사점</option>
             </select>
-            <select class="filter-select" id="f-staff" onchange="renderDbTable()">
+            <select class="filter-select" id="f-staff" onchange="debounceFilter()">
               <option value="">담당자 전체</option>
               <option>여인국</option><option>황제필</option><option>강용민</option>
             </select>
@@ -1825,7 +1825,7 @@ setInterval(()=>{
 let _filterTimer=null;
 window.debounceFilter=function(){
   clearTimeout(_filterTimer);
-  _filterTimer=setTimeout(()=>renderDbTable(),150);
+  _filterTimer=setTimeout(()=>renderDbTable(),50);
 };
 
 function renderAll(){
@@ -2137,6 +2137,7 @@ function renderDashboard(){
 // ── 상담 DB 테이블 ──
 let dbPage=1;const DB_PER_PAGE=20;
 function renderDbTable(){
+  requestAnimationFrame(()=>{
   const search=$('dbSearch')?.value.toLowerCase()||'';
   const period=$('f-period')?.value||'all';
   const status=$('f-status')?.value||'';
@@ -2157,7 +2158,6 @@ function renderDbTable(){
   });
 
   $('db-count-label').textContent=`총 ${list.length}건`;
-  // 중복 전화번호 계산 (전체 ALL 기준)
   const phoneCount={};
   ALL.forEach(c=>{ if(c.phone){ const p=c.phone.replace(/-/g,''); phoneCount[p]=(phoneCount[p]||0)+1; }});
   const dupPhones=new Set(Object.keys(phoneCount).filter(p=>phoneCount[p]>1));
@@ -2165,11 +2165,11 @@ function renderDbTable(){
   const page=list.slice(start,start+DB_PER_PAGE);
   $('dbTbody').innerHTML=page.map(c=>makeRow(c,dupPhones)).join('')||'<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--muted);">결과 없음</td></tr>';
 
-  // 페이지네이션
   const total=Math.ceil(list.length/DB_PER_PAGE);
   let pg='';
   for(let i=1;i<=Math.min(total,10);i++)pg+=`<button class="page-btn${i===dbPage?' active':''}" onclick="dbGoPage(${i})">${i}</button>`;
   $('dbPagination').innerHTML=pg;
+  });
 }
 window.dbGoPage=p=>{dbPage=p;renderDbTable();};
 
@@ -2358,7 +2358,7 @@ function renderStatStore(){
 
 // ── PC 고객 상세 ──
 function selectConsult(id){
-  selectedId=id;
+  selId=id;
   const c=ALL.find(x=>x._id===id);
   if(!c)return;
   if(isMobile){openMDetail(c);return;}
