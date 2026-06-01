@@ -4084,10 +4084,13 @@ function renderCategoryChips(){
 function boot(){
   const app=initializeApp(firebaseConfig);
   const db=getDatabase(app);
-  onValue(ref(db,"uiTexts"),snap=>applyUiTexts(snap.val()||{}));
-  onValue(ref(db,"/"),snap=>{
-    const raw=snap.val();
-    if(!raw){showError("Firebase에 데이터가 없습니다.");return;}
+
+  let loaded={devices:false,plans:false,policy2:false,categories:false,joinTypes:false,discountTypes:false,carriers:false};
+  const raw={};
+
+  function tryRender(){
+    const keys=['devices','plans','policy2','categories','joinTypes','discountTypes','carriers'];
+    if(!keys.every(k=>loaded[k]))return;
     allDevices=Object.entries(raw.devices||{}).map(normalizeDevice);
     allPlans=Object.entries(raw.plans||{}).map(([id,v])=>({id,...v})).filter(p=>p.visible!==false).sort((a,b)=>Number(a.monthlyPrice||0)-Number(b.monthlyPrice||0));
     allPolicies=Object.values(raw.policy2||{});
@@ -4095,13 +4098,8 @@ function boot(){
     const fbJoinTypes=Object.values(raw.joinTypes||{}).filter(j=>j.visible!==false);
     if(fbJoinTypes.length){
       Object.keys(CARRIER_META).forEach(carrier=>{
-        if(carrier==="LG U+"){
-          const jt=fbJoinTypes.find(j=>j.name==="기기변경");
-          if(jt) CARRIER_META[carrier].joinType=jt.name;
-        } else {
-          const jt=fbJoinTypes.find(j=>j.name==="번호이동");
-          if(jt) CARRIER_META[carrier].joinType=jt.name;
-        }
+        if(carrier==="LG U+"){const jt=fbJoinTypes.find(j=>j.name==="기기변경");if(jt)CARRIER_META[carrier].joinType=jt.name;}
+        else{const jt=fbJoinTypes.find(j=>j.name==="번호이동");if(jt)CARRIER_META[carrier].joinType=jt.name;}
       });
     }
     showSubsidy=raw.discountTypes?.subsidy!==false;
@@ -4115,7 +4113,18 @@ function boot(){
     bind();
     renderCategoryChips();
     renderDevices();
-  },e=>showError(e.message||"Firebase 연결 오류"));
+  }
+
+  const paths=['devices','plans','policy2','categories','joinTypes','discountTypes','carriers'];
+  paths.forEach(path=>{
+    onValue(ref(db,path),snap=>{
+      raw[path]=snap.val()||{};
+      loaded[path]=true;
+      tryRender();
+    },e=>showError(e.message||"Firebase 연결 오류"));
+  });
+
+  onValue(ref(db,"uiTexts"),snap=>applyUiTexts(snap.val()||{}));
 }
 try{boot();}catch(e){showError(e.message);}
 </script>
