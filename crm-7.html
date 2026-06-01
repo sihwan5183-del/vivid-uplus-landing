@@ -1499,6 +1499,7 @@ const auth=getAuth(app);
 let ALL=[];
 let TRASH=[];
 let selId=null;
+window.setSelId=function(id){selId=id;};
 let curTab='urgent';
 let sortMode='urgent';
 let detCurTab='info';
@@ -1957,23 +1958,23 @@ function makeCard(c,dupPhones){
   const unassigned=!c.assignedTo;
   if(unassigned){
     actions=`
-      <button class="ca-btn outline-blue" onclick="event.stopPropagation();selId='${c._id}';openBS('assign')">👤 담당자 배정</button>
+      <button class="ca-btn outline-blue" onclick="event.stopPropagation();setSelId('${c._id}');openBS('assign')">👤 담당자 배정</button>
       <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">연락 시작</button>
       <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
   } else if(c.status==='재케어'){
     actions=`
       <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">전화</button>
-      <button class="ca-btn outline-purple" onclick="event.stopPropagation();selId='${c._id}';openBS('rc')">재케어 연장</button>
+      <button class="ca-btn outline-purple" onclick="event.stopPropagation();setSelId('${c._id}');openBS('rc')">재케어 연장</button>
       <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
   } else if(c.status==='부재케어'){
     actions=`
       <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">전화</button>
-      <button class="ca-btn" onclick="event.stopPropagation();selId='${c._id}';openBS('abs')">부재 추가</button>
+      <button class="ca-btn" onclick="event.stopPropagation();setSelId('${c._id}');openBS('abs')">부재 추가</button>
       <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
   } else {
     actions=`
       <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">연락 시작</button>
-      <button class="ca-btn" onclick="event.stopPropagation();selId='${c._id}';openBS('abs')">부재</button>
+      <button class="ca-btn" onclick="event.stopPropagation();setSelId('${c._id}');openBS('abs')">부재</button>
       <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
   }
 
@@ -2512,7 +2513,7 @@ function pcSelectConsult(id){
 }
 window.selectConsult=pcSelectConsult;
 window.closePcDetail=function(){document.getElementById('pcDetailPanel')?.classList.remove('open');};
-window.openPcStatusSheet=function(){selId=selId;openBS('st');};
+window.openPcStatusSheet=function(){openBS('st');};
 window.openPcAssignSheet=function(){openBS('assign');};
 window.openPcMemoSheet=function(){openBS('memo');};
 window.openEditSheet=function(){openBS('edit');};
@@ -2809,7 +2810,7 @@ function renderDetTop(c){
     <div class="det-meta">
       <div class="det-meta-item">🏪 <span class="det-meta-val">${c.assignedStore||'미배정'}</span></div>
       <div class="det-meta-item">👤 <span class="det-meta-val">${c.assignedTo||'미지정'}</span>
-        <button class="det-assign-btn" onclick="selId='${c._id}';openBS('assign')">변경</button>
+        <button class="det-assign-btn" onclick="setSelId('${c._id}');openBS('assign')">변경</button>
       </div>
       <div class="det-meta-item">📅 <span class="det-meta-val">${fmt(c.createdAt)}</span></div>
       ${c.nextContactAt?`<div class="det-meta-item">⏰ <span class="det-meta-val${c.nextContactAt<now()?' blink':''}">${fmt(c.nextContactAt)}</span></div>`:''}
@@ -2844,9 +2845,9 @@ function renderDetBody(c,tab){
         ${c.memo?`<div class="info-row"><div class="info-key">고객 메모</div><div class="info-val">${c.memo}</div></div>`:''}
       </div>
       <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--sub);" onclick="selId='${c._id}';openBS('memo')">메모 추가</button>
-        <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--purple);background:#F5F3FF;font-size:12px;font-weight:700;color:var(--purple);" onclick="selId='${c._id}';openBS('rc')">재케어 예약</button>
-        <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--orange);background:#FFF7ED;font-size:12px;font-weight:700;color:var(--orange);" onclick="selId='${c._id}';openBS('abs')">부재 기록</button>
+        <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--sub);" onclick="setSelId('${c._id}');openBS('memo')">메모 추가</button>
+        <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--purple);background:#F5F3FF;font-size:12px;font-weight:700;color:var(--purple);" onclick="setSelId('${c._id}');openBS('rc')">재케어 예약</button>
+        <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--orange);background:#FFF7ED;font-size:12px;font-weight:700;color:var(--orange);" onclick="setSelId('${c._id}');openBS('abs')">부재 기록</button>
       </div>`;
   } else if(tab==='history'){
     const hist=(c.contactHistory||[]).slice().reverse();
