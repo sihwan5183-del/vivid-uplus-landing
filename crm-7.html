@@ -2518,13 +2518,21 @@ window.openPcAssignSheet=function(){openBS('assign');};
 window.openPcMemoSheet=function(){openBS('memo');};
 window.openEditSheet=function(){openBS('edit');};
 window.deleteConsult=async function(){
-  if(!selId)return;
+  if(!selId){alert('선택된 고객이 없습니다. (selId=null)');return;}
   const c=ALL.find(x=>x._id===selId);
-  if(!c)return;
+  if(!c){alert('고객 정보를 찾을 수 없습니다. selId='+selId);return;}
   if(!confirm(`${c.name||'이 고객'}님을 휴지통으로 이동하시겠습니까?`))return;
-  await fbPush(ref(db,'trash'),{...c,deletedAt:Date.now(),deletedBy:currentUser.name||currentUser.email||'관리자'});
-  await fbRemove(ref(db,`consultations/${selId}`));
-  closePcDetail();
+  try{
+    await fbPush(ref(db,'trash'),{...c,deletedAt:Date.now(),deletedBy:currentUser.name||currentUser.email||'관리자'});
+    await fbRemove(ref(db,`consultations/${selId}`));
+    closePcDetail();
+    const dv=document.getElementById('detailView');
+    if(dv)dv.classList.remove('open');
+    alert('완료: '+selId+' 삭제됨');
+  }catch(e){
+    alert('오류: '+e.message);
+    console.error(e);
+  }
 };
 window.submitEdit=async function(){
   const name=$('editName').value.trim();
@@ -2532,12 +2540,10 @@ window.submitEdit=async function(){
   const birth=$('editBirth').value.trim();
   const memo=$('editMemo').value.trim();
   if(!name||!phone){alert('고객명과 전화번호는 필수입니다.');return;}
-  const upd={};
-  upd[`consultations/${selId}/name`]=name;
-  upd[`consultations/${selId}/phone`]=phone;
-  if(birth)upd[`consultations/${selId}/birth`]=birth;
-  if(memo)upd[`consultations/${selId}/latestMemo`]=memo;
-  await update(ref(db),upd);
+  const upd={name,phone};
+  if(birth)upd.birth=birth;
+  if(memo)upd.latestMemo=memo;
+  await update(ref(db,`consultations/${selId}`),upd);
   closeBS('edit');
   alert('수정되었습니다.');
 };
@@ -3118,7 +3124,7 @@ window.onStatusChange=async function(newStatus){
 window.submitMemo=async function(){
   const memo=$('memoInp').value.trim();
   if(!memo)return;
-  await update(ref(db),{[`consultations/${selId}/latestMemo`]:memo});
+  await update(ref(db,`consultations/${selId}`),{latestMemo:memo});
   closeBS('memo');
   const c=ALL.find(x=>x._id===selId);if(c)renderDetBody(c,'memo');
 };
@@ -3126,13 +3132,10 @@ window.submitMemo=async function(){
 // ── 담당자 배정 ──
 window.submitAssign=async function(){
   if(!bsState.assignStaff){alert('담당자를 선택해주세요.');return;}
+  if(!selId){alert('선택된 고객이 없습니다.');return;}
   const [name,store]=bsState.assignStaff.split('|');
-  const upd={};
-  upd[`consultations/${selId}/assignedTo`]=name||'';
-  upd[`consultations/${selId}/assignedStore`]=store||'';
-  await update(ref(db),upd);
+  await update(ref(db,`consultations/${selId}`),{assignedTo:name||'',assignedStore:store||''});
   closeBS('assign');
-  // 모바일 상세뷰 열려있으면 갱신, 아니면 카드 목록 갱신
   const c=ALL.find(x=>x._id===selId);
   if(c){
     if(document.getElementById('detailView')?.classList.contains('open')) renderDetTop(c);
@@ -3176,7 +3179,8 @@ window.resetFilters=function(){
 window.saveAnalyticsPw=async function(){
   const pw=$('newAnalyticsPw').value.trim();
   if(!pw){alert('비밀번호를 입력해주세요.');return;}
-  await update(ref(db),{'analyticsPassword':pw});
+  const{set:fbSet}=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js');
+  await fbSet(ref(db,'analyticsPassword'),pw);
   analyticsPassword=pw;
   $('newAnalyticsPw').value='';
   alert('비밀번호가 변경되었습니다.');
