@@ -78,12 +78,12 @@ body {
   }
     .slide-track {
     display: flex;
-    width: 500%;
+    width: 600%;
     height: 100%;
     transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
   }
   .slide {
-    width: 20%;
+    width: 16.6667%;
     height: 100%;
     flex-shrink: 0;
     overflow: hidden;
@@ -539,7 +539,7 @@ body {
 <section class="hero-section">
   <div class="banner-slot">
     <div class="slide-track" id="slideTrack">
-      <div class="slide">
+      <div class="slide" style="cursor:pointer" onclick="location.href=window.innerWidth<=768?'benefit_mobile-s.html':'benefit_pc-s.html'">
         <img class="pc-only" src="images/banner1_PC.webp" style="object-fit:contain;" alt="배너1">
         <img class="mo-only" src="images/banner1_mo.webp.png" alt="배너1">
       </div>
@@ -547,17 +547,21 @@ body {
         <img class="pc-only" src="images/banner2_pc.webp.png" alt="배너2" style="object-fit:contain;">
         <img class="mo-only" src="images/banner2_mo.webp.png" alt="배너2">
       </div>
-      <div class="slide" style="cursor:pointer" onclick="location.href='plans-s.html'">
+      <div class="slide" style="cursor:pointer" onclick="location.href='#'">
         <img class="pc-only" src="images/banner3_PC.webp.png" alt="배너3" style="object-fit:contain;">
         <img class="mo-only" src="images/banner3_mo.webp.png" alt="배너3">
       </div>
-      <div class="slide" style="cursor:pointer" onclick="location.href='https://sihwan5183-del.github.io/vivid-uplus-landing/consult-9.html'">
+      <div class="slide" style="cursor:pointer" onclick="location.href='plans-s.html'">
         <img class="pc-only" src="images/banner4_PC.webp.png" alt="배너4" style="object-fit:contain;">
         <img class="mo-only" src="images/banner4_mo.webp.png" alt="배너4">
       </div>
+      <div class="slide" style="cursor:pointer" onclick="location.href='#'">
+        <img class="pc-only" src="images/banner5_pc.webp.png" alt="배너5" style="object-fit:contain;">
+        <img class="mo-only" src="images/banner5_mo.webp.png" alt="배너5">
+      </div>
       <div class="slide" style="cursor:pointer" onclick="location.href=window.innerWidth<=768?'benefit_mobile-s.html':'benefit_pc-s.html'">
-        <img class="pc-only" src="images/banner5_pc.webp" alt="배너5" style="object-fit:contain;">
-        <img class="mo-only" src="images/banner5_mo.webp" alt="배너5">
+        <img class="pc-only" src="images/banner6_pc.webp" alt="배너6" style="object-fit:contain;">
+        <img class="mo-only" src="images/banner6_mo.webp" alt="배너6">
       </div>
     </div>
     <div class="slide-dots">
@@ -566,11 +570,12 @@ body {
       <button class="slide-dot" onclick="goTo(2)"></button>
       <button class="slide-dot" onclick="goTo(3)"></button>
       <button class="slide-dot" onclick="goTo(4)"></button>
+      <button class="slide-dot" onclick="goTo(5)"></button>
     </div>
-    <button class="slide-btn slide-prev" onclick="goTo((curIdx-1+5)%5)">
+    <button class="slide-btn slide-prev" onclick="goTo((curIdx-1+6)%6)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <button class="slide-btn slide-next" onclick="goTo((curIdx+1)%5)">
+    <button class="slide-btn slide-next" onclick="goTo((curIdx+1)%6)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
   </div>
@@ -792,7 +797,7 @@ body {
 
 <script>
   var curIdx = 0;
-  var total = 5;
+  var total = 6;
   var autoTimer;
 
   function goTo(idx) {
