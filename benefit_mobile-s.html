@@ -3870,6 +3870,15 @@ window.pickDiscount=function(type){
   setSV("discount",type==="subsidy"?"공시지원금":"선택약정 25%");
   setStep("discount","done");
   renderSummary();
+  // 모바일: modal-summary가 보이도록 modal-steps 맨 위로 스크롤
+  setTimeout(()=>{
+    const steps=document.getElementById('modalSteps');
+    const box=document.getElementById('modalBox');
+    if(steps&&window.innerWidth<=768){
+      steps.scrollTo({top:0,behavior:'smooth'});
+      if(box) box.scrollTo({top:0,behavior:'smooth'});
+    }
+  },100);
 };
 
 // ── 요약 ──
