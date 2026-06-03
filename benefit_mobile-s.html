@@ -221,6 +221,33 @@ body.modal-open{overflow:hidden;}
   .modal-overlay{padding:0;align-items:flex-end;}
   .modal-box{border-radius:22px 22px 0 0;max-height:92vh;width:100%;}
 }
+
+/* 모바일 summary 항상 fixed */
+.modal-overlay.open .modal-summary{
+  position:fixed !important;
+  left:0 !important;
+  right:0 !important;
+  top:0 !important;
+  bottom:0 !important;
+  z-index:2200 !important;
+  max-height:100% !important;
+  height:100% !important;
+  overflow-y:auto !important;
+  border-radius:0 !important;
+  padding:24px 16px calc(env(safe-area-inset-bottom,0px) + 24px) !important;
+  background:#fff !important;
+  box-shadow:none !important;
+  width:100% !important;
+}
+.modal-overlay.open .modal-summary:has(.summary-placeholder){
+  position:relative !important;
+  left:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  z-index:auto !important;
+  max-height:none !important;
+  box-shadow:none !important;
+}
 </style>
 
 <style id="benefit-mobile-optimization-v1">
@@ -586,9 +613,9 @@ body.modal-open{overflow:hidden;}
 
   /* bottom sheet 압축 스타일 */
   .modal-overlay.open .summary-device-img{
-    width:60px !important;
-    height:60px !important;
-    min-width:60px !important;
+    width:100px !important;
+    height:100px !important;
+    min-width:100px !important;
   }
   .modal-overlay.open .summary-device{
     margin-bottom:8px;
