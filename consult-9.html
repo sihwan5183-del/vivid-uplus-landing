@@ -186,7 +186,7 @@ body{
 .summary-card.show{display:block;}
 
 /* 모바일 bottom sheet */
-@media(max-width:480px){
+@media(max-width:768px){
   .summary-sheet-overlay{
     display:none;
     position:fixed;inset:0;z-index:300;
@@ -1152,7 +1152,7 @@ window.pickDiscount=function(type){
   renderSummary();
   checkSubmit();
   // 모바일이면 bottom sheet, PC면 스크롤
-  if(window.innerWidth<=480){
+  if(window.innerWidth<=768){
     setTimeout(()=>{ openSheet(); },250);
   } else {
     setTimeout(()=>{
