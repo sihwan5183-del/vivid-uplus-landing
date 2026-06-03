@@ -1120,6 +1120,14 @@ window.pickDiscount=function(type){
   v.classList.remove('placeholder');
   renderSummary();
   checkSubmit();
+  // 카드 섹션으로 자동 스크롤
+  setTimeout(()=>{
+    const card=$('summaryCard');
+    if(card&&card.classList.contains('show')){
+      const top=card.getBoundingClientRect().top+window.pageYOffset-16;
+      window.scrollTo({top,behavior:'auto'});
+    }
+  },200);
 };
 
 // 혜택 요약 계산
