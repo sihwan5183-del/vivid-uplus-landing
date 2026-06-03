@@ -1099,9 +1099,8 @@ window.pickPlan=function(id){
 // 할인방식
 function renderDiscountList(){
   const items=[];
-  // Firebase 정책에서 공시지원금/선택약정 여부 확인
-  const hasSubsidy=allPolicies.some(p=>p.discountType==='subsidy')||true;
-  const hasContract=true;
+  const hasSubsidy=window._discountVisible?.['공시지원금']!==false;
+  const hasContract=window._discountVisible?.['선택약정']!==false;
   if(hasSubsidy) items.push({id:'subsidy',name:'공시지원금',desc:'기기값을 할인받는 방식'});
   if(hasContract) items.push({id:'contract',name:'선택약정 25%',desc:'요금제를 매달 25% 할인받는 방식'});
   $('popup-discount-list').innerHTML=items.map(it=>`
@@ -1507,6 +1506,15 @@ function boot(){
     allPolicies=Object.entries(snap.val()||{}).map(([k,v])=>({_key:k,...v}));
     _polLoaded=true; tryBoot();
   },e=>{ _polLoaded=true; tryBoot(); console.error(e); });
+
+  // 할인방식 노출 여부 실시간 구독
+  onValue(ref(db,'discount'),snap=>{
+    const data=snap.val()||{};
+    window._discountVisible={
+      '공시지원금': data['공시지원금']?.visible!==false,
+      '선택약정':   data['선택약정']?.visible!==false,
+    };
+  });
 }
 boot();
 </script>
