@@ -541,18 +541,18 @@ body.modal-open{overflow:hidden;}
   /* 모바일 하단 고정 요약바 */
   .modal-overlay.open .modal-summary{
     position:fixed;
-    left:10px;
-    right:10px;
-    bottom:calc(env(safe-area-inset-bottom,0px) + 8px);
+    left:0;
+    right:0;
+    bottom:0;
     z-index:2200;
-    max-height:42svh;
+    max-height:75svh;
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
     border:1px solid #dbe8ff;
-    border-radius:18px;
-    padding:14px;
-    background:rgba(255,255,255,.98);
-    box-shadow:0 -12px 34px rgba(15,23,42,.16);
+    border-radius:20px 20px 0 0;
+    padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 20px);
+    background:rgba(255,255,255,.99);
+    box-shadow:0 -8px 30px rgba(15,23,42,.18);
   }
   .modal-overlay.open .modal-summary::before{
     content:"";
