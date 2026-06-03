@@ -2726,7 +2726,8 @@ window.pickPlan=function(id){
   setStep("discount","active");
   setSV("discount","");
   renderDiscountOptions();
-  renderSummary();
+  // 공시지원금 자동 선택
+  pickDiscount('subsidy');
 };
 
 // ── STEP 5: 할인 방식 ──
