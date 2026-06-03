@@ -231,7 +231,7 @@ body.modal-open{overflow:hidden;}
    - 제품 카드 문구/계산식 변경 없음
 */
 
-@media(max-width:640px){
+@media(max-width:768px){
   html,body{
     background:#f7f9ff;
     overflow-x:hidden;
@@ -584,47 +584,52 @@ body.modal-open{overflow:hidden;}
     font-size:24px;
   }
 
-  /* 하단 요약바는 핵심만 보이게 압축 */
+  /* bottom sheet 압축 스타일 */
   .modal-overlay.open .summary-device-img{
-    display:none;
+    width:60px !important;
+    height:60px !important;
+    min-width:60px !important;
+  }
+  .modal-overlay.open .summary-device{
+    margin-bottom:8px;
   }
   .modal-overlay.open .summary-device-name{
-    font-size:16px;
-    line-height:1.25;
-    margin:0 0 7px;
+    font-size:15px;
+    line-height:1.2;
+    margin:0 0 6px;
   }
   .modal-overlay.open .s-tags{
-    gap:5px;
-    margin-bottom:8px;
-    max-height:44px;
-    overflow:hidden;
+    gap:4px;
+    margin-bottom:6px;
+    flex-wrap:wrap;
   }
   .modal-overlay.open .s-tag{
-    height:21px;
-    font-size:10.5px;
-    padding:0 7px;
+    height:20px;
+    font-size:10px;
+    padding:0 6px;
   }
   .modal-overlay.open .s-row{
-    display:none;
+    padding:5px 0;
+    font-size:12px;
   }
   .modal-overlay.open .total-box{
-    margin-top:8px;
-    padding:12px;
-    border-radius:14px;
+    margin-top:6px;
+    padding:10px 12px;
+    border-radius:12px;
   }
   .modal-overlay.open .total-row strong{
-    font-size:21px;
+    font-size:20px;
   }
   .modal-overlay.open .s-note{
     display:none;
   }
   .modal-overlay.open .cta-stack{
-    margin-top:10px;
-    gap:7px;
+    margin-top:8px;
+    gap:6px;
   }
   .modal-overlay.open .btn-consult-main{
-    height:50px;
-    border-radius:14px;
+    height:48px;
+    border-radius:12px;
     font-size:15px;
   }
   .modal-overlay.open .btn-other{
