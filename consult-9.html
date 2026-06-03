@@ -1120,14 +1120,17 @@ window.pickDiscount=function(type){
   v.classList.remove('placeholder');
   renderSummary();
   checkSubmit();
-  // 카드 섹션으로 자동 스크롤
+  // 팝업 완전히 닫힌 후 카드 섹션으로 강제 스크롤
   setTimeout(()=>{
     const card=$('summaryCard');
     if(card&&card.classList.contains('show')){
-      const top=card.getBoundingClientRect().top+window.pageYOffset-16;
-      window.scrollTo({top,behavior:'auto'});
+      const rect=card.getBoundingClientRect();
+      const scrollTop=window.pageYOffset||document.documentElement.scrollTop||document.body.scrollTop;
+      const top=rect.top+scrollTop-16;
+      document.documentElement.scrollTop=top;
+      document.body.scrollTop=top;
     }
-  },200);
+  },350);
 };
 
 // 혜택 요약 계산
