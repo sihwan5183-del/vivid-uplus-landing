@@ -3566,18 +3566,11 @@ function openMiniModal(title, bodyHTML, footerHTML){
 
 window.openPcStatusSheet=function(){
   if(!isMobile){
-    const statuses=[
-      {v:'신규',c:'blue'},{v:'연락중',c:'blue'},
-      {v:'재케어',c:'purple'},{v:'부재케어',c:'orange'},
-      {v:'개통완료',c:'green'},{v:'실패',c:'gray'}
-    ];
-    const dotColors={blue:'#074BF4',purple:'#8B5CF6',orange:'#F97316',green:'#10B981',gray:'#9CA3AF'};
-    const statusHTML=statuses.map(s=>`
-      <div class="status-item" onclick="onStatusChange('${s.v}');document.getElementById('pcMiniModal')?.remove();" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;border-radius:10px;transition:background .15s;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='transparent'">
-        <div style="width:12px;height:12px;border-radius:50%;background:${dotColors[s.c]};flex-shrink:0;"></div>
-        <span style="font-size:15px;font-weight:600;">${s.v}</span>
-      </div>`).join('');
-    openMiniModal('상태 변경', `<div>${statusHTML}</div>`,'');
+    renderStatusList();
+    setTimeout(function(){
+      const statusHTML=document.getElementById('statusList').innerHTML;
+      openMiniModal('상태 변경','<div class="status-list">'+statusHTML+'</div>','');
+    },50);
   } else { openBS('st'); }
 };
 window.openPcAssignSheet=function(){
