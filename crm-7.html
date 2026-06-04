@@ -114,7 +114,7 @@ input,select,textarea{font-family:inherit;outline:none;}
 }
 
 /* ── 카드 목록 ── */
-.card-list{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
+.card-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
 
 /* ── 고객 카드 ── */
 .ccard{
@@ -692,9 +692,6 @@ input,select,textarea{font-family:inherit;outline:none;}
   .kpi-dash-grid > div > div:last-child{font-size:18px!important;}
 }
 
-@media(max-width:1023px){
-  body{overflow:auto;height:auto;}
-  #app{overflow:auto;height:auto;}
 }
 </style>
 </head>
@@ -2320,6 +2317,7 @@ window.closeStaffDetailModal=function(){
 function renderAll(){
   renderTabs();
   renderList();
+  if(typeof renderMenuStats==='function') renderMenuStats();
 }
 
 
