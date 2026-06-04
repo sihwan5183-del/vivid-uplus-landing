@@ -724,7 +724,7 @@ input,select,textarea{font-family:inherit;outline:none;}
         <input type="password" id="crmPassword" placeholder="비밀번호" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;box-sizing:border-box;">
       </div>
       <div id="crmLoginError" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none;">이메일 또는 비밀번호가 올바르지 않습니다.</div>
-      <button id="crmLoginBtn" style="width:100%;height:44px;background:var(--blue);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">로그인</button>
+      <button id="crmLoginBtn" onclick="window.crmLoginFn&&window.crmLoginFn()" style="width:100%;height:44px;background:var(--blue);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">로그인</button>
     </div>
     <!-- 직원 로그인 -->
     <div id="loginStaff" style="display:none;">
@@ -1461,7 +1461,7 @@ input,select,textarea{font-family:inherit;outline:none;}
         <div class="menu-kpi-sub" id="mk-rate-sub"></div>
         <div class="menu-kpi-bar"><div class="menu-kpi-bar-fill" id="mk-rate-bar" style="width:0%;background:var(--blue);"></div></div>
       </div>
-      <div class="menu-kpi" onclick="closeMenu();bottomNav('contact')" style="border-color:#F97316;">
+      <div class="menu-kpi" onclick="closeMenu();switchTab('home')" style="border-color:#F97316;">
         <span class="menu-kpi-emoji">⚠️</span>
         <div class="menu-kpi-label">미배정</div>
         <div class="menu-kpi-val" id="mk-unassigned" style="color:var(--orange);">0</div>
@@ -1754,13 +1754,7 @@ window.addEventListener('unhandledrejection',function(e){
   const al=document.getElementById('appLoading');if(al)al.style.display='none';
   const lw=document.getElementById('loginWrap');if(lw)lw.style.display='grid';
 });
-setTimeout(function(){
-  const al=document.getElementById('appLoading');
-  if(al&&al.style.display!=='none'){
-    al.style.display='none';
-    const lw=document.getElementById('loginWrap');if(lw)lw.style.display='grid';
-  }
-},4000);
+
 </script>
 <script type="module">
 const isMobile=window.innerWidth<1024||/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -1995,14 +1989,15 @@ onAuthStateChanged(auth, user=>{
   }
 });
 
-document.getElementById('crmLoginBtn').onclick=async()=>{
+window.crmLoginFn=async function(){
   const email=document.getElementById('crmEmail').value;
   const pw=document.getElementById('crmPassword').value;
   const err=document.getElementById('crmLoginError');
-  err.style.display='none';
+  if(err)err.style.display='none';
   try{ await signInWithEmailAndPassword(auth,email,pw); }
-  catch(e){ err.style.display='block'; }
+  catch(e){ if(err)err.style.display='block'; }
 };
+document.getElementById('crmLoginBtn').onclick=window.crmLoginFn;
 
 // ── 직원 로그인 ──
 window.switchLoginTab=function(tab){
@@ -3891,6 +3886,10 @@ function bottomNav(n){
   else if(n==='new') switchTab('new');
   else if(n==='recare') switchTab('recare');
   else if(n==='absence') switchTab('absence');
+  else if(n==='done') switchTab('done');
+  else if(n==='contact') switchTab('new');
+  else if(n==='urgent') switchTab('urgent');
+  else if(n==='mine') switchTab('mine');
 }
 window.bottomNav=bottomNav;
 
