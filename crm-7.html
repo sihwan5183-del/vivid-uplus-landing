@@ -1421,17 +1421,7 @@ input,select,textarea{font-family:inherit;outline:none;}
         <div style="display:flex;flex-direction:column;gap:12px;">
           <div class="filter-bar">
             <div style="font-size:13px;font-weight:700;margin-bottom:8px;">부재케어 문자</div>
-            <textarea id="absSmsTemplate" style="width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px;font-size:13px;resize:vertical;min-height:160px;">[VIVID] 안녕하세요, 고객님.
-혜택을 전하는 비비드입니다.
-
-상담 신청서를 확인하고 연락드렸지만 연결되지 않아 문자 남깁니다.
-
-혹시 바쁘셨거나 통화가 어려운 상황이셨다면 괜찮습니다.
-
-편하신 시간에 회신 주시면 고객님 상황에 맞는 조건을 함께 확인해드리겠습니다.
-
-급하게 결정하실 필요는 없습니다.
-편하실 때 연락 주세요 :)</textarea>
+            <textarea style="width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px;font-size:13px;resize:vertical;min-height:80px;">안녕하세요. LG U+ 공식 인증 매장 VIVID입니다.\n신청해주신 상담 내용 확인 후 연락드렸으나 연결되지 않아 문자 남겨드립니다.\n편하신 시간에 회신 주시면 확인 후 다시 연락드리겠습니다.</textarea>
           </div>
         </div>
       </div>
@@ -1880,11 +1870,8 @@ input,select,textarea{font-family:inherit;outline:none;}
   <div class="dt-preview" id="absDtPreview">📅 <span id="absDtText"></span></div>
   <div class="custom-dt" id="absCustomDt"><input type="datetime-local" id="absCustomInp"></div>
   <div class="bs-sec">문자 발송 여부</div>
-  <div style="padding:0 16px 8px;">
-    <button type="button" onclick="openAbsSmsApp()" style="width:100%;height:42px;border-radius:9px;border:1.5px solid var(--blue);background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;">📱 문자앱 열기</button>
-  </div>
   <div class="sms-toggle">
-    <button class="sms-chip" data-v="sent" onclick="smsChip(this,&#39;absSms&#39;)">✅ 문자 보냈음</button>
+    <button class="sms-chip" data-v="sent" onclick="smsChip(this,&#39;absSms&#39;)">✅ 발송 완료</button>
     <button class="sms-chip" data-v="not_sent" onclick="smsChip(this,&#39;absSms&#39;)">미발송</button>
   </div>
   <div class="bs-memo">
@@ -4559,32 +4546,6 @@ window.onCallResult=async function(result){
     pushStatHist(c,'연락중',upd);
     await update(ref(db),upd);
   }
-};
-
-
-// ── 부재케어 문자앱 열기 ──
-window.openAbsSmsApp=function(){
-  const c=ALL.find(x=>x._id===selId);
-  if(!c){alert('고객 정보를 찾을 수 없습니다.');return;}
-  const phone=(c.phone||'').replace(/[^0-9+]/g,'');
-  if(!phone){alert('고객 전화번호가 없습니다.');return;}
-  const tplEl=document.getElementById('absSmsTemplate');
-  const fallback=`[VIVID] 안녕하세요, 고객님.
-혜택을 전하는 비비드입니다.
-
-상담 신청서를 확인하고 연락드렸지만 연결되지 않아 문자 남깁니다.
-
-혹시 바쁘셨거나 통화가 어려운 상황이셨다면 괜찮습니다.
-
-편하신 시간에 회신 주시면 고객님 상황에 맞는 조건을 함께 확인해드리겠습니다.
-
-급하게 결정하실 필요는 없습니다.
-편하실 때 연락 주세요 :)`;
-  const message=(tplEl&&tplEl.value?tplEl.value:fallback).replace(/\n/g,'\r\n');
-  const body=encodeURIComponent(message);
-  const ua=navigator.userAgent||'';
-  const sep=/iPhone|iPad|iPod/i.test(ua)?'&':'?';
-  location.href=`sms:${phone}${sep}body=${body}`;
 };
 
 // ── 부재케어 ──
