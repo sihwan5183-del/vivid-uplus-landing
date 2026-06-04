@@ -724,7 +724,7 @@ input,select,textarea{font-family:inherit;outline:none;}
         <input type="password" id="crmPassword" placeholder="비밀번호" style="width:100%;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;box-sizing:border-box;">
       </div>
       <div id="crmLoginError" style="color:#ef4444;font-size:12px;margin-bottom:10px;display:none;">이메일 또는 비밀번호가 올바르지 않습니다.</div>
-      <button id="crmLoginBtn" onclick="window.crmLoginFn&&window.crmLoginFn()" style="width:100%;height:44px;background:var(--blue);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">로그인</button>
+      <button id="crmLoginBtn" onclick="if(window.crmLoginFn)window.crmLoginFn()" style="width:100%;height:44px;background:var(--blue);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">로그인</button>
     </div>
     <!-- 직원 로그인 -->
     <div id="loginStaff" style="display:none;">
@@ -1758,6 +1758,7 @@ window.addEventListener('unhandledrejection',function(e){
 </script>
 <script type="module">
 const isMobile=window.innerWidth<1024||/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+window.crmLoginFn=null;
 
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import{getDatabase,ref,onValue,update,push as fbPush,remove as fbRemove,get}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
@@ -1997,7 +1998,6 @@ window.crmLoginFn=async function(){
   try{ await signInWithEmailAndPassword(auth,email,pw); }
   catch(e){ if(err)err.style.display='block'; }
 };
-document.getElementById('crmLoginBtn').onclick=window.crmLoginFn;
 
 // ── 직원 로그인 ──
 window.switchLoginTab=function(tab){
@@ -2281,12 +2281,12 @@ window.openStaffDetail=function(staffName){
       </div>
       <!-- 필터 -->
       <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;">
-        <button class="sd-filter-btn active" onclick="sdFilter(this,'',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font-size:12px;font-weight:600;cursor:pointer;">전체 ${allList.length}</button>
-        <button class="sd-filter-btn" onclick="sdFilter(this,'연락중',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📞 연락중 ${contact.length}</button>
-        <button class="sd-filter-btn" onclick="sdFilter(this,'부재케어',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📵 부재 ${absent.length}</button>
-        <button class="sd-filter-btn" onclick="sdFilter(this,'재케어',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">🔁 재케어 ${recare.length}</button>
-        <button class="sd-filter-btn" onclick="sdFilter(this,'개통완료',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">✅ 개통완료 ${done.length}</button>
-        <button class="sd-filter-btn" onclick="sdFilter(this,'실패',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">❌ 실패 ${fail.length}</button>
+        <button class="sd-filter-btn active" onclick=\"sdFilter(this,'')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font-size:12px;font-weight:600;cursor:pointer;">전체 ${allList.length}</button>
+        <button class="sd-filter-btn" onclick=\"sdFilter(this,'연락중')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📞 연락중 ${contact.length}</button>
+        <button class="sd-filter-btn" onclick=\"sdFilter(this,'부재케어')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📵 부재 ${absent.length}</button>
+        <button class="sd-filter-btn" onclick=\"sdFilter(this,'재케어')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">🔁 재케어 ${recare.length}</button>
+        <button class="sd-filter-btn" onclick=\"sdFilter(this,'개통완료')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">✅ 개통완료 ${done.length}</button>
+        <button class="sd-filter-btn" onclick=\"sdFilter(this,'실패')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">❌ 실패 ${fail.length}</button>
       </div>
       <!-- DB 목록 -->
       <div style="overflow-y:auto;flex:1;">
@@ -2313,12 +2313,15 @@ window.openStaffDetail=function(staffName){
   document.body.appendChild(modal);
 };
 
-window.sdFilter=function(btn,status,modal){
+window.sdFilter=function(btn,status){
+  const modal=btn.closest('div[style*="position:fixed"]');
+  if(!modal)return;
   modal.querySelectorAll('.sd-filter-btn').forEach(b=>{
     b.style.background='#fff';b.style.color='var(--ink)';b.style.borderColor='var(--line)';
   });
   btn.style.background='var(--blue)';btn.style.color='#fff';btn.style.borderColor='var(--blue)';
-  modal.querySelector('#sdTbody').innerHTML=modal._getRows(status);
+  const tbody=modal.querySelector('#sdTbody');
+  if(tbody&&modal._getRows)tbody.innerHTML=modal._getRows(status);
 };
 
 window.closeStaffDetailModal=function(){
@@ -2867,7 +2870,7 @@ function filterByPeriod(list){
   });
 }
 
-function openStoreDetail(store,initStatus){
+window.openStoreDetail=function(store,initStatus){
   const allList=filterByPeriod(ALL.filter(c=>c.assignedStore===store));
   const done=allList.filter(c=>c.status==='개통완료');
   const fail=allList.filter(c=>c.status==='실패');
@@ -2943,13 +2946,13 @@ function openStoreDetail(store,initStatus){
       </div>
       <!-- 필터 -->
       <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;">
-        <button class="sd-filter-btn${!initStatus?' active':''}" onclick="sdFilterStore(this,'',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid ${!initStatus?'var(--blue)':'var(--line)'};background:${!initStatus?'var(--blue)':'#fff'};color:${!initStatus?'#fff':'var(--ink)'};font-size:12px;font-weight:600;cursor:pointer;">전체 ${allList.length}</button>
-        <button class="sd-filter-btn${initStatus==='연락중'?' active':''}" onclick="sdFilterStore(this,'연락중',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📞 연락중 ${contact.length}</button>
-        <button class="sd-filter-btn${initStatus==='긴급지연'?' active':''}" onclick="sdFilterStore(this,'긴급지연',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">⏰ 긴급지연 ${urgent.length}</button>
-        <button class="sd-filter-btn${initStatus==='부재중'?' active':''}" onclick="sdFilterStore(this,'부재중',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📵 부재 ${absent.length}</button>
-        <button class="sd-filter-btn${initStatus==='재케어'?' active':''}" onclick="sdFilterStore(this,'재케어',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">🔁 재케어 ${recare.length}</button>
-        <button class="sd-filter-btn${initStatus==='개통완료'?' active':''}" onclick="sdFilterStore(this,'개통완료',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">✅ 개통 ${done.length}</button>
-        <button class="sd-filter-btn${initStatus==='실패'?' active':''}" onclick="sdFilterStore(this,'실패',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">❌ 실패 ${fail.length}</button>
+        <button class="sd-filter-btn${!initStatus?' active':''}" onclick=\"sdFilterStore(this,'')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid ${!initStatus?'var(--blue)':'var(--line)'};background:${!initStatus?'var(--blue)':'#fff'};color:${!initStatus?'#fff':'var(--ink)'};font-size:12px;font-weight:600;cursor:pointer;">전체 ${allList.length}</button>
+        <button class="sd-filter-btn${initStatus==='연락중'?' active':''}" onclick=\"sdFilterStore(this,'연락중')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📞 연락중 ${contact.length}</button>
+        <button class="sd-filter-btn${initStatus==='긴급지연'?' active':''}" onclick=\"sdFilterStore(this,'긴급지연')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">⏰ 긴급지연 ${urgent.length}</button>
+        <button class="sd-filter-btn${initStatus==='부재중'?' active':''}" onclick=\"sdFilterStore(this,'부재중')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📵 부재 ${absent.length}</button>
+        <button class="sd-filter-btn${initStatus==='재케어'?' active':''}" onclick=\"sdFilterStore(this,'재케어')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">🔁 재케어 ${recare.length}</button>
+        <button class="sd-filter-btn${initStatus==='개통완료'?' active':''}" onclick=\"sdFilterStore(this,'개통완료')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">✅ 개통 ${done.length}</button>
+        <button class="sd-filter-btn${initStatus==='실패'?' active':''}" onclick=\"sdFilterStore(this,'실패')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">❌ 실패 ${fail.length}</button>
       </div>
       <!-- DB 목록 -->
       <div style="overflow-y:auto;flex:1;">
@@ -2975,14 +2978,17 @@ function openStoreDetail(store,initStatus){
   modal._getRows=getRows;
   modal.onclick=e=>{if(e.target===modal)modal.remove();};
   document.body.appendChild(modal);
-}
+};
 
-window.sdFilterStore=function(btn,status,modal){
+window.sdFilterStore=function(btn,status){
+  const modal=btn.closest('div[style*="position:fixed"]');
+  if(!modal)return;
   modal.querySelectorAll('.sd-filter-btn').forEach(b=>{
     b.style.background='#fff';b.style.color='var(--ink)';b.style.borderColor='var(--line)';
   });
   btn.style.background='var(--blue)';btn.style.color='#fff';btn.style.borderColor='var(--blue)';
-  modal.querySelector('#sdStoreTbody').innerHTML=modal._getRows(status);
+  const tbody=modal.querySelector('#sdStoreTbody');
+  if(tbody&&modal._getRows)tbody.innerHTML=modal._getRows(status);
 };
 
 function renderStatStore(){
@@ -3197,7 +3203,7 @@ function renderDeviceStat(){
   const wrap=document.getElementById('device-stat-wrap');
   if(!wrap)return;
   // 개통완료 건만 집계
-  const done=Object.values(CONS).filter(c=>c.status==='개통완료'||c.status==='개통 완료');
+  const done=ALL.filter(c=>c.status==='개통완료'||c.status==='개통 완료');
   if(!done.length){
     wrap.innerHTML='<div style="color:var(--muted);font-size:13px;">개통완료 건이 없습니다.</div>';
     return;
