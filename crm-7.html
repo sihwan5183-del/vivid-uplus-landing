@@ -289,13 +289,15 @@ input,select,textarea{font-family:inherit;outline:none;}
 }
 .menu-period-tab.on{background:var(--blue);color:#fff;border-color:var(--blue);}
 .menu-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.menu-kpi{
-  background:#fff;border-radius:12px;border:1px solid var(--line);
-  padding:14px;
-}
-.menu-kpi-label{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px;}
-.menu-kpi-val{font-size:26px;font-weight:800;color:var(--ink);}
-.menu-kpi-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.menu-kpi{background:#fff;border-radius:16px;padding:16px 14px;border:1.5px solid var(--line);position:relative;overflow:hidden;cursor:pointer;transition:transform .15s;}
+.menu-kpi:active{transform:scale(.97);}
+.menu-kpi-emoji{font-size:22px;margin-bottom:8px;display:block;}
+.menu-kpi-label{font-size:11px;color:var(--muted);font-weight:700;margin-bottom:4px;letter-spacing:.3px;}
+.menu-kpi-val{font-size:30px;font-weight:900;color:var(--ink);line-height:1;}
+.menu-kpi-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.menu-kpi-bar{height:3px;border-radius:2px;margin-top:10px;background:var(--line);}
+.menu-kpi-bar-fill{height:100%;border-radius:2px;transition:width .4s;}
+
 .menu-table{background:#fff;border-radius:12px;border:1px solid var(--line);overflow:hidden;margin-bottom:16px;}
 .menu-table-hdr{display:grid;grid-template-columns:1fr 60px 60px 60px 60px;padding:10px 14px;background:#F9FAFB;border-bottom:1px solid var(--line);}
 .menu-table-hdr span{font-size:10px;font-weight:700;color:var(--muted);}
@@ -411,11 +413,11 @@ input,select,textarea{font-family:inherit;outline:none;}
 .det-foot-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
 
 /* ── 오버레이 + 바텀시트 ── */
-.bs-ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none;}
+.bs-ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;display:none;}
 .bs-ov.open{display:block;}
 .bs{
   position:fixed;bottom:0;left:0;right:0;
-  background:#fff;border-radius:20px 20px 0 0;z-index:51;
+  background:#fff;border-radius:20px 20px 0 0;z-index:601;
   transform:translateY(100%);transition:.24s cubic-bezier(.32,.72,0,1);
   max-height:88vh;overflow-y:auto;
   padding-bottom:env(safe-area-inset-bottom);
@@ -638,12 +640,18 @@ input,select,textarea{font-family:inherit;outline:none;}
 
 /* 우측 패널 */
 .pc-detail-panel{
-  width:340px;min-width:340px;height:100vh;
-  background:#fff;border-left:1px solid var(--line);
-  display:none;flex-direction:column;overflow:hidden;
-  position:sticky;top:0;
+  display:none;
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.5);
+  align-items:center;justify-content:center;
 }
 .pc-detail-panel.open{display:flex;}
+.pc-detail-inner{
+  background:#fff;border-radius:20px;
+  width:min(680px,95vw);max-height:88vh;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.2);
+}
 .detail-header{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
 .detail-header h3{font-size:15px;font-weight:800;}
 .detail-body{flex:1;overflow-y:auto;padding:16px 18px;}
@@ -656,6 +664,9 @@ input,select,textarea{font-family:inherit;outline:none;}
 .detail-section-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-bottom:8px;}
 .detail-row{display:flex;padding:7px 0;border-bottom:1px solid var(--line);gap:12px;}
 .detail-row:last-child{border-bottom:none;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.detail-grid .detail-row:nth-child(odd){border-right:1px solid var(--line);padding-right:12px;}
+.detail-grid .detail-row:nth-child(even){padding-left:12px;}
 .detail-key{font-size:12px;color:var(--muted);width:100px;flex-shrink:0;}
 .detail-val{font-size:12px;font-weight:600;color:var(--ink);flex:1;}
 
@@ -674,6 +685,12 @@ input,select,textarea{font-family:inherit;outline:none;}
 .page-btn.active{background:var(--blue);color:#fff;}
 .store-period-btn{height:26px;padding:0 10px;border-radius:50px;border:1.5px solid var(--line);background:#fff;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;}
 .store-period-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+@media(max-width:600px){
+  .kpi-dash-grid{grid-template-columns:repeat(3,1fr)!important;}
+  .kpi-dash-grid > div{padding:10px 6px!important;}
+  .kpi-dash-grid > div > div:last-child{font-size:18px!important;}
+}
 </style>
 </head>
 <body>
@@ -1274,20 +1291,22 @@ input,select,textarea{font-family:inherit;outline:none;}
   </div>
 
   <!-- 우측 상세 패널 -->
-  <div class="pc-detail-panel" id="pcDetailPanel">
-    <div class="detail-header">
-      <h3>고객 상세 정보</h3>
-      <button class="btn btn-ghost btn-sm" onclick="closePcDetail()">✕</button>
-    </div>
-    <div class="detail-body" id="pcDetailBody"></div>
-    <div class="detail-footer">
-      <button class="btn btn-outline" style="flex:1;" onclick="openPcStatusSheet()">상태 변경</button>
-      <button class="btn btn-outline" style="flex:1;" onclick="openPcAssignSheet()">담당자 변경</button>
-      <button class="btn btn-primary" style="flex:1;" onclick="openPcMemoSheet()">메모 추가</button>
-    </div>
-    <div style="display:flex;gap:8px;padding:0 18px 14px;">
-      <button class="btn btn-outline" style="flex:1;border-color:var(--blue);color:var(--blue);" onclick="openEditSheet()">✏️ 정보 수정</button>
-      <button class="btn btn-outline" style="flex:1;border-color:var(--red);color:var(--red);" onclick="deleteConsult()">🗑️ 삭제</button>
+  <div class="pc-detail-panel" id="pcDetailPanel" onclick="e=>e.target===this&&closePcDetail()">
+    <div class="pc-detail-inner">
+      <div class="detail-header">
+        <h3>고객 상세 정보</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closePcDetail()">✕</button>
+      </div>
+      <div class="detail-body" id="pcDetailBody"></div>
+      <div class="detail-footer">
+        <button class="btn btn-outline" style="flex:1;" onclick="openPcStatusSheet()">상태 변경</button>
+        <button class="btn btn-outline" style="flex:1;" onclick="openPcAssignSheet()">담당자 변경</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="openPcMemoSheet()">메모 추가</button>
+      </div>
+      <div style="display:flex;gap:8px;padding:0 18px 14px;">
+        <button class="btn btn-outline" style="flex:1;border-color:var(--blue);color:var(--blue);" onclick="openEditSheet()">✏️ 정보 수정</button>
+        <button class="btn btn-outline" style="flex:1;border-color:var(--red);color:var(--red);" onclick="deleteConsult()">🗑️ 삭제</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1419,37 +1438,60 @@ input,select,textarea{font-family:inherit;outline:none;}
     </div>
   </div>
 
-  <!-- KPI -->
+  <!-- KPI 카드 -->
   <div class="menu-section" style="padding-bottom:0;">
-    <div class="menu-section-title">전체 현황</div>
+    <div class="menu-section-title">📊 전체 현황</div>
     <div class="menu-kpi-grid">
-      <div class="menu-kpi"><div class="menu-kpi-label">신규 접수</div><div class="menu-kpi-val" id="mk-new">0</div><div class="menu-kpi-sub">건</div></div>
-      <div class="menu-kpi"><div class="menu-kpi-label">개통완료</div><div class="menu-kpi-val" id="mk-done" style="color:var(--green);">0</div><div class="menu-kpi-sub">건</div></div>
-      <div class="menu-kpi"><div class="menu-kpi-label">개통률</div><div class="menu-kpi-val" id="mk-rate">0%</div><div class="menu-kpi-sub" id="mk-rate-sub"></div></div>
-      <div class="menu-kpi"><div class="menu-kpi-label">미배정</div><div class="menu-kpi-val" id="mk-unassigned" style="color:var(--orange);">0</div><div class="menu-kpi-sub">즉시 배정 필요</div></div>
+      <div class="menu-kpi" onclick="closeMenu();bottomNav('contact')">
+        <span class="menu-kpi-emoji">📋</span>
+        <div class="menu-kpi-label">총 접수</div>
+        <div class="menu-kpi-val" id="mk-new">0</div>
+        <div class="menu-kpi-sub">건</div>
+      </div>
+      <div class="menu-kpi" onclick="closeMenu();bottomNav('done')" style="border-color:#10B981;">
+        <span class="menu-kpi-emoji">✅</span>
+        <div class="menu-kpi-label">개통완료</div>
+        <div class="menu-kpi-val" id="mk-done" style="color:var(--green);">0</div>
+        <div class="menu-kpi-sub">건</div>
+      </div>
+      <div class="menu-kpi" style="border-color:#074BF4;">
+        <span class="menu-kpi-emoji">📈</span>
+        <div class="menu-kpi-label">개통률</div>
+        <div class="menu-kpi-val" id="mk-rate" style="color:var(--blue);">0%</div>
+        <div class="menu-kpi-sub" id="mk-rate-sub"></div>
+        <div class="menu-kpi-bar"><div class="menu-kpi-bar-fill" id="mk-rate-bar" style="width:0%;background:var(--blue);"></div></div>
+      </div>
+      <div class="menu-kpi" onclick="closeMenu();bottomNav('contact')" style="border-color:#F97316;">
+        <span class="menu-kpi-emoji">⚠️</span>
+        <div class="menu-kpi-label">미배정</div>
+        <div class="menu-kpi-val" id="mk-unassigned" style="color:var(--orange);">0</div>
+        <div class="menu-kpi-sub">즉시 배정 필요</div>
+      </div>
+      <div class="menu-kpi" onclick="closeMenu();bottomNav('absence')" style="border-color:#F97316;">
+        <span class="menu-kpi-emoji">📵</span>
+        <div class="menu-kpi-label">부재케어</div>
+        <div class="menu-kpi-val" id="mk-absent" style="color:var(--orange);">0</div>
+        <div class="menu-kpi-sub">건</div>
+      </div>
+      <div class="menu-kpi" onclick="closeMenu();bottomNav('recare')" style="border-color:#8B5CF6;">
+        <span class="menu-kpi-emoji">🔁</span>
+        <div class="menu-kpi-label">재케어</div>
+        <div class="menu-kpi-val" id="mk-recare" style="color:#8B5CF6;">0</div>
+        <div class="menu-kpi-sub">건</div>
+      </div>
     </div>
   </div>
 
   <!-- 직원별 실적 -->
   <div class="menu-section" style="padding-bottom:0;">
-    <div class="menu-section-title">직원별 실적</div>
-    <div class="menu-table">
-      <div class="menu-table-hdr">
-        <span>담당자</span><span style="text-align:center;">배정</span><span style="text-align:center;">개통</span><span style="text-align:center;">실패</span><span style="text-align:center;">개통률</span>
-      </div>
-      <div id="menuStaffRows"></div>
-    </div>
+    <div class="menu-section-title">👤 직원별 실적</div>
+    <div id="menuStaffRows"></div>
   </div>
 
   <!-- 매장별 실적 -->
   <div class="menu-section" style="padding-bottom:0;">
-    <div class="menu-section-title">매장별 실적</div>
-    <div class="menu-table">
-      <div class="menu-table-hdr">
-        <span>매장</span><span style="text-align:center;">접수</span><span style="text-align:center;">개통</span><span style="text-align:center;">긴급</span><span style="text-align:center;">개통률</span>
-      </div>
-      <div id="menuStoreRows"></div>
-    </div>
+    <div class="menu-section-title">🏪 매장별 실적</div>
+    <div id="menuStoreRows"></div>
   </div>
 
   <!-- 액션 버튼 -->
@@ -2131,7 +2173,7 @@ window.downloadTabCSV=function(pageId){
     `${c.device||''}${c.storage?' '+c.storage:''}`,c.plan||'',
     `${c.assignedStore||''}${c.assignedTo?' '+c.assignedTo:''}`
   ]);
-  const csv=[headers,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const escV=function(v){return '"'+String(v||'').replace(/"/g,'""')+'"';};const csv=[headers,...rows].map(function(r){return r.map(escV).join(',');}).join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv'}));
   a.download=`VIVID_${pageId}_${new Date().toISOString().slice(0,10)}.csv`;
@@ -2151,33 +2193,108 @@ function updateTabBadges(){
 }
 
 window.openStaffDetail=function(staffName){
-  // 필터 상태
-  let filterStatus='';
-  const modal=document.getElementById('staffDetailModal');
-  if(!modal)return;
-  const titleEl=document.getElementById('staffDetailTitle');
-  const filterEl=document.getElementById('staffDetailFilter');
-  const tbodyEl=document.getElementById('staffDetailTbody');
+  const allList=ALL.filter(c=>c.assignedTo===staffName);
+  const done=allList.filter(c=>c.status==='개통완료');
+  const fail=allList.filter(c=>c.status==='실패');
+  const absent=allList.filter(c=>c.status==='부재케어');
+  const recare=allList.filter(c=>c.status==='재케어');
+  const contact=allList.filter(c=>c.status==='연락중');
+  const urgent=allList.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=1800000);
+  const rate=allList.length?Math.round(done.length/allList.length*100):0;
 
-  function render(){
-    const list=ALL.filter(c=>c.assignedTo===staffName&&(filterStatus?c.status===filterStatus:true));
-    tbodyEl.innerHTML=list.map(c=>`
-      <tr onclick="pcNav('db');selectConsult('${c._id}')" style="cursor:pointer;">
-        <td>${fmtDate(c.createdAt)}</td>
-        <td style="font-weight:700;">${c.name||'-'}</td>
-        <td style="color:var(--blue);">${c.phone||'-'}</td>
-        <td>${statusBadge(c.status||'신규')}</td>
-        <td>${c.device||'-'}</td>
-        <td style="font-size:11px;">${c.plan||'-'}</td>
-      </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">데이터 없음</td></tr>';
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;';
+
+  function getRows(status){
+    const list=status?allList.filter(c=>c.status===status):allList;
+    if(!list.length) return '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">데이터 없음</td></tr>';
+    return list.map(c=>`
+      <tr onclick="this.closest('div[style*=fixed]').remove();pcNav('db');selectConsult('${c._id}')" style="cursor:pointer;border-bottom:1px solid var(--line);font-size:12px;">
+        <td style="padding:8px;">${fmtDate(c.createdAt)}</td>
+        <td style="padding:8px;font-weight:700;">${c.name||'-'}</td>
+        <td style="padding:8px;color:var(--blue);">${c.phone||'-'}</td>
+        <td style="padding:8px;">${c.birth||'-'}</td>
+        <td style="padding:8px;">${(c.device||'-')+' '+(c.storage||'')}</td>
+        <td style="padding:8px;">${statusBadge(c.status||'신규')}</td>
+        <td style="padding:8px;font-size:11px;">${c.plan||'-'}</td>
+      </tr>`).join('');
   }
 
-  if(titleEl)titleEl.textContent=`${staffName} 담당 상담 목록`;
-  if(filterEl){
-    filterEl.onchange=()=>{filterStatus=filterEl.value;render();};
-  }
-  render();
-  modal.style.display='flex';
+  modal.innerHTML=`
+    <div style="background:#fff;border-radius:20px;padding:28px;width:min(900px,95vw);max-height:88vh;display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+        <div>
+          <div style="font-size:20px;font-weight:900;">👤 ${staffName}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">전체 기간 기준</div>
+        </div>
+        <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:24px;cursor:pointer;">×</button>
+      </div>
+      <!-- KPI -->
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;flex-shrink:0;" class="kpi-dash-grid">
+        <div style="background:#F8FAFF;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">📋 접수</div>
+          <div style="font-size:22px;font-weight:900;">${allList.length}</div>
+        </div>
+        <div style="background:#ECFDF5;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">✅ 개통</div>
+          <div style="font-size:22px;font-weight:900;color:var(--green);">${done.length}</div>
+        </div>
+        <div style="background:#F8FAFF;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">📈 개통률</div>
+          <div style="font-size:22px;font-weight:900;color:var(--blue);">${rate}%</div>
+        </div>
+        <div style="background:#FFF7ED;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">📵 부재</div>
+          <div style="font-size:22px;font-weight:900;color:var(--orange);">${absent.length}</div>
+        </div>
+        <div style="background:#FEF9C3;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">⏰ 긴급</div>
+          <div style="font-size:22px;font-weight:900;color:var(--red);">${urgent.length}</div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">❌ 실패</div>
+          <div style="font-size:22px;font-weight:900;color:var(--red);">${fail.length}</div>
+        </div>
+      </div>
+      <!-- 필터 -->
+      <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;">
+        <button class="sd-filter-btn active" onclick="sdFilter(this,'',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font-size:12px;font-weight:600;cursor:pointer;">전체 ${allList.length}</button>
+        <button class="sd-filter-btn" onclick="sdFilter(this,'연락중',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📞 연락중 ${contact.length}</button>
+        <button class="sd-filter-btn" onclick="sdFilter(this,'부재케어',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📵 부재 ${absent.length}</button>
+        <button class="sd-filter-btn" onclick="sdFilter(this,'재케어',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">🔁 재케어 ${recare.length}</button>
+        <button class="sd-filter-btn" onclick="sdFilter(this,'개통완료',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">✅ 개통완료 ${done.length}</button>
+        <button class="sd-filter-btn" onclick="sdFilter(this,'실패',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">❌ 실패 ${fail.length}</button>
+      </div>
+      <!-- DB 목록 -->
+      <div style="overflow-y:auto;flex:1;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead style="position:sticky;top:0;background:#fff;z-index:1;">
+            <tr style="border-bottom:2px solid var(--line);font-size:11px;color:var(--muted);">
+              <th style="padding:8px;text-align:left;">접수</th>
+              <th style="padding:8px;text-align:left;">고객명</th>
+              <th style="padding:8px;text-align:left;">전화번호</th>
+              <th style="padding:8px;text-align:left;">생년월일</th>
+              <th style="padding:8px;text-align:left;">기기</th>
+              <th style="padding:8px;text-align:left;">상태</th>
+              <th style="padding:8px;text-align:left;">요금제</th>
+            </tr>
+          </thead>
+          <tbody id="sdTbody">${getRows('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+
+  modal._getRows=getRows;
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  document.body.appendChild(modal);
+};
+
+window.sdFilter=function(btn,status,modal){
+  modal.querySelectorAll('.sd-filter-btn').forEach(b=>{
+    b.style.background='#fff';b.style.color='var(--ink)';b.style.borderColor='var(--line)';
+  });
+  btn.style.background='var(--blue)';btn.style.color='#fff';btn.style.borderColor='var(--blue)';
+  modal.querySelector('#sdTbody').innerHTML=modal._getRows(status);
 };
 
 window.closeStaffDetailModal=function(){
@@ -2494,7 +2611,7 @@ function renderDashboard(){
 }
 
 // ── 상담 DB 테이블 ──
-let dbPage=1;const DB_PER_PAGE=20;
+let dbPage=1;const DB_PER_PAGE=30;
 function renderDbTable(){
   requestAnimationFrame(()=>{
   const search=$('dbSearch')?.value.toLowerCase()||'';
@@ -2727,55 +2844,121 @@ function filterByPeriod(list){
   });
 }
 
-function openStoreDetail(store,status){
-  const all=filterByPeriod(ALL.filter(c=>c.assignedStore===store));
-  let list;
-  if(status==='접수') list=all;
-  else if(status==='긴급지연') list=all.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=1800000);
-  else if(status==='부재중') list=all.filter(c=>c.status==='부재케어');
-  else if(status==='실패') list=all.filter(c=>c.status==='실패');
-  else if(status==='개통완료') list=all.filter(c=>c.status==='개통완료');
-  else list=all;
-
-  if(!list.length){alert('해당 건이 없습니다.');return;}
-
-  const rows=list.map(c=>`
-    <tr style="border-bottom:1px solid var(--line);font-size:12px;">
-      <td style="padding:8px;">${fmtDate(c.createdAt)}</td>
-      <td style="padding:8px;font-weight:600;">${c.name||'-'}</td>
-      <td style="padding:8px;">${c.birth||'-'}</td>
-      <td style="padding:8px;color:var(--blue);">${c.phone||'-'}</td>
-      <td style="padding:8px;">${c.device||'-'}</td>
-      <td style="padding:8px;">${c.storage||'-'}</td>
-      <td style="padding:8px;">${c.color||'-'}</td>
-      <td style="padding:8px;">${c.assignedTo||'-'}</td>
-    </tr>`).join('');
+function openStoreDetail(store,initStatus){
+  const allList=filterByPeriod(ALL.filter(c=>c.assignedStore===store));
+  const done=allList.filter(c=>c.status==='개통완료');
+  const fail=allList.filter(c=>c.status==='실패');
+  const absent=allList.filter(c=>c.status==='부재케어');
+  const recare=allList.filter(c=>c.status==='재케어');
+  const contact=allList.filter(c=>c.status==='연락중');
+  const urgent=allList.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=1800000);
+  const rate=allList.length?Math.round(done.length/allList.length*100):0;
 
   const modal=document.createElement('div');
   modal.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;';
+
+  function getRows(status){
+    let list;
+    if(!status||status==='접수') list=allList;
+    else if(status==='긴급지연') list=urgent;
+    else if(status==='부재중') list=absent;
+    else if(status==='실패') list=fail;
+    else if(status==='개통완료') list=done;
+    else if(status==='연락중') list=contact;
+    else if(status==='재케어') list=recare;
+    else list=allList;
+    if(!list.length) return '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">데이터 없음</td></tr>';
+    return list.map(c=>`
+      <tr onclick="this.closest('div[style*=fixed]').remove();pcNav('db');selectConsult('${c._id}')" style="cursor:pointer;border-bottom:1px solid var(--line);font-size:12px;">
+        <td style="padding:8px;">${fmtDate(c.createdAt)}</td>
+        <td style="padding:8px;font-weight:700;">${c.name||'-'}</td>
+        <td style="padding:8px;color:var(--blue);">${c.phone||'-'}</td>
+        <td style="padding:8px;">${c.birth||'-'}</td>
+        <td style="padding:8px;">${(c.device||'-')+' '+(c.storage||'')}</td>
+        <td style="padding:8px;">${statusBadge(c.status||'신규')}</td>
+        <td style="padding:8px;">${c.assignedTo||'-'}</td>
+        <td style="padding:8px;font-size:11px;">${c.plan||'-'}</td>
+      </tr>`).join('');
+  }
+
   modal.innerHTML=`
-    <div style="background:#fff;border-radius:16px;padding:24px;width:min(900px,95vw);max-height:80vh;overflow-y:auto;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div style="font-size:16px;font-weight:800;">${store} · ${status} <span style="color:var(--muted);font-size:13px;font-weight:400;">${list.length}건</span></div>
-        <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+    <div style="background:#fff;border-radius:20px;padding:28px;width:min(960px,95vw);max-height:88vh;display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+        <div>
+          <div style="font-size:20px;font-weight:900;">🏪 ${store}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">기간: ${storePeriod==='today'?'오늘':storePeriod==='week'?'최근 7일':storePeriod==='month'?'이번 달':'전체'}</div>
+        </div>
+        <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:24px;cursor:pointer;">×</button>
       </div>
-      <table style="width:100%;border-collapse:collapse;">
-        <thead><tr style="border-bottom:2px solid var(--line);font-size:12px;color:var(--muted);">
-          <th style="padding:8px;text-align:left;">접수</th>
-          <th style="padding:8px;text-align:left;">고객명</th>
-          <th style="padding:8px;text-align:left;">생년월일</th>
-          <th style="padding:8px;text-align:left;">전화번호</th>
-          <th style="padding:8px;text-align:left;">기기</th>
-          <th style="padding:8px;text-align:left;">용량</th>
-          <th style="padding:8px;text-align:left;">색상</th>
-          <th style="padding:8px;text-align:left;">담당자</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
+      <!-- KPI -->
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;flex-shrink:0;" class="kpi-dash-grid">
+        <div style="background:#F8FAFF;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">📋 접수</div>
+          <div style="font-size:22px;font-weight:900;">${allList.length}</div>
+        </div>
+        <div style="background:#ECFDF5;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">✅ 개통</div>
+          <div style="font-size:22px;font-weight:900;color:var(--green);">${done.length}</div>
+        </div>
+        <div style="background:#F8FAFF;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">📈 개통률</div>
+          <div style="font-size:22px;font-weight:900;color:var(--blue);">${rate}%</div>
+        </div>
+        <div style="background:#FEF9C3;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">⏰ 긴급</div>
+          <div style="font-size:22px;font-weight:900;color:var(--red);">${urgent.length}</div>
+        </div>
+        <div style="background:#FFF7ED;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">📵 부재</div>
+          <div style="font-size:22px;font-weight:900;color:var(--orange);">${absent.length}</div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:12px;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;">❌ 실패</div>
+          <div style="font-size:22px;font-weight:900;color:var(--red);">${fail.length}</div>
+        </div>
+      </div>
+      <!-- 필터 -->
+      <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;">
+        <button class="sd-filter-btn${!initStatus?' active':''}" onclick="sdFilterStore(this,'',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid ${!initStatus?'var(--blue)':'var(--line)'};background:${!initStatus?'var(--blue)':'#fff'};color:${!initStatus?'#fff':'var(--ink)'};font-size:12px;font-weight:600;cursor:pointer;">전체 ${allList.length}</button>
+        <button class="sd-filter-btn${initStatus==='연락중'?' active':''}" onclick="sdFilterStore(this,'연락중',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📞 연락중 ${contact.length}</button>
+        <button class="sd-filter-btn${initStatus==='긴급지연'?' active':''}" onclick="sdFilterStore(this,'긴급지연',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">⏰ 긴급지연 ${urgent.length}</button>
+        <button class="sd-filter-btn${initStatus==='부재중'?' active':''}" onclick="sdFilterStore(this,'부재중',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📵 부재 ${absent.length}</button>
+        <button class="sd-filter-btn${initStatus==='재케어'?' active':''}" onclick="sdFilterStore(this,'재케어',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">🔁 재케어 ${recare.length}</button>
+        <button class="sd-filter-btn${initStatus==='개통완료'?' active':''}" onclick="sdFilterStore(this,'개통완료',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">✅ 개통 ${done.length}</button>
+        <button class="sd-filter-btn${initStatus==='실패'?' active':''}" onclick="sdFilterStore(this,'실패',modal)" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">❌ 실패 ${fail.length}</button>
+      </div>
+      <!-- DB 목록 -->
+      <div style="overflow-y:auto;flex:1;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead style="position:sticky;top:0;background:#fff;z-index:1;">
+            <tr style="border-bottom:2px solid var(--line);font-size:11px;color:var(--muted);">
+              <th style="padding:8px;text-align:left;">접수</th>
+              <th style="padding:8px;text-align:left;">고객명</th>
+              <th style="padding:8px;text-align:left;">전화번호</th>
+              <th style="padding:8px;text-align:left;">생년월일</th>
+              <th style="padding:8px;text-align:left;">기기</th>
+              <th style="padding:8px;text-align:left;">상태</th>
+              <th style="padding:8px;text-align:left;">담당자</th>
+              <th style="padding:8px;text-align:left;">요금제</th>
+            </tr>
+          </thead>
+          <tbody id="sdStoreTbody">${getRows(initStatus)}</tbody>
+        </table>
+      </div>
     </div>`;
+
+  modal._getRows=getRows;
   modal.onclick=e=>{if(e.target===modal)modal.remove();};
   document.body.appendChild(modal);
 }
+
+window.sdFilterStore=function(btn,status,modal){
+  modal.querySelectorAll('.sd-filter-btn').forEach(b=>{
+    b.style.background='#fff';b.style.color='var(--ink)';b.style.borderColor='var(--line)';
+  });
+  btn.style.background='var(--blue)';btn.style.color='#fff';btn.style.borderColor='var(--blue)';
+  modal.querySelector('#sdStoreTbody').innerHTML=modal._getRows(status);
+};
 
 function renderStatStore(){
   const stores=['남양시장점','중곡점','구미사점'];
@@ -2788,7 +2971,7 @@ function renderStatStore(){
     const rate=mine.length?Math.round(done.length/mine.length*100):0;
     const td=(v,color,st)=>`<td style="cursor:pointer;${color?'color:'+color+';':''};font-weight:${v?'700':'400'};" onclick="openStoreDetail('${s}','${st}')">${v}</td>`;
     return`<tr>
-      <td style="font-weight:700;">${s}</td>
+      <td style="font-weight:800;cursor:pointer;color:var(--blue);text-decoration:underline;" onclick="openStoreDashboard('${s}')">${s}</td>
       ${td(mine.length,'','접수')}
       ${td(urgent.length,'var(--red)','긴급지연')}
       ${td(absent.length,'var(--orange)','부재중')}
@@ -2798,6 +2981,95 @@ function renderStatStore(){
     </tr>`;
   }).join('');
 }
+
+window.openStoreDashboard=function(store){
+  const all=filterByPeriod(ALL.filter(c=>c.assignedStore===store));
+  const done=all.filter(c=>c.status==='개통완료');
+  const fail=all.filter(c=>c.status==='실패');
+  const urgent=all.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=1800000);
+  const absent=all.filter(c=>c.status==='부재케어');
+  const contact=all.filter(c=>c.status==='연락중');
+  const recare=all.filter(c=>c.status==='재케어');
+  const rate=all.length?Math.round(done.length/all.length*100):0;
+
+  // 직원별 집계
+  const staffMap={};
+  all.forEach(c=>{
+    const n=c.assignedTo||'미배정';
+    if(!staffMap[n]) staffMap[n]={name:n,total:0,done:0,fail:0,contact:0,absent:0};
+    staffMap[n].total++;
+    if(c.status==='개통완료') staffMap[n].done++;
+    else if(c.status==='실패') staffMap[n].fail++;
+    else if(c.status==='연락중') staffMap[n].contact++;
+    else if(c.status==='부재케어') staffMap[n].absent++;
+  });
+  const staffRows=Object.values(staffMap).sort((a,b)=>b.done-a.done).map(s=>`
+    <tr style="border-bottom:1px solid var(--line);font-size:13px;">
+      <td style="padding:10px 12px;font-weight:700;">${s.name}</td>
+      <td style="padding:10px 12px;text-align:center;">${s.total}</td>
+      <td style="padding:10px 12px;text-align:center;color:var(--blue);">${s.contact}</td>
+      <td style="padding:10px 12px;text-align:center;color:var(--orange);">${s.absent}</td>
+      <td style="padding:10px 12px;text-align:center;color:var(--green);font-weight:700;">${s.done}</td>
+      <td style="padding:10px 12px;text-align:center;color:var(--red);">${s.fail}</td>
+      <td style="padding:10px 12px;text-align:center;font-weight:700;">${s.total?Math.round(s.done/s.total*100):0}%</td>
+    </tr>`).join('');
+
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML=`
+    <div style="background:#fff;border-radius:20px;padding:32px;width:min(800px,95vw);max-height:88vh;overflow-y:auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div>
+          <div style="font-size:22px;font-weight:900;">${store}</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px;">기간: ${storePeriod==='today'?'오늘':storePeriod==='week'?'최근 7일':storePeriod==='month'?'이번 달':'전체'}</div>
+        </div>
+        <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:24px;cursor:pointer;">×</button>
+      </div>
+      <!-- KPI 카드 -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;">
+        <div style="background:#F8FAFF;border-radius:14px;padding:18px;text-align:center;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">총 접수</div>
+          <div style="font-size:28px;font-weight:900;">${all.length}</div>
+        </div>
+        <div style="background:#ECFDF5;border-radius:14px;padding:18px;text-align:center;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">개통완료</div>
+          <div style="font-size:28px;font-weight:900;color:var(--green);">${done.length}</div>
+        </div>
+        <div style="background:#F8FAFF;border-radius:14px;padding:18px;text-align:center;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">개통률</div>
+          <div style="font-size:28px;font-weight:900;color:var(--blue);">${rate}%</div>
+        </div>
+        <div style="background:#FFF7ED;border-radius:14px;padding:18px;text-align:center;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">긴급지연</div>
+          <div style="font-size:28px;font-weight:900;color:var(--red);">${urgent.length}</div>
+        </div>
+        <div style="background:#FFF7ED;border-radius:14px;padding:18px;text-align:center;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">부재중</div>
+          <div style="font-size:28px;font-weight:900;color:var(--orange);">${absent.length}</div>
+        </div>
+        <div style="background:#FEF2F2;border-radius:14px;padding:18px;text-align:center;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">실패</div>
+          <div style="font-size:28px;font-weight:900;color:var(--red);">${fail.length}</div>
+        </div>
+      </div>
+      <!-- 직원별 -->
+      <div style="font-size:15px;font-weight:800;margin-bottom:12px;">직원별 현황</div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="border-bottom:2px solid var(--line);font-size:12px;color:var(--muted);">
+          <th style="padding:10px 12px;text-align:left;">담당자</th>
+          <th style="padding:10px 12px;text-align:center;">접수</th>
+          <th style="padding:10px 12px;text-align:center;color:var(--blue);">연락중</th>
+          <th style="padding:10px 12px;text-align:center;color:var(--orange);">부재중</th>
+          <th style="padding:10px 12px;text-align:center;color:var(--green);">개통완료</th>
+          <th style="padding:10px 12px;text-align:center;color:var(--red);">실패</th>
+          <th style="padding:10px 12px;text-align:center;">개통률</th>
+        </tr></thead>
+        <tbody>${staffRows||'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">데이터 없음</td></tr>'}</tbody>
+      </table>
+    </div>`;
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  document.body.appendChild(modal);
+};
 
 // ── PC 고객 상세 ──
 function selectConsult(id){
@@ -2809,41 +3081,74 @@ function selectConsult(id){
   panel.classList.add('open');
   const ms=elapsedMs(c.createdAt);
   $('pcDetailBody').innerHTML=`
-    <div class="detail-name">${c.name||'-'}</div>
-    <div class="detail-phone-row">
-      <div class="detail-phone">${c.phone||'-'}</div>
-      <a href="tel:${(c.phone||'').replace(/-/g,'')}" class="btn btn-primary btn-sm">📞 전화</a>
+    <!-- 헤더 -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:20px 20px 0;">
+      <div>
+        <div style="font-size:22px;font-weight:900;margin-bottom:4px;">${c.name||'-'}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <a href="tel:${(c.phone||'').replace(/-/g,'')}" style="font-size:15px;font-weight:700;color:var(--blue);text-decoration:none;">${c.phone||'-'}</a>
+          <a href="tel:${(c.phone||'').replace(/-/g,'')}" class="btn btn-primary btn-sm">📞 전화</a>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <span class="badge badge-${statusColor(c.status)}">${c.status||'신규'}</span>
+          ${ms>=1800000?`<span class="badge badge-red blink">⏰ ${elapsedLabel(ms)}</span>`:`<span class="badge badge-gray">${elapsedLabel(ms)}</span>`}
+        </div>
+      </div>
+      <div style="text-align:right;font-size:11px;color:var(--muted);">
+        <div>📍 ${c.assignedStore||'미배정'}</div>
+        <div>👤 ${c.assignedTo||'미지정'}</div>
+        <div>🕐 ${fmtDate(c.createdAt)}</div>
+      </div>
     </div>
-    <div style="display:flex;gap:6px;margin-bottom:14px;">
-      <span class="badge badge-${statusColor(c.status)}">${c.status||'신규'}</span>
-      ${ms>=1800000?`<span class="badge badge-red blink">${elapsedLabel(ms)} 경과</span>`:`<span class="badge badge-gray">${elapsedLabel(ms)} 경과</span>`}
+    <!-- 2컬럼 정보 -->
+    <div style="padding:16px 20px;">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-bottom:10px;">📋 신청 조건</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">통신사</div>
+          <div style="font-size:13px;font-weight:700;">${c.carrier||'-'}</div>
+        </div>
+        <div style="padding:10px 14px;border-bottom:1px solid var(--line);">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">가입유형</div>
+          <div style="font-size:13px;font-weight:700;">${c.joinType||'-'}</div>
+        </div>
+        <div style="padding:10px 14px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">기기</div>
+          <div style="font-size:13px;font-weight:700;">${c.device||'-'}</div>
+        </div>
+        <div style="padding:10px 14px;border-bottom:1px solid var(--line);">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">용량</div>
+          <div style="font-size:13px;font-weight:700;">${c.storage||'-'}</div>
+        </div>
+        <div style="padding:10px 14px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">색상</div>
+          <div style="font-size:13px;font-weight:700;">${c.color||'-'}</div>
+        </div>
+        <div style="padding:10px 14px;border-bottom:1px solid var(--line);">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">할인방식</div>
+          <div style="font-size:13px;font-weight:700;">${c.discount||'-'}</div>
+        </div>
+        <div style="padding:10px 14px;border-right:1px solid var(--line);">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">요금제</div>
+          <div style="font-size:13px;font-weight:700;">${c.plan||'-'}</div>
+        </div>
+        <div style="padding:10px 14px;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:2px;">상담시간</div>
+          <div style="font-size:13px;font-weight:700;">${c.consultTime||'-'}</div>
+        </div>
+      </div>
+      ${c.memo?`<div style="margin-top:10px;background:#F8FAFF;border-radius:10px;padding:12px 14px;font-size:13px;"><span style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;">💬 고객 메모</span>${c.memo}</div>`:''}
     </div>
-    <div class="detail-section">
-      <div class="detail-section-title">기본 정보</div>
-      <div class="detail-row"><div class="detail-key">매장</div><div class="detail-val">${c.assignedStore||'미배정'}</div></div>
-      <div class="detail-row"><div class="detail-key">담당자</div><div class="detail-val">${c.assignedTo||'미지정'}</div></div>
-      <div class="detail-row"><div class="detail-key">접수</div><div class="detail-val">${fmtDate(c.createdAt)}</div></div>
-    </div>
-    <div class="detail-section">
-      <div class="detail-section-title">신청 조건</div>
-      <div class="detail-row"><div class="detail-key">현재 통신사</div><div class="detail-val">${c.carrier||'-'}</div></div>
-      <div class="detail-row"><div class="detail-key">가입 유형</div><div class="detail-val">${c.joinType||'-'}</div></div>
-      <div class="detail-row"><div class="detail-key">기기</div><div class="detail-val">${c.device||'-'}</div></div>
-      <div class="detail-row"><div class="detail-key">용량</div><div class="detail-val">${c.storage||'-'}</div></div>
-      <div class="detail-row"><div class="detail-key">색상</div><div class="detail-val">${c.color||'-'}</div></div>
-      <div class="detail-row"><div class="detail-key">요금제</div><div class="detail-val">${c.plan||'-'}</div></div>
-      <div class="detail-row"><div class="detail-key">할인 방식</div><div class="detail-val">${c.discount||'-'}</div></div>
-      <div class="detail-row"><div class="detail-key">상담 시간</div><div class="detail-val">${c.consultTime||'-'}</div></div>
-      <div class="detail-row"><div class="detail-key">인터넷/TV</div><div class="detail-val">${c.internetTV||'아니요'}</div></div>
-      <div class="detail-row"><div class="detail-key">고객 메모</div><div class="detail-val">${c.memo||'-'}</div></div>
-    </div>
-    <button class="accordion-btn" onclick="toggleAccordion('acc-history')">연락 이력 (${(c.contactHistory||[]).length}) <span>▼</span></button>
-    <div class="accordion-body" id="acc-history">
-      ${(c.contactHistory||[]).map(h=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--line);">${fmtDate(h.at)} · ${h.result||'-'} · ${h.by||'-'}</div>`).join('')||'<div style="font-size:12px;color:var(--muted);">이력 없음</div>'}
-    </div>
-    <button class="accordion-btn" onclick="toggleAccordion('acc-status')">상태 변경 이력 (${(c.statusHistory||[]).length}) <span>▼</span></button>
-    <div class="accordion-body" id="acc-status">
-      ${(c.statusHistory||[]).map(h=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--line);">${fmtDate(h.at)} · ${h.from||'-'} → ${h.to||'-'}</div>`).join('')||'<div style="font-size:12px;color:var(--muted);">이력 없음</div>'}
+    <!-- 이력 아코디언 -->
+    <div style="padding:0 20px 8px;">
+      <button class="accordion-btn" onclick="toggleAccordion('acc-history')">📞 연락 이력 (${(c.contactHistory||[]).length}) <span>▼</span></button>
+      <div class="accordion-body" id="acc-history">
+        ${(c.contactHistory||[]).slice().reverse().map(h=>`<div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--line);">${fmtDate(h.at)} · ${h.result||'-'} · ${h.by||'-'}</div>`).join('')||'<div style="font-size:12px;color:var(--muted);">이력 없음</div>'}
+      </div>
+      <button class="accordion-btn" onclick="toggleAccordion('acc-status')">🔄 상태 변경 이력 (${(c.statusHistory||[]).length}) <span>▼</span></button>
+      <div class="accordion-body" id="acc-status-body"></div>
+      <button class="accordion-btn" id="acc-action-btn" onclick="toggleAccordion('acc-action')">👤 담당자·메모 이력 (0) <span>▼</span></button>
+      <div class="accordion-body" id="acc-action-body"></div>
     </div>
   `;
 }
@@ -2852,6 +3157,7 @@ window.toggleAccordion=id=>{$$(id)?.classList.toggle('open');};
 function $$(id){return document.getElementById(id);}
 
 function closePcDetail(){$('pcDetailPanel').classList.remove('open');}
+document.getElementById('pcDetailPanel')?.addEventListener('click',function(e){if(e.target===this)closePcDetail();});
 window.closePcDetail=closePcDetail;
 
 // ── PC 네비 ──
@@ -3065,16 +3371,18 @@ window.viewArchive=async function(ym){
 
     function downloadCSVArchive(items){
       const headers=['접수시간','고객명','전화번호','생년월일','기기','용량','색상','요금제','상태','매장','담당자'];
-      const rows=items.map(c=>[
-        fmtDate(c.createdAt),c.name||'',c.phone||'',c.birth||'',
-        c.device||'',c.storage||'',c.color||'',c.plan||'',
-        c.status||'',c.assignedStore||'',c.assignedTo||''
-      ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
-      const csv='﻿'+[headers.join(','),...rows].join('
-');
+      const esc=function(v){return '"'+String(v||'').replace(/"/g,'""')+'"';};
+      const rows=items.map(function(c){
+        return [fmtDate(c.createdAt),c.name||'',c.phone||'',c.birth||'',
+          c.device||'',c.storage||'',c.color||'',c.plan||'',
+          c.status||'',c.assignedStore||'',c.assignedTo||''
+        ].map(esc).join(',');
+      });
+      const csv='\uFEFF'+[headers.join(',')].concat(rows).join('\n');
       const a=document.createElement('a');
       a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-      a.download=`아카이브_${ym}.csv`;a.click();
+      a.download='아카이브_'+ym+'.csv';
+      a.click();
     }
 
     const modal=document.createElement('div');
@@ -3125,14 +3433,34 @@ window.viewArchive=async function(ym){
             <tbody id="av-tbody"></tbody>
           </table>
         </div>
+        <div id="av-pager"></div>
       </div>`;
     modal.onclick=e=>{if(e.target===modal)modal.remove();};
     document.body.appendChild(modal);
 
+    let avPage=1;
+    const AV_PER_PAGE=30;
+
     function refresh(){
       const f=getFiltered();
-      modal.querySelector('#av-tbody').innerHTML=renderRows(f);
-      modal.querySelector('#av-count').textContent=f.length+'건';
+      const total=f.length;
+      const totalPages=Math.max(1,Math.ceil(total/AV_PER_PAGE));
+      if(avPage>totalPages)avPage=1;
+      const paged=f.slice((avPage-1)*AV_PER_PAGE,avPage*AV_PER_PAGE);
+      modal.querySelector('#av-tbody').innerHTML=renderRows(paged);
+      modal.querySelector('#av-count').textContent=total+'건';
+      // 페이지네이션 버튼
+      let pager='';
+      if(totalPages>1){
+        pager='<div style="display:flex;gap:6px;align-items:center;justify-content:center;margin-top:12px;">';
+        pager+=`<button onclick="avPage=Math.max(1,avPage-1);refresh()" style="height:30px;padding:0 12px;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer;font-size:12px;">◀</button>`;
+        for(let p=1;p<=totalPages;p++){
+          pager+=`<button onclick="avPage=${p};refresh()" style="height:30px;padding:0 10px;border:1px solid var(--line);border-radius:6px;background:${p===avPage?'var(--blue)':'#fff'};color:${p===avPage?'#fff':'inherit'};cursor:pointer;font-size:12px;">${p}</button>`;
+        }
+        pager+=`<button onclick="avPage=Math.min(${totalPages},avPage+1);refresh()" style="height:30px;padding:0 12px;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer;font-size:12px;">▶</button>`;
+        pager+='</div>';
+      }
+      modal.querySelector('#av-pager').innerHTML=pager;
     }
     refresh();
 
@@ -3155,7 +3483,7 @@ function downloadCSV(){
     c.device||'',c.storage||'',c.color||'',c.plan||'',c.discount||'',
     c.consultTime||'',c.internetTV||'',c.status||'신규',
     c.assignedStore||'',c.assignedTo||'',c.memo||''
-  ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  ].map(function(v){return '"'+String(v||'').replace(/"/g,'""')+'"';}).join(','));
   const csv='\uFEFF'+[headers.join(','),...rows].join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
@@ -3218,10 +3546,135 @@ function pcSelectConsult(id){
 }
 window.selectConsult=pcSelectConsult;
 window.closePcDetail=function(){document.getElementById('pcDetailPanel')?.classList.remove('open');};
-window.openPcStatusSheet=function(){openBS('st');};
-window.openPcAssignSheet=function(){openBS('assign');};
-window.openPcMemoSheet=function(){openBS('memo');};
-window.openEditSheet=function(){openBS('edit');};
+// PC에서는 미니 모달로 표시 (z-index 9000)
+function openMiniModal(title, bodyHTML, footerHTML){
+  document.getElementById('pcMiniModal')?.remove();
+  const m=document.createElement('div');
+  m.id='pcMiniModal';
+  m.style.cssText='position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;';
+  m.innerHTML=`<div style="background:#fff;border-radius:16px;width:min(420px,92vw);max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line);">
+      <div style="font-size:16px;font-weight:800;">${title}</div>
+      <button onclick="document.getElementById('pcMiniModal').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
+    </div>
+    <div style="padding:16px 20px;">${bodyHTML}</div>
+    ${footerHTML?`<div style="padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:8px;">${footerHTML}</div>`:''}
+  </div>`;
+  m.onclick=e=>{if(e.target===m)m.remove();};
+  document.body.appendChild(m);
+}
+
+window.openPcStatusSheet=function(){
+  if(!isMobile){
+    const statuses=[
+      {v:'신규',c:'blue'},{v:'연락중',c:'blue'},
+      {v:'재케어',c:'purple'},{v:'부재케어',c:'orange'},
+      {v:'개통완료',c:'green'},{v:'실패',c:'gray'}
+    ];
+    const dotColors={blue:'#074BF4',purple:'#8B5CF6',orange:'#F97316',green:'#10B981',gray:'#9CA3AF'};
+    const statusHTML=statuses.map(s=>`
+      <div class="status-item" onclick="onStatusChange('${s.v}');document.getElementById('pcMiniModal')?.remove();" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;border-radius:10px;transition:background .15s;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='transparent'">
+        <div style="width:12px;height:12px;border-radius:50%;background:${dotColors[s.c]};flex-shrink:0;"></div>
+        <span style="font-size:15px;font-weight:600;">${s.v}</span>
+      </div>`).join('');
+    openMiniModal('상태 변경', `<div>${statusHTML}</div>`,'');
+  } else { openBS('st'); }
+};
+window.openPcAssignSheet=function(){
+  if(!isMobile){
+    // 담당자 목록 생성
+    const canAssignAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+    const staffList=Object.values(allStaff).filter(s=>s.active!==false);
+    const defaultStaff=[{name:'여인국',store:'남양시장점'},{name:'황제필',store:'중곡점'},{name:'강용민',store:'구미사점'}];
+    const list=canAssignAll?(staffList.length>0?staffList:defaultStaff):[{name:currentUser.name,store:currentUser.store}];
+    const chips=list.map(s=>`
+      <button onclick="selectPcAssign(this,'${s.name}','${s.store||''}')" style="padding:10px 16px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:600;cursor:pointer;text-align:left;transition:all .15s;">
+        <div>${s.name}</div><div style="font-size:11px;color:var(--muted);">${s.store||''}</div>
+      </button>`).join('');
+    openMiniModal('담당자 변경',
+      `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="pcAssignGrid">${chips}</div>
+       <div style="display:none;" id="pcAssignSelected"></div>`,
+      `<button onclick="document.getElementById('pcMiniModal').remove()" style="flex:1;height:42px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:14px;font-weight:600;cursor:pointer;">취소</button>
+       <button onclick="submitPcAssign()" style="flex:1;height:42px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:14px;font-weight:700;cursor:pointer;">배정 완료</button>`
+    );
+  } else { openBS('assign'); }
+};
+
+window.selectPcAssign=function(btn,name,store){
+  document.querySelectorAll('#pcAssignGrid button').forEach(b=>{b.style.background='#fff';b.style.borderColor='var(--line)';b.style.color='var(--ink)';});
+  btn.style.background='var(--blue)';btn.style.borderColor='var(--blue)';btn.style.color='#fff';
+  btn.querySelector('div:last-child').style.color='rgba(255,255,255,.7)';
+  document.getElementById('pcAssignSelected').textContent=name+'|'+store;
+};
+
+window.submitPcAssign=async function(){
+  const sel=document.getElementById('pcAssignSelected')?.textContent;
+  if(!sel){alert('담당자를 선택해주세요.');return;}
+  const [name,store]=sel.split('|');
+  if(!selId)return;
+  const canAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+  const c=ALL.find(x=>x._id===selId);
+  if(!canAll&&c?.assignedTo&&c.assignedTo!==currentUser.name){alert('본인 담당 건만 변경 가능합니다.');return;}
+  const upd={};
+  upd['consultations/'+selId+'/assignedTo']=name;
+  upd['consultations/'+selId+'/assignedStore']=store;
+  if(c) pushAssignHist(c,name,store,upd);
+  await update(ref(db),upd);
+  document.getElementById('pcMiniModal')?.remove();
+  const fresh=ALL.find(x=>x._id===selId);if(fresh)renderDetTop(fresh);
+};
+window.openPcMemoSheet=function(){
+  if(!isMobile){
+    openMiniModal('메모 추가',
+      `<textarea id="pcMemoInp" placeholder="메모를 입력하세요" maxlength="200" style="width:100%;height:100px;border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14px;resize:none;font-family:inherit;box-sizing:border-box;"></textarea>
+       <div style="font-size:11px;color:var(--muted);margin-top:4px;" id="pcMemoCnt">0/200</div>`,
+      `<button onclick="document.getElementById('pcMiniModal').remove()" style="flex:1;height:42px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:14px;font-weight:600;cursor:pointer;">취소</button>
+       <button onclick="submitPcMemo()" style="flex:1;height:42px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:14px;font-weight:700;cursor:pointer;">저장</button>`
+    );
+    document.getElementById('pcMemoInp')?.addEventListener('input',function(){document.getElementById('pcMemoCnt').textContent=this.value.length+'/200';});
+  } else { openBS('memo'); }
+};
+window.openEditSheet=function(){
+  if(!isMobile){
+    const c=ALL.find(x=>x._id===selId);
+    if(!c)return;
+    openMiniModal('✏️ 고객 정보 수정',
+      `<div style="display:flex;flex-direction:column;gap:12px;">
+        <div><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">고객명</div><input type="text" id="pcEditName" value="${c.name||''}" style="width:100%;height:40px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;font-size:14px;box-sizing:border-box;"></div>
+        <div><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">전화번호</div><input type="tel" id="pcEditPhone" value="${c.phone||''}" style="width:100%;height:40px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;font-size:14px;box-sizing:border-box;"></div>
+        <div><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">생년월일</div><input type="text" id="pcEditBirth" value="${c.birth||''}" placeholder="예: 19900101" style="width:100%;height:40px;border:1.5px solid var(--line);border-radius:8px;padding:0 12px;font-size:14px;box-sizing:border-box;"></div>
+        <div><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">메모</div><textarea id="pcEditMemo" rows="3" style="width:100%;border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14px;resize:none;font-family:inherit;box-sizing:border-box;">${c.memo||''}</textarea></div>
+      </div>`,
+      `<button onclick="document.getElementById('pcMiniModal').remove()" style="flex:1;height:42px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:14px;font-weight:600;cursor:pointer;">취소</button>
+       <button onclick="submitPcEdit()" style="flex:1;height:42px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:14px;font-weight:700;cursor:pointer;">수정 완료</button>`
+    );
+  } else { openBS('edit'); }
+};
+
+window.submitPcMemo=async function(){
+  const memo=document.getElementById('pcMemoInp')?.value.trim();
+  if(!memo){alert('메모를 입력해주세요.');return;}
+  if(!selId)return;
+  const c=ALL.find(x=>x._id===selId);if(!c)return;
+  const upd={};
+  upd['consultations/'+selId+'/latestMemo']=memo;
+  upd['consultations/'+selId+'/memo']=memo;
+  pushMemoHist(c,memo,upd);
+  await update(ref(db),upd);
+  document.getElementById('pcMiniModal')?.remove();
+  const fresh=ALL.find(x=>x._id===selId);if(fresh)renderDetTop(fresh);
+};
+
+window.submitPcEdit=async function(){
+  const name=document.getElementById('pcEditName')?.value.trim();
+  const phone=document.getElementById('pcEditPhone')?.value.trim();
+  const birth=document.getElementById('pcEditBirth')?.value.trim();
+  const memo=document.getElementById('pcEditMemo')?.value.trim();
+  if(!selId)return;
+  await update(ref(db,'consultations/'+selId),{name,phone,birth,memo,latestMemo:memo});
+  document.getElementById('pcMiniModal')?.remove();
+  const fresh=ALL.find(x=>x._id===selId);if(fresh)renderDetTop(fresh);
+};
 window.deleteConsult=async function(){
   if(!selId){alert('선택된 고객이 없습니다. (selId=null)');return;}
   const c=ALL.find(x=>x._id===selId);
@@ -3299,16 +3752,23 @@ function renderMenuStats(){
   else list=ALL.filter(c=>isThisMonth(c.createdAt));
 
   const done=list.filter(c=>c.status==='개통완료');
+  const fail=list.filter(c=>c.status==='실패');
+  const absent=list.filter(c=>c.status==='부재케어');
+  const recare=list.filter(c=>c.status==='재케어');
+  const contact=list.filter(c=>c.status==='연락중');
   const rate=list.length?Math.round(done.length/list.length*100):0;
   const unassigned=list.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status));
 
-  const mkNew=$('mk-new'); if(mkNew)mkNew.textContent=list.length;
-  const mkDone=$('mk-done'); if(mkDone)mkDone.textContent=done.length;
-  const mkRate=$('mk-rate'); if(mkRate)mkRate.textContent=rate+'%';
-  const mkSub=$('mk-rate-sub'); if(mkSub)mkSub.textContent=`${list.length}건 중 ${done.length}건`;
-  const mkUn=$('mk-unassigned'); if(mkUn)mkUn.textContent=unassigned.length;
+  if($('mk-new')) $('mk-new').textContent=list.length;
+  if($('mk-done')) $('mk-done').textContent=done.length;
+  if($('mk-rate')) $('mk-rate').textContent=rate+'%';
+  if($('mk-rate-sub')) $('mk-rate-sub').textContent=list.length+'건 중 '+done.length+'건';
+  if($('mk-rate-bar')) $('mk-rate-bar').style.width=rate+'%';
+  if($('mk-unassigned')) $('mk-unassigned').textContent=unassigned.length;
+  if($('mk-absent')) $('mk-absent').textContent=absent.length;
+  if($('mk-recare')) $('mk-recare').textContent=recare.length;
 
-  // 직원별 바 차트
+  // 직원별 카드
   const staffNames=Object.values(allStaff).filter(s=>s.active!==false).map(s=>s.name);
   const defaultStaffs=['여인국','황제필','강용민'];
   const sList=staffNames.length>0?staffNames:defaultStaffs;
@@ -3319,21 +3779,41 @@ function renderMenuStats(){
       const mine=list.filter(c=>c.assignedTo===name);
       const d=mine.filter(c=>c.status==='개통완료');
       const f=mine.filter(c=>c.status==='실패');
+      const ab=mine.filter(c=>c.status==='부재케어');
+      const rc=mine.filter(c=>c.status==='재케어');
       const r=mine.length?Math.round(d.length/mine.length*100):0;
       const barW=Math.round(d.length/maxDone*100);
-      return`<div style="padding:10px 14px;border-bottom:1px solid var(--line);">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
-          <span style="font-size:13px;font-weight:700;">${name}</span>
-          <span style="font-size:12px;color:var(--muted);">${mine.length}건 · 개통 ${d.length} · 실패 ${f.length} · ${r}%</span>
+      return`<div style="background:#fff;border-radius:14px;border:1.5px solid var(--line);padding:14px 16px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-size:14px;font-weight:800;">👤 ${name}</span>
+          <span style="font-size:20px;font-weight:900;color:${r>=70?'var(--green)':r>=40?'var(--blue)':'var(--red)'};">${r}%</span>
         </div>
-        <div style="background:var(--line);border-radius:4px;height:8px;overflow:hidden;">
-          <div style="background:var(--green);height:100%;width:${barW}%;border-radius:4px;transition:.3s;"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
+          <div style="text-align:center;background:#F8FAFF;border-radius:8px;padding:6px 4px;">
+            <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">📋 접수</div>
+            <div style="font-size:16px;font-weight:800;">${mine.length}</div>
+          </div>
+          <div style="text-align:center;background:#ECFDF5;border-radius:8px;padding:6px 4px;">
+            <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">✅ 개통</div>
+            <div style="font-size:16px;font-weight:800;color:var(--green);">${d.length}</div>
+          </div>
+          <div style="text-align:center;background:#FFF7ED;border-radius:8px;padding:6px 4px;">
+            <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">📵 부재</div>
+            <div style="font-size:16px;font-weight:800;color:var(--orange);">${ab.length}</div>
+          </div>
+          <div style="text-align:center;background:#FEF2F2;border-radius:8px;padding:6px 4px;">
+            <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">❌ 실패</div>
+            <div style="font-size:16px;font-weight:800;color:var(--red);">${f.length}</div>
+          </div>
+        </div>
+        <div style="background:var(--line);border-radius:4px;height:6px;overflow:hidden;">
+          <div style="background:${r>=70?'var(--green)':r>=40?'var(--blue)':'var(--red)'};height:100%;width:${barW}%;border-radius:4px;transition:.4s;"></div>
         </div>
       </div>`;
     }).join('')||'<div style="padding:14px;text-align:center;color:var(--muted);font-size:12px;">직원 데이터 없음</div>';
   }
 
-  // 매장별 바 차트
+  // 매장별 카드
   const stores=['남양시장점','중곡점','구미사점'];
   const storeRows=$('menuStoreRows');
   if(storeRows){
@@ -3342,15 +3822,35 @@ function renderMenuStats(){
       const mine=list.filter(c=>c.assignedStore===s);
       const d=mine.filter(c=>c.status==='개통완료');
       const urg=mine.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=1800000);
+      const ab=mine.filter(c=>c.status==='부재케어');
+      const f=mine.filter(c=>c.status==='실패');
       const r=mine.length?Math.round(d.length/mine.length*100):0;
       const barW=Math.round(d.length/maxStoreDone*100);
-      return`<div style="padding:10px 14px;border-bottom:1px solid var(--line);">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
-          <span style="font-size:13px;font-weight:700;">${s.replace('점','')}</span>
-          <span style="font-size:12px;color:var(--muted);">접수 ${mine.length} · 개통 ${d.length} · 긴급 ${urg.length} · ${r}%</span>
+      return`<div style="background:#fff;border-radius:14px;border:1.5px solid var(--line);padding:14px 16px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-size:14px;font-weight:800;">🏪 ${s}</span>
+          <span style="font-size:20px;font-weight:900;color:${r>=70?'var(--green)':r>=40?'var(--blue)':'var(--red)'};">${r}%</span>
         </div>
-        <div style="background:var(--line);border-radius:4px;height:8px;overflow:hidden;">
-          <div style="background:var(--blue);height:100%;width:${barW}%;border-radius:4px;transition:.3s;"></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
+          <div style="text-align:center;background:#F8FAFF;border-radius:8px;padding:6px 4px;">
+            <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">📋 접수</div>
+            <div style="font-size:16px;font-weight:800;">${mine.length}</div>
+          </div>
+          <div style="text-align:center;background:#ECFDF5;border-radius:8px;padding:6px 4px;">
+            <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">✅ 개통</div>
+            <div style="font-size:16px;font-weight:800;color:var(--green);">${d.length}</div>
+          </div>
+          <div style="text-align:center;background:#FEF9C3;border-radius:8px;padding:6px 4px;">
+            <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">⏰ 긴급</div>
+            <div style="font-size:16px;font-weight:800;color:var(--red);">${urg.length}</div>
+          </div>
+          <div style="text-align:center;background:#FFF7ED;border-radius:8px;padding:6px 4px;">
+            <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">📵 부재</div>
+            <div style="font-size:16px;font-weight:800;color:var(--orange);">${ab.length}</div>
+          </div>
+        </div>
+        <div style="background:var(--line);border-radius:4px;height:6px;overflow:hidden;">
+          <div style="background:${r>=70?'var(--green)':r>=40?'var(--blue)':'var(--red)'};height:100%;width:${barW}%;border-radius:4px;transition:.4s;"></div>
         </div>
       </div>`;
     }).join('');
@@ -3827,6 +4327,11 @@ window.onStatusChange=async function(newStatus){
   if(newStatus==='재케어'){openBS('rc');return;}
   if(newStatus==='실패'){openBS('fail');return;}
   const c=ALL.find(x=>x._id===selId);if(!c)return;
+  // 권한 체크: 일반 직원은 본인 담당 건만 상태 변경 가능
+  const canAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+  if(!canAll&&c.assignedTo&&c.assignedTo!==currentUser.name){
+    alert('본인이 담당한 건만 상태를 변경할 수 있습니다.');return;
+  }
   const upd={};
   upd[`consultations/${selId}/status`]=newStatus;
   if(newStatus==='개통완료')upd[`consultations/${selId}/doneAt`]=now();
@@ -3848,8 +4353,21 @@ window.submitMemo=async function(){
 window.submitAssign=async function(){
   if(!bsState.assignStaff){alert('담당자를 선택해주세요.');return;}
   if(!selId){alert('선택된 고객이 없습니다.');return;}
+  // 권한 체크: 일반 직원은 본인 담당 건만 변경 가능
+  const canAssignAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+  if(!canAssignAll){
+    const c=ALL.find(x=>x._id===selId);
+    if(c&&c.assignedTo&&c.assignedTo!==currentUser.name){
+      alert('본인이 담당한 건만 변경할 수 있습니다.');return;
+    }
+  }
   const [name,store]=bsState.assignStaff.split('|');
-  await update(ref(db,`consultations/${selId}`),{assignedTo:name||'',assignedStore:store||''});
+  const c2=ALL.find(x=>x._id===selId);
+  const upd2={};
+  upd2[`consultations/${selId}/assignedTo`]=name||'';
+  upd2[`consultations/${selId}/assignedStore`]=store||'';
+  if(c2) pushAssignHist(c2,name,store,upd2);
+  await update(ref(db),upd2);
   closeBS('assign');
   const c=ALL.find(x=>x._id===selId);
   if(c){
@@ -3860,8 +4378,20 @@ window.submitAssign=async function(){
 
 // ── 상태 이력 누적 ──
 function pushStatHist(c,newStatus,upd,reason=''){
-  const entry={at:now(),from:c.status||'신규',to:newStatus,by:'담당자',reason};
+  const entry={at:now(),from:c.status||'신규',to:newStatus,by:currentUser.name||'담당자',reason};
   upd[`consultations/${selId}/statusHistory`]=[...(c.statusHistory||[]),entry];
+}
+
+// 담당자 변경 히스토리
+function pushAssignHist(c,newName,newStore,upd){
+  const entry={at:now(),type:'담당자변경',from:c.assignedTo||'미배정',to:newName||'미배정',by:currentUser.name||'관리자'};
+  upd[`consultations/${selId}/actionHistory`]=[...(c.actionHistory||[]),entry];
+}
+
+// 메모 히스토리
+function pushMemoHist(c,memo,upd){
+  const entry={at:now(),type:'메모',content:memo,by:currentUser.name||'담당자'};
+  upd[`consultations/${selId}/actionHistory`]=[...(c.actionHistory||[]),entry];
 }
 
 // ── 정리 ──
@@ -3874,7 +4404,7 @@ window.downloadCSV=function(){
     c.device||'',c.storage||'',c.color||'',c.plan||'',c.discount||'',
     c.consultTime||'',c.internetTV||'',c.status||'신규',
     c.assignedStore||'',c.assignedTo||'',c.memo||''
-  ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+  ].map(function(v){return '"'+String(v||'').replace(/"/g,'""')+'"';}).join(','));
   const csv='\uFEFF'+[headers.join(','),...rows].join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
