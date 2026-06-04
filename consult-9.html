@@ -185,36 +185,7 @@ body{
 }
 .summary-card.show{display:block;}
 
-/* 모바일 bottom sheet */
-@media(max-width:768px){
-  .summary-sheet-overlay{
-    display:none;
-    position:fixed;inset:0;z-index:300;
-    background:rgba(0,0,0,0.45);
-  }
-  .summary-sheet-overlay.open{display:block;}
-  .summary-sheet{
-    position:fixed;bottom:0;left:0;right:0;z-index:301;
-    background:#fff;
-    border-radius:20px 20px 0 0;
-    padding:20px 20px 36px;
-    max-height:80vh;
-    overflow-y:auto;
-    transform:translateY(100%);
-    transition:transform .3s cubic-bezier(.32,.72,0,1);
-  }
-  .summary-sheet.open{transform:translateY(0);}
-  .summary-sheet-handle{
-    width:40px;height:4px;border-radius:2px;
-    background:#D1D5DB;margin:0 auto 16px;
-  }
-  .summary-sheet-close{
-    position:absolute;top:16px;right:16px;
-    width:28px;height:28px;border-radius:50%;
-    background:#F3F4F6;border:none;cursor:pointer;
-    font-size:14px;display:flex;align-items:center;justify-content:center;
-  }
-}
+
 .summary-device{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
 .summary-device-img{width:160px;height:160px;object-fit:contain;border-radius:12px;background:#f5f5f5;padding:6px;}
 .summary-device-img-placeholder{
@@ -781,6 +752,10 @@ body{
   <div class="success-icon">🎉</div>
   <div class="success-title">상담 신청이 완료되었습니다!</div>
   <div class="success-desc">담당자가 확인 후 빠르게 연락드리겠습니다.<br>연중무휴 오전 10시 ~ 오후 8시 운영</div>
+  <div style="margin-top:32px;display:flex;flex-direction:column;gap:12px;">
+    <a href="https://sihwan5183-del.github.io/vivid-uplus-landing/benefit_pc-s.html" style="display:flex;align-items:center;justify-content:center;height:52px;background:var(--blue);color:#fff;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;">혜택 다시 확인하기</a>
+    <a href="https://sihwan5183-del.github.io/vivid-uplus-landing/hero_pc.html" style="display:flex;align-items:center;justify-content:center;height:52px;background:#F3F4F6;color:#374151;border-radius:12px;font-size:15px;font-weight:600;text-decoration:none;">처음으로</a>
+  </div>
 </div>
 
 <!-- 팝업: 기기 -->
@@ -830,6 +805,41 @@ body{
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import{getDatabase,ref,onValue,push,set}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+// Supabase
+const SUPA_URL='https://iajkdgmkbbbzofexfjrk.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhamtkZ21rYmJiem9mZXhmanJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NTI0MTksImV4cCI6MjA5NTUyODQxOX0.vWpjkqIEk5IL6RYNgA5G9u5ghH9eLdZiEyhyJe0440o';
+async function supaInsert(data){
+  const res=await fetch(`${SUPA_URL}/rest/v1/consultations`,{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'apikey':SUPA_KEY,
+      'Authorization':`Bearer ${SUPA_KEY}`,
+      'Prefer':'return=minimal'
+    },
+    body:JSON.stringify({
+      device:data.device,
+      storage:data.storage,
+      color:data.color,
+      carrier:data.carrier,
+      join_type:data.joinType,
+      plan:data.plan,
+      plan_price:data.planPrice,
+      discount:data.discount,
+      monthly_total:data.monthlyTotal,
+      name:data.name,
+      phone:data.phone,
+      birth:data.birth,
+      consult_time:data.consultTime,
+      bundling:data.bundling,
+      memo:data.memo,
+      agree_marketing:data.agreeMarketing,
+      source:data.source
+    })
+  });
+  if(!res.ok) throw new Error('Supabase insert failed');
+}
 
 const FB={
   apiKey:"AIzaSyBCaJiSuWRHMySOXfBPg2JB7UoE1XKQEqw",
@@ -1158,34 +1168,16 @@ window.pickDiscount=function(type){
   v.classList.remove('placeholder');
   renderSummary();
   checkSubmit();
-  // 모바일이면 bottom sheet, PC면 스크롤
-  if(window.innerWidth<=768){
-    setTimeout(()=>{ openSheet(); },250);
-  } else {
-    setTimeout(()=>{
-      const card=$('summaryCard');
-      if(card&&card.classList.contains('show')){
-        const top=card.getBoundingClientRect().top+window.pageYOffset-16;
-        window.scrollTo({top,behavior:'smooth'});
-      }
-    },200);
-  }
+  // 카드 섹션으로 부드럽게 스크롤
+  setTimeout(()=>{
+    const card=$('summaryCard');
+    if(card&&card.classList.contains('show')){
+      const top=card.getBoundingClientRect().top+window.pageYOffset-16;
+      window.scrollTo({top,behavior:'smooth'});
+    }
+  },200);
 };
 
-function openSheet(){
-  const card=$('summaryCard');
-  if(!card||!card.classList.contains('show')) return;
-  // 카드 내용을 sheet에 복사
-  $('summarySheetInner').innerHTML=card.innerHTML;
-  $('summarySheetOverlay').classList.add('open');
-  $('summarySheet').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-window.closeSheet=function(){
-  $('summarySheetOverlay').classList.remove('open');
-  $('summarySheet').classList.remove('open');
-  document.body.style.overflow='';
-};
 
 // 혜택 요약 계산
 function calcPrices(){
@@ -1415,6 +1407,8 @@ window.submitForm=async function(){
     // Firebase 저장
     const newRef=push(ref(db,'consultations'));
     await set(newRef,data);
+    // Supabase 저장
+    try{ await supaInsert(data); }catch(e){ console.error('Supabase error:',e); }
     // 텔레그램 알림 (실패해도 DB 저장은 완료)
     try{
       const msg=`🔔 <b>새 상담 신청</b>
@@ -1584,8 +1578,6 @@ function boot(){
 boot();
 </script>
 
-<!-- 모바일 혜택요약 Bottom Sheet -->
-<div class="summary-sheet-overlay" id="summarySheetOverlay" onclick="closeSheet()"></div>
 <div class="summary-sheet" id="summarySheet">
   <div class="summary-sheet-handle"></div>
   <button class="summary-sheet-close" onclick="closeSheet()">✕</button>
