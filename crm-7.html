@@ -672,6 +672,8 @@ input,select,textarea{font-family:inherit;outline:none;}
 .page-btn{width:30px;height:30px;border-radius:6px;font-size:12px;font-weight:600;background:transparent;color:var(--sub);cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .page-btn:hover{background:var(--bg);}
 .page-btn.active{background:var(--blue);color:#fff;}
+.store-period-btn{height:26px;padding:0 10px;border-radius:50px;border:1.5px solid var(--line);background:#fff;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;}
+.store-period-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
 </style>
 </head>
 <body>
@@ -781,12 +783,14 @@ input,select,textarea{font-family:inherit;outline:none;}
       <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-store')">매장별 실적</div>
       <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-device')">기기별 실적</div>
       <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-channel')">유입 채널별</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-archive')">월별 아카이브</div>
 
       <div class="pc-nav-section" style="margin-top:8px;">설정</div>
       <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-staff')">직원 관리</div>
       <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-store')">매장 관리</div>
       <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-template')">문자 템플릿</div>
       <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-perm')">권한 관리</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-archive')">월 마감</div>
     </nav>
     <div class="pc-sidebar-footer">
       <div style="display:flex;align-items:center;gap:8px;">
@@ -878,6 +882,9 @@ input,select,textarea{font-family:inherit;outline:none;}
               <option value="week">최근 7일</option>
               <option value="month">이번 달</option>
             </select>
+            <input type="date" id="f-date-from" onchange="debounceFilter()" style="height:32px;border:1.5px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px;" title="시작일">
+            <span style="font-size:12px;color:var(--muted);">~</span>
+            <input type="date" id="f-date-to" onchange="debounceFilter()" style="height:32px;border:1.5px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px;" title="종료일">
             <select class="filter-select" id="f-status" onchange="debounceFilter()">
               <option value="">상태 전체</option>
               <option value="신규">신규</option>
@@ -1154,7 +1161,28 @@ input,select,textarea{font-family:inherit;outline:none;}
         <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">🏪 매장별 실적</h1>
         <div class="table-wrap">
           <table class="data-table">
-            <thead><tr><th>매장</th><th>오늘접수</th><th>미배정</th><th>긴급지연</th><th>개통완료</th><th>개통률</th></tr></thead>
+            <thead>
+  <tr>
+    <th>매장</th>
+    <th>오늘접수</th>
+    <th style="color:var(--red);">긴급지연</th>
+    <th style="color:var(--orange);">부재중</th>
+    <th style="color:var(--red);">실패</th>
+    <th style="color:var(--green);">개통완료</th>
+    <th>개통률</th>
+  </tr>
+  <tr>
+    <td colspan="7" style="padding:6px 8px;">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="font-size:12px;color:var(--muted);">기간:</span>
+        <button class="store-period-btn" onclick="setStorePeriod('today',this)">오늘</button>
+        <button class="store-period-btn" onclick="setStorePeriod('week',this)">주별</button>
+        <button class="store-period-btn" onclick="setStorePeriod('month',this)">월별</button>
+        <button class="store-period-btn active" onclick="setStorePeriod('all',this)">전체</button>
+      </div>
+    </td>
+  </tr>
+</thead>
             <tbody id="statStoreTbody"></tbody>
           </table>
         </div>
@@ -1177,6 +1205,22 @@ input,select,textarea{font-family:inherit;outline:none;}
           </div>
         </div>
       </div>
+      <div class="pc-page" id="page-set-archive">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:6px;">📦 월 마감</h1>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:24px;">이번 달 상담 건을 마감하고 아카이브로 이동합니다.<br>개통완료·실패는 아카이브로 이동, 진행중인 건은 다음달로 유지됩니다.</p>
+        <div style="background:#F8FAFF;border:1.5px solid #DBEAFE;border-radius:14px;padding:24px;max-width:480px;">
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px;" id="archiveMonthLabel"></div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:6px;" id="archiveCountLabel"></div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:20px;" id="archiveActiveLabel"></div>
+          <button onclick="doArchive()" style="height:48px;width:100%;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">이번 달 마감하기</button>
+        </div>
+      </div>
+
+      <div class="pc-page" id="page-stat-archive">
+        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">📂 월별 아카이브</h1>
+        <div id="archiveList" style="display:flex;flex-direction:column;gap:8px;max-width:600px;"></div>
+      </div>
+
       <div class="pc-page" id="page-set-perm">
         <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:20px;">
           <h1 style="font-size:20px;font-weight:800;">🔐 권한 관리</h1>
@@ -1811,6 +1855,8 @@ onValue(ref(db,'trash'),snap=>{
 
 // ── 앱 시작 ──
 function startApp(userData){
+  // 브라우저 알림 권한 요청
+  if(Notification.permission==='default') Notification.requestPermission();
   currentUser=userData;
   document.getElementById('loginWrap').style.display='none';
 
@@ -1835,7 +1881,8 @@ function startApp(userData){
   }
 
   applyPermUI();
-  onValue(ref(db,'consultations'),snap=>{
+  let _prevConsultIds=null;
+onValue(ref(db,'consultations'),snap=>{
     const raw=snap.val()||{};
     ALL=Object.entries(raw).filter(([k])=>k&&k!=='null').map(([k,v])=>({...v,_id:k}))
       .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
@@ -2374,7 +2421,8 @@ function renderKPI(){
   $('kpi-recare').textContent=recarePending.length;
   $('kpi-absence').textContent=ALL.filter(c=>c.status==='부재케어').length;
 
-  const done=thisMonth.filter(c=>c.status==='개통완료');
+  // 개통완료: doneAt 기준 이번달 (없으면 createdAt 기준)
+  const done=ALL.filter(c=>c.status==='개통완료'&&isThisMonth(c.doneAt||c.createdAt));
   $('kpi-done').textContent=done.length;
   const rate=thisMonth.length?Math.round(done.length/thisMonth.length*100):0;
   $('kpi-done-rate').textContent=`개통률 ${rate}%`;
@@ -2654,18 +2702,98 @@ function renderStatStaff(){
   }).join('');
 }
 
+let storePeriod='all';
+function setStorePeriod(p,el){
+  storePeriod=p;
+  document.querySelectorAll('.store-period-btn').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderStatStore();
+}
+
+function filterByPeriod(list){
+  const now=new Date();
+  return list.filter(c=>{
+    const d=new Date(c.createdAt);
+    if(storePeriod==='today') return isToday(c.createdAt);
+    if(storePeriod==='week'){
+      const w=new Date(now); w.setDate(now.getDate()-7);
+      return d>=w;
+    }
+    if(storePeriod==='month'){
+      const m=new Date(now); m.setDate(now.getDate()-30);
+      return d>=m;
+    }
+    return true;
+  });
+}
+
+function openStoreDetail(store,status){
+  const all=filterByPeriod(ALL.filter(c=>c.assignedStore===store));
+  let list;
+  if(status==='접수') list=all;
+  else if(status==='긴급지연') list=all.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=1800000);
+  else if(status==='부재중') list=all.filter(c=>c.status==='부재케어');
+  else if(status==='실패') list=all.filter(c=>c.status==='실패');
+  else if(status==='개통완료') list=all.filter(c=>c.status==='개통완료');
+  else list=all;
+
+  if(!list.length){alert('해당 건이 없습니다.');return;}
+
+  const rows=list.map(c=>`
+    <tr style="border-bottom:1px solid var(--line);font-size:12px;">
+      <td style="padding:8px;">${fmtDate(c.createdAt)}</td>
+      <td style="padding:8px;font-weight:600;">${c.name||'-'}</td>
+      <td style="padding:8px;">${c.birth||'-'}</td>
+      <td style="padding:8px;color:var(--blue);">${c.phone||'-'}</td>
+      <td style="padding:8px;">${c.device||'-'}</td>
+      <td style="padding:8px;">${c.storage||'-'}</td>
+      <td style="padding:8px;">${c.color||'-'}</td>
+      <td style="padding:8px;">${c.assignedTo||'-'}</td>
+    </tr>`).join('');
+
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML=`
+    <div style="background:#fff;border-radius:16px;padding:24px;width:min(900px,95vw);max-height:80vh;overflow-y:auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="font-size:16px;font-weight:800;">${store} · ${status} <span style="color:var(--muted);font-size:13px;font-weight:400;">${list.length}건</span></div>
+        <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+      </div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="border-bottom:2px solid var(--line);font-size:12px;color:var(--muted);">
+          <th style="padding:8px;text-align:left;">접수</th>
+          <th style="padding:8px;text-align:left;">고객명</th>
+          <th style="padding:8px;text-align:left;">생년월일</th>
+          <th style="padding:8px;text-align:left;">전화번호</th>
+          <th style="padding:8px;text-align:left;">기기</th>
+          <th style="padding:8px;text-align:left;">용량</th>
+          <th style="padding:8px;text-align:left;">색상</th>
+          <th style="padding:8px;text-align:left;">담당자</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  document.body.appendChild(modal);
+}
+
 function renderStatStore(){
   const stores=['남양시장점','중곡점','구미사점'];
   $('statStoreTbody').innerHTML=stores.map(s=>{
-    const mine=ALL.filter(c=>c.assignedStore===s);
+    const mine=filterByPeriod(ALL.filter(c=>c.assignedStore===s));
     const done=mine.filter(c=>c.status==='개통완료');
+    const urgent=mine.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=1800000);
+    const absent=mine.filter(c=>c.status==='부재케어');
+    const fail=mine.filter(c=>c.status==='실패');
     const rate=mine.length?Math.round(done.length/mine.length*100):0;
-    const todayCount=mine.filter(c=>isToday(c.createdAt)).length;
+    const td=(v,color,st)=>`<td style="cursor:pointer;${color?'color:'+color+';':''};font-weight:${v?'700':'400'};" onclick="openStoreDetail('${s}','${st}')">${v}</td>`;
     return`<tr>
-      <td style="font-weight:700;">${s}</td><td>${todayCount}</td>
-      <td>${mine.filter(c=>!c.assignedTo).length}</td>
-      <td style="color:var(--red);">${mine.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=1800000).length}</td>
-      <td style="color:var(--green);font-weight:700;">${done.length}</td>
+      <td style="font-weight:700;">${s}</td>
+      ${td(mine.length,'','접수')}
+      ${td(urgent.length,'var(--red)','긴급지연')}
+      ${td(absent.length,'var(--orange)','부재중')}
+      ${td(fail.length,'var(--red)','실패')}
+      ${td(done.length,'var(--green)','개통완료')}
       <td style="font-weight:700;">${rate}%</td>
     </tr>`;
   }).join('');
@@ -2738,7 +2866,7 @@ function renderDeviceStat(){
   const wrap=document.getElementById('device-stat-wrap');
   if(!wrap)return;
   // 개통완료 건만 집계
-  const done=Object.values(CONS).filter(c=>c.status==='개통완료');
+  const done=Object.values(CONS).filter(c=>c.status==='개통완료'||c.status==='개통 완료');
   if(!done.length){
     wrap.innerHTML='<div style="color:var(--muted);font-size:13px;">개통완료 건이 없습니다.</div>';
     return;
@@ -2798,8 +2926,145 @@ function pcNav(page){
   // 탭별 테이블 렌더링
   const tabPages=['urgent','contact','recare','absence','done','fail'];
   if(tabPages.includes(page)) renderTabTable(`page-${page}`);
+  if(page==='stat-staff') renderStatStaff();
+  if(page==='stat-store') renderStatStore();
+  if(page==='stat-device') renderDeviceStat();
+  if(page==='set-archive') initArchivePage();
+  if(page==='stat-archive') initArchiveListPage();
 }
 window.pcNav=pcNav;
+
+// ── 월 마감 ──
+function initArchivePage(){
+  const now=new Date();
+  const label=`${now.getFullYear()}년 ${now.getMonth()+1}월`;
+  const done=ALL.filter(c=>c.status==='개통완료');
+  const fail=ALL.filter(c=>c.status==='실패');
+  const active=ALL.filter(c=>!['개통완료','실패'].includes(c.status));
+  const el=document.getElementById('archiveMonthLabel');
+  const cl=document.getElementById('archiveCountLabel');
+  const al=document.getElementById('archiveActiveLabel');
+  if(el) el.textContent=`${label} 마감 대상`;
+  if(cl) cl.textContent=`📦 아카이브 이동: 개통완료 ${done.length}건 + 실패 ${fail.length}건`;
+  if(al) al.textContent=`🔄 다음달 유지: 진행중 ${active.length}건`;
+}
+
+function initArchiveListPage(){
+  const archiveRef=ref(db,'archive');
+  onValue(archiveRef,snap=>{
+    const data=snap.val()||{};
+    const list=document.getElementById('archiveList');
+    if(!list)return;
+    const months=Object.keys(data).sort().reverse();
+    if(!months.length){list.innerHTML='<div style="font-size:13px;color:var(--muted);">아카이브 없음</div>';return;}
+    list.innerHTML=months.map(m=>{
+      const cnt=Object.keys(data[m]).length;
+      const items=Object.values(data[m]);
+      const done=items.filter(c=>c.status==='개통완료').length;
+      const fail=items.filter(c=>c.status==='실패').length;
+      return`<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#fff;border:1px solid var(--line);border-radius:12px;">
+        <div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:4px;">${m}</div>
+          <div style="font-size:12px;color:var(--muted);">총 ${cnt}건 · 개통완료 ${done}건 · 실패 ${fail}건</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="viewArchive('${m}')" style="height:34px;padding:0 16px;background:#EEF2FF;color:var(--blue);border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">보기</button>
+          <button onclick="rollbackArchive('${m}')" style="height:34px;padding:0 16px;background:#FEF2F2;color:var(--red);border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">롤백</button>
+        </div>
+      </div>`;
+    }).join('');
+  },{onlyOnce:true});
+}
+
+window.doArchive=function(){
+  const now=new Date();
+  const ym=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const targets=ALL.filter(c=>['개통완료','실패'].includes(c.status));
+  if(!targets.length){alert('마감할 건이 없습니다.');return;}
+  if(!confirm(`${ym} 마감을 진행합니다.
+개통완료·실패 ${targets.length}건을 아카이브로 이동합니다.
+
+계속하시겠습니까?`))return;
+
+  const upd={};
+  targets.forEach(c=>{
+    upd[`archive/${ym}/${c._id}`]={...c,archivedAt:Date.now()};
+    upd[`consultations/${c._id}`]=null;
+  });
+
+  update(ref(db),upd).then(()=>{
+    alert(`✅ ${targets.length}건이 ${ym} 아카이브로 이동되었습니다.`);
+    initArchivePage();
+  }).catch(e=>alert('오류: '+e.message));
+};
+
+window.rollbackArchive=function(ym){
+  if(!confirm(`${ym} 아카이브를 롤백합니다.
+해당 월 건들이 상담 DB로 복원됩니다.
+
+계속하시겠습니까?`))return;
+  const archiveRef=ref(db,`archive/${ym}`);
+  onValue(archiveRef,snap=>{
+    const data=snap.val()||{};
+    const items=Object.entries(data);
+    if(!items.length){alert('복원할 데이터가 없습니다.');return;}
+    const upd={};
+    items.forEach(([k,v])=>{
+      // _active_ 접두사 제거하고 원래 id로 복원
+      const origId=k.startsWith('_active_')?k.replace('_active_',''):k;
+      const {archivedAt,archiveNote,...orig}=v;
+      upd[`consultations/${origId}`]=orig;
+      upd[`archive/${ym}/${k}`]=null;
+    });
+    update(ref(db),upd).then(()=>{
+      alert(`✅ ${items.length}건이 상담 DB로 복원되었습니다.`);
+      initArchiveListPage();
+    }).catch(e=>alert('오류: '+e.message));
+  },{onlyOnce:true});
+};
+
+window.viewArchive=function(ym){
+  const archiveRef=ref(db,`archive/${ym}`);
+  onValue(archiveRef,snap=>{
+    const data=snap.val()||{};
+    const list=Object.values(data).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    if(!list.length){alert('데이터 없음');return;}
+    const rows=list.map(c=>`
+      <tr style="border-bottom:1px solid var(--line);font-size:12px;">
+        <td style="padding:8px;">${fmtDate(c.createdAt)}</td>
+        <td style="padding:8px;font-weight:600;">${c.name||'-'}</td>
+        <td style="padding:8px;">${c.phone||'-'}</td>
+        <td style="padding:8px;">${c.device||'-'} ${c.storage||''}</td>
+        <td style="padding:8px;">${c.plan||'-'}</td>
+        <td style="padding:8px;font-weight:700;color:${c.status==='개통완료'?'var(--green)':'var(--red)'};">${c.status}</td>
+        <td style="padding:8px;">${c.assignedStore||'-'} · ${c.assignedTo||'-'}</td>
+      </tr>`).join('');
+    const modal=document.createElement('div');
+    modal.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;';
+    modal.innerHTML=`
+      <div style="background:#fff;border-radius:16px;padding:24px;width:min(900px,95vw);max-height:80vh;overflow-y:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div style="font-size:16px;font-weight:800;">${ym} 아카이브 <span style="color:var(--muted);font-size:13px;font-weight:400;">${list.length}건</span></div>
+          <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+          <thead><tr style="border-bottom:2px solid var(--line);font-size:12px;color:var(--muted);">
+            <th style="padding:8px;text-align:left;">접수</th>
+            <th style="padding:8px;text-align:left;">고객명</th>
+            <th style="padding:8px;text-align:left;">전화번호</th>
+            <th style="padding:8px;text-align:left;">기기</th>
+            <th style="padding:8px;text-align:left;">요금제</th>
+            <th style="padding:8px;text-align:left;">상태</th>
+            <th style="padding:8px;text-align:left;">매장·담당</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+    modal.onclick=e=>{if(e.target===modal)modal.remove();};
+    document.body.appendChild(modal);
+  },{onlyOnce:true});
+};
+window.clearBell=function(){const b=$('bellBadge');if(b){b.textContent='0';b.style.display='none';}};
 
 // ── CSV 다운로드 ──
 function downloadCSV(){
