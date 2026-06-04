@@ -1899,7 +1899,7 @@ function startApp(userData){
   // 브라우저 알림 권한 요청
   if(Notification.permission==='default') Notification.requestPermission();
   currentUser=userData;
-  document.getElementById('loginWrap').style.display='none';
+  const _lw=document.getElementById('loginWrap');if(_lw)_lw.style.display='none';
 
   // 헤더 이름 표시
   const roleLabel=userData.role||'관리자';
