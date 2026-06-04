@@ -1959,15 +1959,20 @@ function applyPermUI(){
 }
 
 // ── Firebase Auth 로그인 ──
+// 5초 타임아웃 - Auth 응답 없으면 로그인 화면 표시
+const authTimeout=setTimeout(()=>{
+  const al=$('appLoading');if(al)al.style.display='none';
+  const lw=document.getElementById('loginWrap');if(lw)lw.style.display='grid';
+},1500);
+
 onAuthStateChanged(auth, user=>{
+  clearTimeout(authTimeout);
   if(user){
-    // 이메일로 역할 판단
     const role=user.email==='ssgvivid2026@gmail.com'?'대표관리자':'대표';
     startApp({type:'admin',name:role==='대표관리자'?'김시환':'이승환',role,email:user.email});
   } else {
-    $('appLoading').style.display='none';
-    const lw=document.getElementById('loginWrap');
-    lw.style.display='grid';
+    const al=$('appLoading');if(al)al.style.display='none';
+    const lw=document.getElementById('loginWrap');if(lw)lw.style.display='grid';
   }
 });
 
