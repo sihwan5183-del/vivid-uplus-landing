@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- saved from url=(0075)file:///C:/Users/hajjong/Downloads/VIVID_CRM_runtime_state_removed_v10.html -->
-<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>VIVID CRM</title>
-<link href="./챗지피티 crm_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -86,7 +86,6 @@ input,select,textarea{font-family:inherit;outline:none;}
 .tcnt-blue{background:var(--blue);color:#fff;}
 .tcnt-purple{background:var(--purple);color:#fff;}
 .tcnt-orange{background:var(--orange);color:#fff;}
-.tcnt-pink{background:var(--pink);color:#fff;}
 
 /* ── 긴급 요약바 ── */
 .urg-bar{
@@ -130,7 +129,6 @@ input,select,textarea{font-family:inherit;outline:none;}
 .cbar-red{background:var(--red);}
 .cbar-charcoal{background:var(--charcoal);}
 .cbar-purple{background:var(--purple);}
-.cbar-pink{background:var(--pink);}
 .cbar-green{background:var(--green);}
 .cbar-gray{background:var(--gray);}
 
@@ -415,11 +413,11 @@ input,select,textarea{font-family:inherit;outline:none;}
 .det-foot-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
 
 /* ── 오버레이 + 바텀시트 ── */
-.bs-ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;display:none;}
+.bs-ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;display:none;}
 .bs-ov.open{display:block;}
 .bs{
   position:fixed;bottom:0;left:0;right:0;
-  background:#fff;border-radius:20px 20px 0 0;z-index:10001;
+  background:#fff;border-radius:20px 20px 0 0;z-index:601;
   transform:translateY(100%);transition:.24s cubic-bezier(.32,.72,0,1);
   max-height:88vh;overflow-y:auto;
   padding-bottom:env(safe-area-inset-bottom);
@@ -502,9 +500,6 @@ input,select,textarea{font-family:inherit;outline:none;}
   background:#fff;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;
 }
 .sms-chip.on{border-color:var(--green);background:#ECFDF5;color:var(--green);}
-.sms-open-row{padding:0 16px 8px;}
-.sms-open-btn{width:100%;height:42px;border-radius:9px;border:1.5px solid var(--blue);background:var(--blue-light);color:var(--blue);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;}
-.sms-open-btn:active{transform:scale(.98);}
 
 /* 상태 변경 목록 */
 .status-list{padding:8px 0;}
@@ -696,107 +691,27 @@ input,select,textarea{font-family:inherit;outline:none;}
   .kpi-dash-grid > div{padding:10px 6px!important;}
   .kpi-dash-grid > div > div:last-child{font-size:18px!important;}
 }
-
-
-/* === v6 PC 모달 계층/중앙정렬 긴급 수정 === */
-@media (min-width: 768px){
-  .bs-ov.open{
-    display:block !important;
-    z-index:10000 !important;
-    background:rgba(0,0,0,.48) !important;
-  }
-  .bs{
-    z-index:10001 !important;
-  }
-  .bs.open{
-    top:50% !important;
-    bottom:auto !important;
-    left:50% !important;
-    right:auto !important;
-    width:min(760px,92vw) !important;
-    max-height:82vh !important;
-    transform:translate(-50%,-50%) !important;
-    border-radius:18px !important;
-    box-shadow:0 24px 80px rgba(0,0,0,.28) !important;
-    padding-bottom:0 !important;
-  }
-  .bs-handle{
-    display:none !important;
-  }
-  .bs-title{
-    padding:18px 22px 14px !important;
-    font-size:16px !important;
-  }
-  .bs-sec{
-    padding:16px 22px 8px !important;
-  }
-  .chip-grid,
-  .sms-toggle,
-  .sms-open-row{
-    padding-left:22px !important;
-    padding-right:22px !important;
-  }
-  .bs-memo{
-    margin-left:22px !important;
-    margin-right:22px !important;
-  }
-  .dt-preview,
-  .custom-dt{
-    margin-left:22px !important;
-    margin-right:22px !important;
-  }
-  .bs-submit{
-    margin:14px 22px 22px !important;
-    width:calc(100% - 44px) !important;
-  }
-  .sel-chip,
-  .sms-chip{
-    min-height:44px !important;
-  }
-}
-
-
-
-/* === MOBILE LAYOUT REPAIR: 모바일에서는 바텀시트 유지 === */
-@media (max-width: 767px){
-  body{overflow:hidden !important;height:100vh !important;}
-  #app{display:flex !important;flex-direction:column !important;height:100vh !important;overflow:hidden !important;}
-  #pcApp{display:none !important;}
-  #pcApp.show{display:none !important;}
-  .bs-ov.open{display:block !important;z-index:600 !important;background:rgba(0,0,0,.45) !important;}
-  .bs{position:fixed !important;top:auto !important;bottom:0 !important;left:0 !important;right:0 !important;width:100% !important;max-height:88vh !important;transform:translateY(100%) !important;border-radius:20px 20px 0 0 !important;box-shadow:none !important;z-index:601 !important;padding-bottom:env(safe-area-inset-bottom) !important;overflow-y:auto !important;}
-  .bs.open{top:auto !important;bottom:0 !important;left:0 !important;right:0 !important;width:100% !important;transform:translateY(0) !important;border-radius:20px 20px 0 0 !important;max-height:88vh !important;}
-  .bs-handle{display:block !important;}
-  .bs-title{padding:8px 18px 12px !important;font-size:15px !important;}
-  .bs-sec{padding:12px 16px 6px !important;}
-  .chip-grid,.sms-toggle,.sms-open-row{padding-left:16px !important;padding-right:16px !important;}
-  .bs-memo{margin-left:16px !important;margin-right:16px !important;}
-  .dt-preview,.custom-dt{margin-left:16px !important;margin-right:16px !important;}
-  .bs-submit{margin:8px 16px 14px !important;width:calc(100% - 32px) !important;}
-  .sel-chip,.sms-chip{min-height:40px !important;}
-}
-
 </style>
 </head>
 <body>
 
 <!-- 로딩 -->
-<div id="appLoading" style="display: none;">
+<div id="appLoading">
   <div style="font-size:22px;font-weight:800;color:var(--blue);">VIVID CRM</div>
   <div class="spinner"></div>
   <div style="font-size:12px;color:var(--muted);">데이터 불러오는 중...</div>
 </div>
 
 <!-- 로그인 -->
-<div id="loginWrap" style="display: none; position: fixed; inset: 0px; background: linear-gradient(135deg, rgb(224, 236, 255), rgb(247, 249, 255)); z-index: 999; place-items: center;">
+<div id="loginWrap" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#e0ecff,#f7f9ff);z-index:999;place-items:center;">
   <div style="background:#fff;border-radius:20px;padding:36px 32px;width:min(90vw,380px);box-shadow:0 20px 60px rgba(15,23,42,.12);">
     <div style="font-size:28px;margin-bottom:12px;">🔐</div>
     <div style="font-size:20px;font-weight:800;margin-bottom:4px;">VIVID CRM</div>
     <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">로그인 유형을 선택하세요</div>
     <!-- 탭 -->
     <div style="display:flex;gap:8px;margin-bottom:20px;">
-      <button id="tabAdmin" onclick="switchLoginTab(&#39;admin&#39;)" style="flex:1;height:36px;border-radius:8px;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">관리자</button>
-      <button id="tabStaff" onclick="switchLoginTab(&#39;staff&#39;)" style="flex:1;height:36px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;">직원</button>
+      <button id="tabAdmin" onclick="switchLoginTab('admin')" style="flex:1;height:36px;border-radius:8px;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">관리자</button>
+      <button id="tabStaff" onclick="switchLoginTab('staff')" style="flex:1;height:36px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;">직원</button>
     </div>
     <!-- 관리자 로그인 -->
     <div id="loginAdmin">
@@ -828,7 +743,7 @@ input,select,textarea{font-family:inherit;outline:none;}
 </div>
 
 <!-- ══ PC 관리자 ══ -->
-<div id="pcApp" class="show">
+<div id="pcApp">
   <!-- 사이드바 -->
   <div class="pc-sidebar">
     <div class="pc-sidebar-logo">
@@ -836,74 +751,69 @@ input,select,textarea{font-family:inherit;outline:none;}
       <div class="logo-sub">LG U+ 공식 인증 매장</div>
     </div>
     <nav class="pc-nav">
-      <div class="pc-nav-item active" onclick="pcNav(&#39;dashboard&#39;)">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+      <div class="pc-nav-item active" onclick="pcNav('dashboard')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         오늘의 현황
       </div>
-      <div class="pc-nav-item" onclick="pcNav(&#39;db&#39;)">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+      <div class="pc-nav-item" onclick="pcNav('db')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
         상담 DB
         <span class="pc-nav-badge" id="nav-badge-new">0</span>
       </div>
-      <div class="pc-nav-item" onclick="pcNav(&#39;urgent&#39;)">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path></svg>
+      <div class="pc-nav-item" onclick="pcNav('urgent')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
         긴급·연락지연
-        <span class="pc-nav-badge" id="nav-badge-urgent">1</span>
+        <span class="pc-nav-badge" id="nav-badge-urgent">0</span>
       </div>
-      <div class="pc-nav-item" onclick="pcNav(&#39;contact&#39;)">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+      <div class="pc-nav-item" onclick="pcNav('contact')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
         연락중
-        <span class="pc-nav-badge" id="nav-badge-contact" style="background:var(--blue);">●</span>
+        <span class="pc-nav-badge" id="nav-badge-contact" style="background:var(--blue);">0</span>
       </div>
-      <div class="pc-nav-item" onclick="pcNav(&#39;recare&#39;)">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+      <div class="pc-nav-item" onclick="pcNav('recare')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
         재케어
-        <span class="pc-nav-badge" id="nav-badge-recare" style="background:var(--purple);">●</span>
+        <span class="pc-nav-badge" id="nav-badge-recare" style="background:var(--purple);">0</span>
       </div>
-      <div class="pc-nav-item" onclick="pcNav(&#39;absence&#39;)">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+      <div class="pc-nav-item" onclick="pcNav('absence')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
         부재케어
-        <span class="pc-nav-badge" id="nav-badge-absence" style="background:var(--orange);">1</span>
+        <span class="pc-nav-badge" id="nav-badge-absence" style="background:var(--orange);">0</span>
       </div>
-      <div class="pc-nav-item" onclick="pcNav(&#39;success&#39;)">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        성공
-        <span class="pc-nav-badge" id="nav-badge-success" style="background:var(--pink);">●</span>
-      </div>
-<div class="pc-nav-item" onclick="pcNav(&#39;done&#39;)">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      <div class="pc-nav-item" onclick="pcNav('done')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         개통완료
-        <span class="pc-nav-badge" id="nav-badge-done" style="background:var(--green);">●</span>
+        <span class="pc-nav-badge" id="nav-badge-done" style="background:var(--green);">0</span>
       </div>
-      <div class="pc-nav-item" onclick="pcNav(&#39;fail&#39;)">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M15 9l-6 6M9 9l6 6"></path></svg>
+      <div class="pc-nav-item" onclick="pcNav('fail')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
         실패
       </div>
-      <div class="pc-nav-item" onclick="pcNav(&#39;trash&#39;)" id="nav-trash">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14H6L5 6m5 0V4h4v2"></path></svg>
+      <div class="pc-nav-item" onclick="pcNav('trash')" id="nav-trash">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6m5 0V4h4v2"/></svg>
         휴지통
-        <span class="pc-nav-badge" id="nav-badge-trash" style="background:var(--gray);">●</span>
+        <span class="pc-nav-badge" id="nav-badge-trash" style="background:var(--gray);">0</span>
       </div>
 
       <div class="pc-nav-section" style="margin-top:8px;">성과 분석</div>
-      <div class="pc-nav-item pc-nav-sub" onclick="pcNav(&#39;stat-staff&#39;)" style="display: flex;">직원별 실적</div>
-      <div class="pc-nav-item pc-nav-sub" onclick="pcNav(&#39;stat-store&#39;)" style="display: flex;">매장별 실적</div>
-      <div class="pc-nav-item pc-nav-sub" onclick="pcNav(&#39;stat-device&#39;)" style="display: flex;">기기별 실적</div>
-      <div class="pc-nav-item pc-nav-sub" onclick="pcNav(&#39;stat-channel&#39;)" style="display: flex;">유입 채널별</div>
-      <div class="pc-nav-item pc-nav-sub" onclick="pcNav(&#39;stat-archive&#39;)" style="display: flex;">월별 아카이브</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-staff')">직원별 실적</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-store')">매장별 실적</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-device')">기기별 실적</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-channel')">유입 채널별</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('stat-archive')">월별 아카이브</div>
 
       <div class="pc-nav-section" style="margin-top:8px;">설정</div>
-      <div class="pc-nav-item pc-nav-sub" onclick="pcNav(&#39;set-staff&#39;)" style="display: flex;">직원 관리</div>
-      <div class="pc-nav-item pc-nav-sub" onclick="pcNav(&#39;set-store&#39;)" style="display: flex;">매장 관리</div>
-      <div class="pc-nav-item pc-nav-sub" onclick="pcNav(&#39;set-template&#39;)">문자 템플릿</div>
-      <div class="pc-nav-item pc-nav-sub" onclick="pcNav(&#39;set-perm&#39;)" style="display: flex;">권한 관리</div>
-      <div class="pc-nav-item pc-nav-sub" onclick="pcNav(&#39;set-archive&#39;)" style="display: flex;">월 마감</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-staff')">직원 관리</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-store')">매장 관리</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-template')">문자 템플릿</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-perm')">권한 관리</div>
+      <div class="pc-nav-item pc-nav-sub" onclick="pcNav('set-archive')">월 마감</div>
     </nav>
     <div class="pc-sidebar-footer">
       <div style="display:flex;align-items:center;gap:8px;">
         <div style="width:30px;height:30px;border-radius:999px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;">관</div>
         <div>
-          <div class="user-name" id="pc-user-name">김시환 (대표관리자)</div>
+          <div class="user-name" id="pc-user-name">관리자</div>
           <div class="user-role">최고 관리자</div>
         </div>
         <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="logout()">로그아웃</button>
@@ -914,15 +824,15 @@ input,select,textarea{font-family:inherit;outline:none;}
   <!-- 메인 -->
   <div class="pc-main" id="pcMain">
     <div class="pc-header">
-      <span class="pc-header-date" id="pc-today-date">2026.06.04 (목)</span>
+      <span class="pc-header-date" id="pc-today-date"></span>
       <div class="pc-header-spacer"></div>
       <div class="pc-header-bell">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"></path></svg>
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
         <div class="pc-header-bell-dot"></div>
       </div>
       <div class="pc-header-admin">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 3a4 4 0 100 8 4 4 0 000-8z"></path></svg>
-        <span id="pc-header-name">김시환</span>
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 3a4 4 0 100 8 4 4 0 000-8z"/></svg>
+        <span id="pc-header-name">관리자</span>
       </div>
     </div>
 
@@ -931,24 +841,24 @@ input,select,textarea{font-family:inherit;outline:none;}
       <div class="pc-page active" id="page-dashboard">
         <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:20px;">
           <h1 style="font-size:20px;font-weight:800;">오늘의 현황</h1>
-          <span style="font-size:13px;color:var(--muted);" id="pc-total-count">총 3건</span>
+          <span style="font-size:13px;color:var(--muted);" id="pc-total-count"></span>
         </div>
         <div class="kpi-grid" id="kpiGrid">
-          <div class="kpi-card" onclick="pcNav(&#39;db&#39;)"><div class="kpi-label">오늘 신규 접수</div><div class="kpi-value" id="kpi-today">0</div><div class="kpi-prev" id="kpi-today-prev">어제 0건</div></div>
-          <div class="kpi-card warning" onclick="pcNav(&#39;db&#39;)"><div class="kpi-label">미배정</div><div class="kpi-value" id="kpi-unassigned">0</div><div class="kpi-prev">즉시 배정 필요</div></div>
-          <div class="kpi-card urgent" onclick="pcNav(&#39;urgent&#39;)"><div class="kpi-label">30분 이상 연락지연</div><div class="kpi-value" id="kpi-delay30">1</div><div class="kpi-prev kpi-delay-prev"></div></div>
-          <div class="kpi-card" onclick="pcNav(&#39;recare&#39;)"><div class="kpi-label">재케어 예정</div><div class="kpi-value" id="kpi-recare">0</div><div class="kpi-prev"></div></div>
-          <div class="kpi-card" onclick="pcNav(&#39;absence&#39;)"><div class="kpi-label">부재케어 재시도</div><div class="kpi-value" id="kpi-absence">1</div><div class="kpi-prev"></div></div>
-          <div class="kpi-card" style="border-left:3px solid var(--green);" onclick="pcNav(&#39;done&#39;)"><div class="kpi-label">이번 달 개통완료</div><div class="kpi-value" style="color:var(--green);" id="kpi-done">0</div><div class="kpi-prev" id="kpi-done-rate">개통률 0%</div></div>
+          <div class="kpi-card" onclick="pcNav('db')"><div class="kpi-label">오늘 신규 접수</div><div class="kpi-value" id="kpi-today">0</div><div class="kpi-prev" id="kpi-today-prev">어제 0건</div></div>
+          <div class="kpi-card warning" onclick="pcNav('db')"><div class="kpi-label">미배정</div><div class="kpi-value" id="kpi-unassigned">0</div><div class="kpi-prev">즉시 배정 필요</div></div>
+          <div class="kpi-card urgent" onclick="pcNav('urgent')"><div class="kpi-label">30분 이상 연락지연</div><div class="kpi-value" id="kpi-delay30">0</div><div class="kpi-prev kpi-delay-prev"></div></div>
+          <div class="kpi-card" onclick="pcNav('recare')"><div class="kpi-label">재케어 예정</div><div class="kpi-value" id="kpi-recare">0</div><div class="kpi-prev"></div></div>
+          <div class="kpi-card" onclick="pcNav('absence')"><div class="kpi-label">부재케어 재시도</div><div class="kpi-value" id="kpi-absence">0</div><div class="kpi-prev"></div></div>
+          <div class="kpi-card" style="border-left:3px solid var(--green);" onclick="pcNav('done')"><div class="kpi-label">이번 달 개통완료</div><div class="kpi-value" style="color:var(--green);" id="kpi-done">0</div><div class="kpi-prev" id="kpi-done-rate"></div></div>
         </div>
 
         <div class="urgent-section">
           <div class="section-header">
             <div class="section-title">⚡ 긴급 처리 필요</div>
-            <button class="btn btn-outline btn-sm" onclick="pcNav(&#39;urgent&#39;)">전체 보기</button>
+            <button class="btn btn-outline btn-sm" onclick="pcNav('urgent')">전체 보기</button>
           </div>
           <div class="urgent-grid">
-            <div class="urgent-card type-red"><div class="urgent-card-label">1시간 이상 지연</div><div class="urgent-card-count" id="urg-1h">1</div></div>
+            <div class="urgent-card type-red"><div class="urgent-card-label">1시간 이상 지연</div><div class="urgent-card-count" id="urg-1h">0</div></div>
             <div class="urgent-card type-orange"><div class="urgent-card-label">재케어 시간 초과</div><div class="urgent-card-count" id="urg-recare">0</div></div>
             <div class="urgent-card type-purple"><div class="urgent-card-label">부재케어 재시도 누락</div><div class="urgent-card-count" id="urg-absence">0</div></div>
             <div class="urgent-card type-gray"><div class="urgent-card-label">담당자 미배정</div><div class="urgent-card-count" id="urg-unassign">0</div></div>
@@ -957,7 +867,7 @@ input,select,textarea{font-family:inherit;outline:none;}
 
         <div class="section-header">
           <div class="section-title">최근 접수</div>
-          <button class="btn btn-outline btn-sm" onclick="pcNav(&#39;db&#39;)">전체 보기</button>
+          <button class="btn btn-outline btn-sm" onclick="pcNav('db')">전체 보기</button>
         </div>
         <div class="table-wrap" id="dashboard-table-wrap">
           <table class="data-table" id="dashboard-table">
@@ -965,34 +875,7 @@ input,select,textarea{font-family:inherit;outline:none;}
               <th>접수시간</th><th>경과</th><th>고객명</th><th>전화번호</th>
               <th>상태</th><th>기기</th><th>요금제</th><th>매장·담당자</th>
             </tr></thead>
-            <tbody id="dashboard-tbody"><tr onclick="selectConsult(&#39;-OuCSuzE_mKIMb6YdLjM&#39;)">
-      <td>6/3 21:31</td>
-      <td><span class="cel-charcoal blink">22시간 7분 전</span></td>
-      <td style="font-weight:700;">연습용2</td>
-      <td style="color:var(--blue);">010-7777-5555</td>
-      <td><span class="badge badge-orange">부재케어</span></td>
-      <td>아이폰 17 프로</td>
-      <td style="font-size:11px;">5G 프리미어 슈퍼</td>
-      <td style="font-size:11px;">중곡점 ·황제필</td>
-    </tr><tr onclick="selectConsult(&#39;-OuCRwBW_ydVOfJJySfA&#39;)">
-      <td>6/3 21:27</td>
-      <td><span class="cel-charcoal blink">22시간 11분 전</span></td>
-      <td style="font-weight:700;">연습용1</td>
-      <td style="color:var(--blue);">010-1234-5678</td>
-      <td><span class="badge badge-gray">실패</span></td>
-      <td>아이폰 17 프로맥스</td>
-      <td style="font-size:11px;">5G 시그니처</td>
-      <td style="font-size:11px;">구미사점 ·강용민</td>
-    </tr><tr onclick="selectConsult(&#39;-OuFK45thaGFg8hyfWan&#39;)">
-      <td>6/3 19:56</td>
-      <td><span class="cel-charcoal blink">23시간 42분 전</span></td>
-      <td style="font-weight:700;">하종민</td>
-      <td style="color:var(--blue);">010-1234-5678</td>
-      <td><span class="badge badge-gray">실패</span></td>
-      <td>갤럭시 S26</td>
-      <td style="font-size:11px;">5G 프리미어 에센셜</td>
-      <td style="font-size:11px;">중곡점 ·황제필</td>
-    </tr></tbody>
+            <tbody id="dashboard-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -1001,17 +884,17 @@ input,select,textarea{font-family:inherit;outline:none;}
       <div class="pc-page" id="page-db">
         <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:16px;">
           <h1 style="font-size:20px;font-weight:800;">상담 DB</h1>
-          <span style="font-size:13px;color:var(--muted);" id="db-count-label">총 0건</span>
+          <span style="font-size:13px;color:var(--muted);" id="db-count-label"></span>
         </div>
         <div class="filter-bar">
           <div class="filter-search">
-            <svg width="14" height="14" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+            <svg width="14" height="14" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
             <input type="text" placeholder="고객명, 전화번호, 기기 검색" id="dbSearch" oninput="debounceFilter()">
           </div>
           <div class="filter-row">
             <select class="filter-select" id="f-period" onchange="debounceFilter()">
               <option value="all">기간 전체</option>
-              <option value="today" selected="">오늘</option>
+              <option value="today" selected>오늘</option>
               <option value="yesterday">어제</option>
               <option value="week">최근 7일</option>
               <option value="month">이번 달</option>
@@ -1025,7 +908,6 @@ input,select,textarea{font-family:inherit;outline:none;}
               <option value="연락중">연락중</option>
                             <option value="재케어">재케어</option>
               <option value="부재케어">부재케어</option>
-              <option value="성공">성공</option>
                             <option value="개통완료">개통완료</option>
               <option value="실패">실패</option>
             </select>
@@ -1051,7 +933,7 @@ input,select,textarea{font-family:inherit;outline:none;}
               <th>상태</th><th>다음연락</th><th>기기</th><th>요금제</th>
               <th>매장·담당</th><th>최근메모</th>
             </tr></thead>
-            <tbody id="dbTbody"><tr><td colspan="11" style="text-align:center;padding:24px;color:var(--muted);">결과 없음</td></tr></tbody>
+            <tbody id="dbTbody"></tbody>
           </table>
           <div class="pagination" id="dbPagination"></div>
         </div>
@@ -1062,38 +944,30 @@ input,select,textarea{font-family:inherit;outline:none;}
         <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">⚡ 긴급·연락지연</h1>
               <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
         <div class="filter-row">
-          <select class="filter-select" id="page-urgent-f-period" onchange="renderTabTable(&#39;page-urgent&#39;)">
+          <select class="filter-select" id="page-urgent-f-period" onchange="renderTabTable('page-urgent')">
             <option value="all">기간 전체</option>
             <option value="today">오늘</option>
             <option value="yesterday">어제</option>
             <option value="week">이번 주</option>
             <option value="month">이번 달</option>
           </select>
-          <select class="filter-select" id="page-urgent-f-store" onchange="renderTabTable(&#39;page-urgent&#39;)">
+          <select class="filter-select" id="page-urgent-f-store" onchange="renderTabTable('page-urgent')">
             <option value="">매장 전체</option>
             <option>남양시장점</option><option>중곡점</option><option>구미사점</option>
           </select>
-          <select class="filter-select" id="page-urgent-f-staff" onchange="renderTabTable(&#39;page-urgent&#39;)">
+          <select class="filter-select" id="page-urgent-f-staff" onchange="renderTabTable('page-urgent')">
             <option value="">담당자 전체</option>
             <option>여인국</option><option>황제필</option><option>강용민</option>
           </select>
           <div class="filter-spacer"></div>
-          <button class="btn btn-outline btn-sm" onclick="resetTabFilter(&#39;page-urgent&#39;)">초기화</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV(&#39;page-urgent&#39;)">⬇ CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="resetTabFilter('page-urgent')">초기화</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV('page-urgent')">⬇ CSV</button>
         </div>
       </div>
         <div class="table-wrap">
           <table class="data-table">
             <thead><tr><th>접수</th><th>경과</th><th>고객명</th><th>전화번호</th><th>상태</th><th>매장·담당</th><th>기기</th></tr></thead>
-            <tbody id="urgentTbody"><tr onclick="selectConsult(&#39;-OuCSuzE_mKIMb6YdLjM&#39;)" class="row-urgent">
-      <td>6/3 21:31</td>
-      <td><span class="cel-charcoal blink blink">22시간 7분 전</span></td>
-      <td style="font-weight:700;">연습용2</td>
-      <td style="color:var(--blue);">010-7777-5555</td>
-      <td><span class="badge badge-orange">부재케어</span></td>
-      <td style="font-size:11px;">중곡점 ·황제필</td>
-      <td>아이폰 17 프로</td>
-    </tr></tbody>
+            <tbody id="urgentTbody"></tbody>
           </table>
         </div>
       </div>
@@ -1103,30 +977,30 @@ input,select,textarea{font-family:inherit;outline:none;}
         <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">🔄 재케어</h1>
               <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
         <div class="filter-row">
-          <select class="filter-select" id="page-recare-f-period" onchange="renderTabTable(&#39;page-recare&#39;)">
+          <select class="filter-select" id="page-recare-f-period" onchange="renderTabTable('page-recare')">
             <option value="all">기간 전체</option>
             <option value="today">오늘</option>
             <option value="yesterday">어제</option>
             <option value="week">이번 주</option>
             <option value="month">이번 달</option>
           </select>
-          <select class="filter-select" id="page-recare-f-store" onchange="renderTabTable(&#39;page-recare&#39;)">
+          <select class="filter-select" id="page-recare-f-store" onchange="renderTabTable('page-recare')">
             <option value="">매장 전체</option>
             <option>남양시장점</option><option>중곡점</option><option>구미사점</option>
           </select>
-          <select class="filter-select" id="page-recare-f-staff" onchange="renderTabTable(&#39;page-recare&#39;)">
+          <select class="filter-select" id="page-recare-f-staff" onchange="renderTabTable('page-recare')">
             <option value="">담당자 전체</option>
             <option>여인국</option><option>황제필</option><option>강용민</option>
           </select>
           <div class="filter-spacer"></div>
-          <button class="btn btn-outline btn-sm" onclick="resetTabFilter(&#39;page-recare&#39;)">초기화</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV(&#39;page-recare&#39;)">⬇ CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="resetTabFilter('page-recare')">초기화</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV('page-recare')">⬇ CSV</button>
         </div>
       </div>
         <div class="table-wrap">
           <table class="data-table">
             <thead><tr><th>접수</th><th>고객명</th><th>전화번호</th><th>재케어 사유</th><th>다음연락</th><th>담당자</th></tr></thead>
-            <tbody id="recareTbody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted);">재케어 건 없음</td></tr></tbody>
+            <tbody id="recareTbody"></tbody>
           </table>
         </div>
       </div>
@@ -1136,105 +1010,63 @@ input,select,textarea{font-family:inherit;outline:none;}
         <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">📵 부재케어</h1>
               <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
         <div class="filter-row">
-          <select class="filter-select" id="page-absence-f-period" onchange="renderTabTable(&#39;page-absence&#39;)">
+          <select class="filter-select" id="page-absence-f-period" onchange="renderTabTable('page-absence')">
             <option value="all">기간 전체</option>
             <option value="today">오늘</option>
             <option value="yesterday">어제</option>
             <option value="week">이번 주</option>
             <option value="month">이번 달</option>
           </select>
-          <select class="filter-select" id="page-absence-f-store" onchange="renderTabTable(&#39;page-absence&#39;)">
+          <select class="filter-select" id="page-absence-f-store" onchange="renderTabTable('page-absence')">
             <option value="">매장 전체</option>
             <option>남양시장점</option><option>중곡점</option><option>구미사점</option>
           </select>
-          <select class="filter-select" id="page-absence-f-staff" onchange="renderTabTable(&#39;page-absence&#39;)">
+          <select class="filter-select" id="page-absence-f-staff" onchange="renderTabTable('page-absence')">
             <option value="">담당자 전체</option>
             <option>여인국</option><option>황제필</option><option>강용민</option>
           </select>
           <div class="filter-spacer"></div>
-          <button class="btn btn-outline btn-sm" onclick="resetTabFilter(&#39;page-absence&#39;)">초기화</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV(&#39;page-absence&#39;)">⬇ CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="resetTabFilter('page-absence')">초기화</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV('page-absence')">⬇ CSV</button>
         </div>
       </div>
         <div class="table-wrap">
           <table class="data-table">
             <thead><tr><th>접수</th><th>고객명</th><th>전화번호</th><th>부재사유</th><th>시도횟수</th><th>다음연락</th><th>담당자</th></tr></thead>
-            <tbody id="absenceTbody">
-    <tr onclick="selectConsult(&#39;-OuCSuzE_mKIMb6YdLjM&#39;)">
-      <td>6/3 21:31</td><td style="font-weight:700;">연습용2</td>
-      <td style="color:var(--blue);">010-7777-5555</td>
-      <td style="font-size:11px;">no_answer</td>
-      <td style="text-align:center;">3회</td>
-      <td>6/4 20:11</td>
-      <td>황제필</td>
-    </tr></tbody>
+            <tbody id="absenceTbody"></tbody>
           </table>
         </div>
       </div>
-
-      <!-- 성공 -->
-      <div class="pc-page" id="page-success">
-        <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">🎯 성공</h1>
-        <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
-          <div class="filter-row">
-            <select class="filter-select" id="page-success-f-period" onchange="renderTabTable(&#39;page-success&#39;)">
-              <option value="all">기간 전체</option><option value="today">오늘</option><option value="yesterday">어제</option><option value="week">이번 주</option><option value="month">이번 달</option>
-            </select>
-            <select class="filter-select" id="page-success-f-store" onchange="renderTabTable(&#39;page-success&#39;)">
-              <option value="">매장 전체</option><option>남양시장점</option><option>중곡점</option><option>구미사점</option>
-            </select>
-            <select class="filter-select" id="page-success-f-staff" onchange="renderTabTable(&#39;page-success&#39;)">
-              <option value="">담당자 전체</option><option>여인국</option><option>황제필</option><option>강용민</option>
-            </select>
-            <div class="filter-spacer"></div>
-            <button class="btn btn-outline btn-sm" onclick="resetTabFilter(&#39;page-success&#39;)">초기화</button>
-            <button class="btn btn-primary btn-sm" onclick="downloadTabCSV(&#39;page-success&#39;)">⬇ CSV</button>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table class="data-table"><thead><tr><th>접수</th><th>경과</th><th>고객명</th><th>전화번호</th><th>상태</th><th>기기</th><th>요금제</th><th>매장·담당</th></tr></thead><tbody id="successTbody"><tr onclick="selectConsult(&#39;-OuCSuzE_mKIMb6YdLjM&#39;)">
-        <td>6/3 21:31</td>
-        <td><span class="cel-charcoal blink">18시간 49분 전</span></td>
-        <td style="font-weight:700;">연습용2</td>
-        <td style="color:var(--blue);">010-7777-5555</td>
-        <td><span class="badge badge-pink">성공</span></td>
-        <td>아이폰 17 프로 ·256GB</td>
-        <td style="font-size:11px;">5G 프리미어 슈퍼</td>
-        <td style="font-size:11px;">구미사점 ·강용민</td>
-      </tr></tbody></table>
-        </div>
-      </div>
-
 
       <!-- 개통완료 -->
       <div class="pc-page" id="page-done">
         <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">✅ 개통완료</h1>
               <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
         <div class="filter-row">
-          <select class="filter-select" id="page-done-f-period" onchange="renderTabTable(&#39;page-done&#39;)">
+          <select class="filter-select" id="page-done-f-period" onchange="renderTabTable('page-done')">
             <option value="all">기간 전체</option>
             <option value="today">오늘</option>
             <option value="yesterday">어제</option>
             <option value="week">이번 주</option>
             <option value="month">이번 달</option>
           </select>
-          <select class="filter-select" id="page-done-f-store" onchange="renderTabTable(&#39;page-done&#39;)">
+          <select class="filter-select" id="page-done-f-store" onchange="renderTabTable('page-done')">
             <option value="">매장 전체</option>
             <option>남양시장점</option><option>중곡점</option><option>구미사점</option>
           </select>
-          <select class="filter-select" id="page-done-f-staff" onchange="renderTabTable(&#39;page-done&#39;)">
+          <select class="filter-select" id="page-done-f-staff" onchange="renderTabTable('page-done')">
             <option value="">담당자 전체</option>
             <option>여인국</option><option>황제필</option><option>강용민</option>
           </select>
           <div class="filter-spacer"></div>
-          <button class="btn btn-outline btn-sm" onclick="resetTabFilter(&#39;page-done&#39;)">초기화</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV(&#39;page-done&#39;)">⬇ CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="resetTabFilter('page-done')">초기화</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV('page-done')">⬇ CSV</button>
         </div>
       </div>
         <div class="table-wrap">
           <table class="data-table">
             <thead><tr><th>접수</th><th>완료일시</th><th>고객명</th><th>기기</th><th>요금제</th><th>할인방식</th><th>담당자</th></tr></thead>
-            <tbody id="doneTbody"><tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">개통완료 건 없음</td></tr></tbody>
+            <tbody id="doneTbody"></tbody>
           </table>
         </div>
       </div>
@@ -1244,44 +1076,30 @@ input,select,textarea{font-family:inherit;outline:none;}
         <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">❌ 실패</h1>
               <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
         <div class="filter-row">
-          <select class="filter-select" id="page-fail-f-period" onchange="renderTabTable(&#39;page-fail&#39;)">
+          <select class="filter-select" id="page-fail-f-period" onchange="renderTabTable('page-fail')">
             <option value="all">기간 전체</option>
             <option value="today">오늘</option>
             <option value="yesterday">어제</option>
             <option value="week">이번 주</option>
             <option value="month">이번 달</option>
           </select>
-          <select class="filter-select" id="page-fail-f-store" onchange="renderTabTable(&#39;page-fail&#39;)">
+          <select class="filter-select" id="page-fail-f-store" onchange="renderTabTable('page-fail')">
             <option value="">매장 전체</option>
             <option>남양시장점</option><option>중곡점</option><option>구미사점</option>
           </select>
-          <select class="filter-select" id="page-fail-f-staff" onchange="renderTabTable(&#39;page-fail&#39;)">
+          <select class="filter-select" id="page-fail-f-staff" onchange="renderTabTable('page-fail')">
             <option value="">담당자 전체</option>
             <option>여인국</option><option>황제필</option><option>강용민</option>
           </select>
           <div class="filter-spacer"></div>
-          <button class="btn btn-outline btn-sm" onclick="resetTabFilter(&#39;page-fail&#39;)">초기화</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV(&#39;page-fail&#39;)">⬇ CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="resetTabFilter('page-fail')">초기화</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV('page-fail')">⬇ CSV</button>
         </div>
       </div>
         <div class="table-wrap">
           <table class="data-table">
             <thead><tr><th>접수</th><th>고객명</th><th>전화번호</th><th>실패사유</th><th>기기</th><th>담당자</th></tr></thead>
-            <tbody id="failTbody">
-    <tr onclick="selectConsult(&#39;-OuCRwBW_ydVOfJJySfA&#39;)">
-      <td>6/3 21:27</td><td style="font-weight:700;">연습용1</td>
-      <td style="color:var(--blue);">010-1234-5678</td>
-      <td>delay</td>
-      <td>아이폰 17 프로맥스</td>
-      <td>강용민</td>
-    </tr>
-    <tr onclick="selectConsult(&#39;-OuFK45thaGFg8hyfWan&#39;)">
-      <td>6/3 19:56</td><td style="font-weight:700;">하종민</td>
-      <td style="color:var(--blue);">010-1234-5678</td>
-      <td>no_device</td>
-      <td>갤럭시 S26</td>
-      <td>황제필</td>
-    </tr></tbody>
+            <tbody id="failTbody"></tbody>
           </table>
         </div>
       </div>
@@ -1291,24 +1109,24 @@ input,select,textarea{font-family:inherit;outline:none;}
         <h1 style="font-size:20px;font-weight:800;margin-bottom:16px;">📞 연락중</h1>
               <div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
         <div class="filter-row">
-          <select class="filter-select" id="contact-f-period" onchange="renderTabTable(&#39;contact&#39;)">
+          <select class="filter-select" id="contact-f-period" onchange="renderTabTable('contact')">
             <option value="all">기간 전체</option>
             <option value="today">오늘</option>
             <option value="yesterday">어제</option>
             <option value="week">이번 주</option>
             <option value="month">이번 달</option>
           </select>
-          <select class="filter-select" id="contact-f-store" onchange="renderTabTable(&#39;contact&#39;)">
+          <select class="filter-select" id="contact-f-store" onchange="renderTabTable('contact')">
             <option value="">매장 전체</option>
             <option>남양시장점</option><option>중곡점</option><option>구미사점</option>
           </select>
-          <select class="filter-select" id="contact-f-staff" onchange="renderTabTable(&#39;contact&#39;)">
+          <select class="filter-select" id="contact-f-staff" onchange="renderTabTable('contact')">
             <option value="">담당자 전체</option>
             <option>여인국</option><option>황제필</option><option>강용민</option>
           </select>
           <div class="filter-spacer"></div>
-          <button class="btn btn-outline btn-sm" onclick="resetTabFilter(&#39;contact&#39;)">초기화</button>
-          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV(&#39;contact&#39;)">⬇ CSV</button>
+          <button class="btn btn-outline btn-sm" onclick="resetTabFilter('contact')">초기화</button>
+          <button class="btn btn-primary btn-sm" onclick="downloadTabCSV('contact')">⬇ CSV</button>
         </div>
       </div>
         <div class="table-wrap">
@@ -1323,7 +1141,7 @@ input,select,textarea{font-family:inherit;outline:none;}
       <div class="pc-page" id="page-trash">
         <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:16px;">
           <h1 style="font-size:20px;font-weight:800;">🗑️ 휴지통</h1>
-          <span style="font-size:13px;color:var(--muted);" id="trash-count-label">총 0건</span>
+          <span style="font-size:13px;color:var(--muted);" id="trash-count-label"></span>
         </div>
         <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#B91C1C;">
           ⚠️ 완전삭제는 복구가 불가능합니다. 완전삭제 시 <b>"완전삭제"</b>를 직접 입력해야 합니다.
@@ -1339,7 +1157,7 @@ input,select,textarea{font-family:inherit;outline:none;}
         <div class="table-wrap">
           <table class="data-table">
             <thead><tr><th><input type="checkbox" id="trashChkAllHead" onchange="trashToggleAll(this)"></th><th>삭제일시</th><th>삭제자</th><th>고객명</th><th>전화번호</th><th>기기</th><th>상태</th><th>담당자</th></tr></thead>
-            <tbody id="trashTbody"><tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">휴지통이 비어있습니다</td></tr></tbody>
+            <tbody id="trashTbody"></tbody>
           </table>
         </div>
       </div>
@@ -1350,37 +1168,7 @@ input,select,textarea{font-family:inherit;outline:none;}
         <div class="table-wrap">
           <table class="data-table">
             <thead><tr><th>담당자</th><th>매장</th><th>배정</th><th>연락완료</th><th>연락중</th><th>재케어</th><th>개통완료</th><th>실패</th><th>개통률</th></tr></thead>
-            <tbody id="statStaffTbody"><tr onclick="openStaffDetail(&#39;여인국&#39;)" style="cursor:pointer;" title="클릭하면 상담 목록 보기">
-      <td style="font-weight:700;color:var(--blue);">여인국 <span style="font-size:10px;color:var(--muted);">▶</span></td>
-      <td style="font-size:11px;"></td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td style="color:var(--green);font-weight:700;">0</td>
-      <td>0</td>
-      <td style="font-weight:700;">0%</td>
-    </tr><tr onclick="openStaffDetail(&#39;황제필&#39;)" style="cursor:pointer;" title="클릭하면 상담 목록 보기">
-      <td style="font-weight:700;color:var(--blue);">황제필 <span style="font-size:10px;color:var(--muted);">▶</span></td>
-      <td style="font-size:11px;"></td>
-      <td>2</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td style="color:var(--green);font-weight:700;">0</td>
-      <td>1</td>
-      <td style="font-weight:700;">0%</td>
-    </tr><tr onclick="openStaffDetail(&#39;강용민&#39;)" style="cursor:pointer;" title="클릭하면 상담 목록 보기">
-      <td style="font-weight:700;color:var(--blue);">강용민 <span style="font-size:10px;color:var(--muted);">▶</span></td>
-      <td style="font-size:11px;"></td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td style="color:var(--green);font-weight:700;">0</td>
-      <td>1</td>
-      <td style="font-weight:700;">0%</td>
-    </tr></tbody>
+            <tbody id="statStaffTbody"></tbody>
           </table>
         </div>
       </div>
@@ -1404,39 +1192,15 @@ input,select,textarea{font-family:inherit;outline:none;}
     <td colspan="7" style="padding:6px 8px;">
       <div style="display:flex;gap:8px;align-items:center;">
         <span style="font-size:12px;color:var(--muted);">기간:</span>
-        <button class="store-period-btn" onclick="setStorePeriod(&#39;today&#39;,this)">오늘</button>
-        <button class="store-period-btn" onclick="setStorePeriod(&#39;week&#39;,this)">주별</button>
-        <button class="store-period-btn" onclick="setStorePeriod(&#39;month&#39;,this)">월별</button>
-        <button class="store-period-btn active" onclick="setStorePeriod(&#39;all&#39;,this)">전체</button>
+        <button class="store-period-btn" onclick="setStorePeriod('today',this)">오늘</button>
+        <button class="store-period-btn" onclick="setStorePeriod('week',this)">주별</button>
+        <button class="store-period-btn" onclick="setStorePeriod('month',this)">월별</button>
+        <button class="store-period-btn active" onclick="setStorePeriod('all',this)">전체</button>
       </div>
     </td>
   </tr>
 </thead>
-            <tbody id="statStoreTbody"><tr>
-      <td style="font-weight:800;cursor:pointer;color:var(--blue);text-decoration:underline;" onclick="openStoreDetail(&#39;남양시장점&#39;,&#39;&#39;)">남양시장점</td>
-      <td style="cursor:pointer;;font-weight:400;" onclick="openStoreDetail(&#39;남양시장점&#39;,&#39;접수&#39;)">0</td>
-      <td style="cursor:pointer;color:var(--red);;font-weight:400;" onclick="openStoreDetail(&#39;남양시장점&#39;,&#39;긴급지연&#39;)">0</td>
-      <td style="cursor:pointer;color:var(--orange);;font-weight:400;" onclick="openStoreDetail(&#39;남양시장점&#39;,&#39;부재중&#39;)">0</td>
-      <td style="cursor:pointer;color:var(--red);;font-weight:400;" onclick="openStoreDetail(&#39;남양시장점&#39;,&#39;실패&#39;)">0</td>
-      <td style="cursor:pointer;color:var(--green);;font-weight:400;" onclick="openStoreDetail(&#39;남양시장점&#39;,&#39;개통완료&#39;)">0</td>
-      <td style="font-weight:700;">0%</td>
-    </tr><tr>
-      <td style="font-weight:800;cursor:pointer;color:var(--blue);text-decoration:underline;" onclick="openStoreDetail(&#39;중곡점&#39;,&#39;&#39;)">중곡점</td>
-      <td style="cursor:pointer;;font-weight:700;" onclick="openStoreDetail(&#39;중곡점&#39;,&#39;접수&#39;)">2</td>
-      <td style="cursor:pointer;color:var(--red);;font-weight:700;" onclick="openStoreDetail(&#39;중곡점&#39;,&#39;긴급지연&#39;)">1</td>
-      <td style="cursor:pointer;color:var(--orange);;font-weight:700;" onclick="openStoreDetail(&#39;중곡점&#39;,&#39;부재중&#39;)">1</td>
-      <td style="cursor:pointer;color:var(--red);;font-weight:700;" onclick="openStoreDetail(&#39;중곡점&#39;,&#39;실패&#39;)">1</td>
-      <td style="cursor:pointer;color:var(--green);;font-weight:400;" onclick="openStoreDetail(&#39;중곡점&#39;,&#39;개통완료&#39;)">0</td>
-      <td style="font-weight:700;">0%</td>
-    </tr><tr>
-      <td style="font-weight:800;cursor:pointer;color:var(--blue);text-decoration:underline;" onclick="openStoreDetail(&#39;구미사점&#39;,&#39;&#39;)">구미사점</td>
-      <td style="cursor:pointer;;font-weight:700;" onclick="openStoreDetail(&#39;구미사점&#39;,&#39;접수&#39;)">1</td>
-      <td style="cursor:pointer;color:var(--red);;font-weight:400;" onclick="openStoreDetail(&#39;구미사점&#39;,&#39;긴급지연&#39;)">0</td>
-      <td style="cursor:pointer;color:var(--orange);;font-weight:400;" onclick="openStoreDetail(&#39;구미사점&#39;,&#39;부재중&#39;)">0</td>
-      <td style="cursor:pointer;color:var(--red);;font-weight:700;" onclick="openStoreDetail(&#39;구미사점&#39;,&#39;실패&#39;)">1</td>
-      <td style="cursor:pointer;color:var(--green);;font-weight:400;" onclick="openStoreDetail(&#39;구미사점&#39;,&#39;개통완료&#39;)">0</td>
-      <td style="font-weight:700;">0%</td>
-    </tr></tbody>
+            <tbody id="statStoreTbody"></tbody>
           </table>
         </div>
       </div>
@@ -1454,18 +1218,7 @@ input,select,textarea{font-family:inherit;outline:none;}
         <div style="display:flex;flex-direction:column;gap:12px;">
           <div class="filter-bar">
             <div style="font-size:13px;font-weight:700;margin-bottom:8px;">부재케어 문자</div>
-            <textarea id="absSmsTemplate" style="width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px;font-size:13px;resize:vertical;min-height:160px;">[VIVID] 안녕하세요, 고객님.
-혜택을 전하는 비비드입니다.
-
-상담 신청서를 확인하고 연락드렸지만 연결되지 않아 문자 남깁니다.
-
-혹시 바쁘셨거나 통화가 어려운 상황이셨다면 괜찮습니다.
-
-편하신 시간에 회신 주시면 고객님 상황에 맞는 조건을 함께 확인해드리겠습니다.
-
-급하게 결정하실 필요는 없습니다.
-편하실 때 연락 주세요 :)</textarea>
-            <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;">※ 모바일 부재케어의 “문자앱 열기” 버튼은 이 문구를 불러옵니다.</div>
+            <textarea style="width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px;font-size:13px;resize:vertical;min-height:80px;">안녕하세요. LG U+ 공식 인증 매장 VIVID입니다.\n신청해주신 상담 내용 확인 후 연락드렸으나 연결되지 않아 문자 남겨드립니다.\n편하신 시간에 회신 주시면 확인 후 다시 연락드리겠습니다.</textarea>
           </div>
         </div>
       </div>
@@ -1488,7 +1241,7 @@ input,select,textarea{font-family:inherit;outline:none;}
       <div class="pc-page" id="page-set-perm">
         <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:20px;">
           <h1 style="font-size:20px;font-weight:800;">🔐 권한 관리</h1>
-          <span style="font-size:12px;color:var(--muted);">대표관리자만 접근 가능</span>
+          <span style="font-size:12px;color:var(--muted);">대표·대표관리자만 접근 가능</span>
         </div>
         <div class="filter-bar" style="margin-bottom:16px;">
           <div style="font-size:13px;font-weight:700;margin-bottom:10px;">성과 분석 접근 비밀번호</div>
@@ -1511,7 +1264,6 @@ input,select,textarea{font-family:inherit;outline:none;}
             <div>
               <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">직급</div>
               <select id="newStaffRole" style="width:100%;height:36px;border:1.5px solid var(--line);border-radius:8px;padding:0 8px;font-size:13px;">
-                <option value="대표">대표</option>
                 <option value="부사장">부사장</option>
                 <option value="팀장">팀장</option>
                 <option value="플래너">플래너</option>
@@ -1531,7 +1283,7 @@ input,select,textarea{font-family:inherit;outline:none;}
         <div class="table-wrap">
           <table class="data-table">
             <thead><tr><th>이름</th><th>직급</th><th>매장</th><th>상태</th><th>비밀번호 변경</th><th>관리</th></tr></thead>
-            <tbody id="staffTbody"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">등록된 직원이 없습니다</td></tr></tbody>
+            <tbody id="staffTbody"></tbody>
           </table>
         </div>
       </div>
@@ -1539,27 +1291,13 @@ input,select,textarea{font-family:inherit;outline:none;}
   </div>
 
   <!-- 우측 상세 패널 -->
-  <div class="pc-detail-panel" id="pcDetailPanel" onclick="e=&gt;e.target===this&amp;&amp;closePcDetail()">
+  <div class="pc-detail-panel" id="pcDetailPanel" onclick="e=>e.target===this&&closePcDetail()">
     <div class="pc-detail-inner">
       <div class="detail-header">
         <h3>고객 상세 정보</h3>
         <button class="btn btn-ghost btn-sm" onclick="closePcDetail()">✕</button>
       </div>
-      <div class="detail-body" id="pcDetailBody">
-    <div class="detail-name">연습용2</div>
-    <div class="detail-phone-row">
-      <div class="detail-phone">010-7777-5555</div>
-      <a href="tel:01077775555" class="btn btn-primary btn-sm" style="padding:0 12px;height:30px;border-radius:6px;background:var(--blue);color:#fff;display:inline-flex;align-items:center;text-decoration:none;font-size:12px;font-weight:700;">📞 전화</a>
-    </div>
-    <div style="display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap;">
-      <span class="badge badge-blue">성공</span>
-      <span class="badge badge-gray">18시간 49분 전 경과</span>
-    </div>
-    <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;">기본 정보</div>
-    <div class="detail-row"><div class="detail-key">매장</div><div class="detail-val">구미사점</div></div><div class="detail-row"><div class="detail-key">담당자</div><div class="detail-val">강용민</div></div><div class="detail-row"><div class="detail-key">접수</div><div class="detail-val">6/3 21:31</div></div><div class="detail-row"><div class="detail-key">통신사</div><div class="detail-val">KT</div></div><div class="detail-row"><div class="detail-key">가입유형</div><div class="detail-val">번호이동</div></div><div class="detail-row"><div class="detail-key">기기</div><div class="detail-val">아이폰 17 프로</div></div><div class="detail-row"><div class="detail-key">용량</div><div class="detail-val">256GB</div></div><div class="detail-row"><div class="detail-key">색상</div><div class="detail-val">딥블루</div></div><div class="detail-row"><div class="detail-key">요금제</div><div class="detail-val">5G 프리미어 슈퍼</div></div><div class="detail-row"><div class="detail-key">할인방식</div><div class="detail-val">공시지원금</div></div><div class="detail-row"><div class="detail-key">상담시간</div><div class="detail-val">오후 3시</div></div><div class="detail-row"><div class="detail-key">인터넷TV</div><div class="detail-val">아니요</div></div><div class="detail-row"><div class="detail-key">고객메모</div><div class="detail-val">-</div></div>
-    <div style="margin-top:12px;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;">연락 이력 (0)</div>
-    <div style="font-size:11px;color:var(--muted);">없음</div>
-  </div>
+      <div class="detail-body" id="pcDetailBody"></div>
       <div class="detail-footer">
         <button class="btn btn-outline" style="flex:1;" onclick="openPcStatusSheet()">상태 변경</button>
         <button class="btn btn-outline" style="flex:1;" onclick="openPcAssignSheet()">담당자 변경</button>
@@ -1582,18 +1320,18 @@ input,select,textarea{font-family:inherit;outline:none;}
       <div>
         <div class="hdr-logo">VIVID <span style="color:var(--muted);font-size:13px;font-weight:600;">현황판</span></div>
         <div class="hdr-loc" onclick="openLocSheet()">
-          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-          <span id="hdrLoc">VIVID 관리자</span>
-          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+          <span id="hdrLoc">매장 선택</span>
+          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
         </div>
       </div>
       <div class="hdr-icons">
         <div class="hdr-btn" id="notifBtn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"></path></svg>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
           <div class="notif-dot" id="notifDot" style="display:none;"></div>
         </div>
         <div class="hdr-btn" onclick="doRefresh()">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
         </div>
       </div>
     </div>
@@ -1601,23 +1339,23 @@ input,select,textarea{font-family:inherit;outline:none;}
 
   <!-- 요약 카드 (홈 탭에서만 표시) -->
   <div id="summaryCards" class="summary-cards">
-    <div class="sum-card sum-red" onclick="switchTab(&#39;urgent&#39;)">
+    <div class="sum-card sum-red" onclick="switchTab('urgent')">
       <div class="sum-label">⚡ 긴급</div>
       <div class="sum-num" id="sc-urgent">0</div>
     </div>
-    <div class="sum-card sum-blue" onclick="switchTab(&#39;new&#39;)">
+    <div class="sum-card sum-blue" onclick="switchTab('new')">
       <div class="sum-label">🆕 신규</div>
       <div class="sum-num" id="sc-new">0</div>
     </div>
-    <div class="sum-card sum-purple" onclick="switchTab(&#39;recare&#39;)">
+    <div class="sum-card sum-purple" onclick="switchTab('recare')">
       <div class="sum-label">🔄 재케어</div>
       <div class="sum-num" id="sc-recare">0</div>
     </div>
-    <div class="sum-card sum-orange" onclick="switchTab(&#39;absence&#39;)">
+    <div class="sum-card sum-orange" onclick="switchTab('absence')">
       <div class="sum-label">📵 부재케어</div>
       <div class="sum-num" id="sc-absence">0</div>
     </div>
-    <div class="sum-card sum-green" onclick="switchTab(&#39;done&#39;)">
+    <div class="sum-card sum-green" onclick="switchTab('done')">
       <div class="sum-label">✅ 완료(오늘)</div>
       <div class="sum-num" id="sc-done">0</div>
     </div>
@@ -1625,23 +1363,22 @@ input,select,textarea{font-family:inherit;outline:none;}
 
   <!-- 탭 -->
   <div class="tabs" id="tabBar">
-    <div class="tab on" data-tab="home" onclick="switchTab(&#39;home&#39;)">전체</div>
-    <div class="tab" data-tab="new" onclick="switchTab(&#39;new&#39;)">신규 <span class="tcnt tcnt-blue" id="tc-new">0</span></div>
-    <div class="tab" data-tab="recare" onclick="switchTab(&#39;recare&#39;)">재케어 <span class="tcnt tcnt-purple" id="tc-recare">0</span></div>
-    <div class="tab" data-tab="absence" onclick="switchTab(&#39;absence&#39;)">부재케어 <span class="tcnt tcnt-orange" id="tc-absence">0</span></div>
-    <div class="tab" data-tab="success" onclick="switchTab(&#39;success&#39;)">성공 <span class="tcnt tcnt-pink" id="tc-success">0</span></div>
-    <div class="tab" data-tab="urgent" onclick="switchTab(&#39;urgent&#39;)">긴급 <span class="tcnt tcnt-red" id="tc-urgent">0</span></div>
-    <div class="tab" data-tab="mine" onclick="switchTab(&#39;mine&#39;)">내 고객</div>
+    <div class="tab on" data-tab="home" onclick="switchTab('home')">전체</div>
+    <div class="tab" data-tab="new" onclick="switchTab('new')">신규 <span class="tcnt tcnt-blue" id="tc-new">0</span></div>
+    <div class="tab" data-tab="recare" onclick="switchTab('recare')">재케어 <span class="tcnt tcnt-purple" id="tc-recare">0</span></div>
+    <div class="tab" data-tab="absence" onclick="switchTab('absence')">부재케어 <span class="tcnt tcnt-orange" id="tc-absence">0</span></div>
+    <div class="tab" data-tab="urgent" onclick="switchTab('urgent')">긴급 <span class="tcnt tcnt-red" id="tc-urgent">0</span></div>
+    <div class="tab" data-tab="mine" onclick="switchTab('mine')">내 고객</div>
   </div>
 
   <!-- 검색/필터 -->
   <div class="searchbar">
     <div class="search-wrap">
-      <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+      <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input class="search-inp" type="search" placeholder="고객명 또는 전화번호" id="searchInp" oninput="renderList()">
     </div>
     <button class="filter-btn" onclick="toggleSort()">
-      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"></path></svg>
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
       <span id="sortLabel">긴급순</span>
     </button>
     <button class="filter-btn" id="selectModeBtn" onclick="toggleSelectMode()" style="border-color:var(--red);color:var(--red);">선택</button>
@@ -1662,24 +1399,24 @@ input,select,textarea{font-family:inherit;outline:none;}
 
   <!-- 하단 네비 -->
   <div class="btmnav">
-    <div class="bnav on" id="bnav-home" onclick="bottomNav(&#39;home&#39;)">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+    <div class="bnav on" id="bnav-home" onclick="bottomNav('home')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
       홈
     </div>
-    <div class="bnav" id="bnav-new" onclick="bottomNav(&#39;new&#39;)">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+    <div class="bnav" id="bnav-new" onclick="bottomNav('new')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
       신규<span class="bnav-cnt" id="bnav-cnt-new"></span>
     </div>
-    <div class="bnav" id="bnav-recare" onclick="bottomNav(&#39;recare&#39;)">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+    <div class="bnav" id="bnav-recare" onclick="bottomNav('recare')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
       재케어<span class="bnav-cnt bnav-cnt-purple" id="bnav-cnt-recare"></span>
     </div>
-    <div class="bnav" id="bnav-absence" onclick="bottomNav(&#39;absence&#39;)">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+    <div class="bnav" id="bnav-absence" onclick="bottomNav('absence')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
       부재케어<span class="bnav-cnt bnav-cnt-orange" id="bnav-cnt-absence"></span>
     </div>
-    <div class="bnav" id="bnav-menu" onclick="bottomNav(&#39;menu&#39;)">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    <div class="bnav" id="bnav-menu" onclick="bottomNav('menu')">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       메뉴
     </div>
   </div>
@@ -1695,9 +1432,9 @@ input,select,textarea{font-family:inherit;outline:none;}
   <!-- 기간 탭 -->
   <div style="padding:14px 16px 0;">
     <div class="menu-period-tabs">
-      <button class="menu-period-tab on" id="mpt-today" onclick="menuPeriod(&#39;today&#39;)">오늘</button>
-      <button class="menu-period-tab" id="mpt-week" onclick="menuPeriod(&#39;week&#39;)">이번 주</button>
-      <button class="menu-period-tab" id="mpt-month" onclick="menuPeriod(&#39;month&#39;)">이번 달</button>
+      <button class="menu-period-tab on" id="mpt-today" onclick="menuPeriod('today')">오늘</button>
+      <button class="menu-period-tab" id="mpt-week" onclick="menuPeriod('week')">이번 주</button>
+      <button class="menu-period-tab" id="mpt-month" onclick="menuPeriod('month')">이번 달</button>
     </div>
   </div>
 
@@ -1705,13 +1442,13 @@ input,select,textarea{font-family:inherit;outline:none;}
   <div class="menu-section" style="padding-bottom:0;">
     <div class="menu-section-title">📊 전체 현황</div>
     <div class="menu-kpi-grid">
-      <div class="menu-kpi" onclick="closeMenu();bottomNav(&#39;contact&#39;)">
+      <div class="menu-kpi" onclick="closeMenu();bottomNav('contact')">
         <span class="menu-kpi-emoji">📋</span>
         <div class="menu-kpi-label">총 접수</div>
         <div class="menu-kpi-val" id="mk-new">0</div>
         <div class="menu-kpi-sub">건</div>
       </div>
-      <div class="menu-kpi" onclick="closeMenu();bottomNav(&#39;done&#39;)" style="border-color:#10B981;">
+      <div class="menu-kpi" onclick="closeMenu();bottomNav('done')" style="border-color:#10B981;">
         <span class="menu-kpi-emoji">✅</span>
         <div class="menu-kpi-label">개통완료</div>
         <div class="menu-kpi-val" id="mk-done" style="color:var(--green);">0</div>
@@ -1724,19 +1461,19 @@ input,select,textarea{font-family:inherit;outline:none;}
         <div class="menu-kpi-sub" id="mk-rate-sub"></div>
         <div class="menu-kpi-bar"><div class="menu-kpi-bar-fill" id="mk-rate-bar" style="width:0%;background:var(--blue);"></div></div>
       </div>
-      <div class="menu-kpi" onclick="closeMenu();switchTab(&#39;home&#39;)" style="border-color:#F97316;">
+      <div class="menu-kpi" onclick="closeMenu();switchTab('home')" style="border-color:#F97316;">
         <span class="menu-kpi-emoji">⚠️</span>
         <div class="menu-kpi-label">미배정</div>
         <div class="menu-kpi-val" id="mk-unassigned" style="color:var(--orange);">0</div>
         <div class="menu-kpi-sub">즉시 배정 필요</div>
       </div>
-      <div class="menu-kpi" onclick="closeMenu();bottomNav(&#39;absence&#39;)" style="border-color:#F97316;">
+      <div class="menu-kpi" onclick="closeMenu();bottomNav('absence')" style="border-color:#F97316;">
         <span class="menu-kpi-emoji">📵</span>
         <div class="menu-kpi-label">부재케어</div>
         <div class="menu-kpi-val" id="mk-absent" style="color:var(--orange);">0</div>
         <div class="menu-kpi-sub">건</div>
       </div>
-      <div class="menu-kpi" onclick="closeMenu();bottomNav(&#39;recare&#39;)" style="border-color:#8B5CF6;">
+      <div class="menu-kpi" onclick="closeMenu();bottomNav('recare')" style="border-color:#8B5CF6;">
         <span class="menu-kpi-emoji">🔁</span>
         <div class="menu-kpi-label">재케어</div>
         <div class="menu-kpi-val" id="mk-recare" style="color:#8B5CF6;">0</div>
@@ -1772,8 +1509,8 @@ input,select,textarea{font-family:inherit;outline:none;}
 <div class="menu-screen" id="mobileTrashScreen">
   <div class="menu-hdr">
     <div style="display:flex;align-items:center;gap:10px;">
-      <button onclick="document.getElementById(&#39;mobileTrashScreen&#39;).classList.remove(&#39;open&#39;)" style="color:var(--muted);font-size:20px;">←</button>
-      <div class="menu-hdr-title">🗑️ 휴지통 <span id="mobileTrashCount" style="font-size:13px;font-weight:400;color:var(--muted);">총 0건</span></div>
+      <button onclick="document.getElementById('mobileTrashScreen').classList.remove('open')" style="color:var(--muted);font-size:20px;">←</button>
+      <div class="menu-hdr-title">🗑️ 휴지통 <span id="mobileTrashCount" style="font-size:13px;font-weight:400;color:var(--muted);"></span></div>
     </div>
   </div>
   <div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:10px 14px;font-size:11px;color:#B91C1C;">
@@ -1789,7 +1526,7 @@ input,select,textarea{font-family:inherit;outline:none;}
       <button style="height:32px;padding:0 12px;border-radius:8px;border:1.5px solid var(--red);color:var(--red);background:#fff;font-size:12px;font-weight:700;" onclick="mobileTrashBulkDelete()">완전삭제</button>
     </div>
   </div>
-  <div style="flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;" id="mobileTrashList"><div style="text-align:center;padding:40px;color:var(--muted);">휴지통이 비어있습니다</div></div>
+  <div style="flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;" id="mobileTrashList"></div>
 </div>
 
 <!-- 직원 상담 목록 모달 -->
@@ -1807,7 +1544,6 @@ input,select,textarea{font-family:inherit;outline:none;}
           <option value="연락중">연락중</option>
                     <option value="재케어">재케어</option>
           <option value="부재케어">부재케어</option>
-          <option value="성공">성공</option>
           <option value="개통완료">개통완료</option>
           <option value="실패">실패</option>
         </select>
@@ -1827,40 +1563,20 @@ input,select,textarea{font-family:inherit;outline:none;}
 <div class="detail" id="detailView">
   <div class="det-hdr">
     <div class="det-back" onclick="closeDetail()">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"></path></svg>
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
     </div>
     <div class="det-hdr-title">고객 상세</div>
   </div>
 
   <!-- 상단 고객 정보 고정 -->
-  <div class="det-top" id="detTop">
-    <div class="det-name">연습용2</div>
-    <div class="det-phone-row">
-      <div class="det-phone">010-7777-5555</div>
-      <button class="det-call-btn" onclick="doCall(&#39;-OuCSuzE_mKIMb6YdLjM&#39;,&#39;01077775555&#39;)">
-        <svg width="14" height="14" fill="#fff" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></svg>
-      </button>
-    </div>
-    <div class="det-badges">
-      <span class="badge badge-blue">성공</span>
-      <span class="badge badge-charcoal blink">1시간+ 지연</span>
-      <span class="badge badge-gray blink">18시간 49분 전 경과</span>
-    </div>
-    <div class="det-meta">
-      <div class="det-meta-item">🏪 <span class="det-meta-val">구미사점</span></div>
-      <div class="det-meta-item">👤 <span class="det-meta-val">강용민</span>
-        <button class="det-assign-btn" onclick="setSelId(&#39;-OuCSuzE_mKIMb6YdLjM&#39;);openBS(&#39;assign&#39;)">변경</button>
-      </div>
-      <div class="det-meta-item">📅 <span class="det-meta-val">6/3 21:31</span></div>
-      
-    </div></div>
+  <div class="det-top" id="detTop"></div>
 
   <!-- 탭 -->
   <div class="det-tabs">
-    <div class="det-tab on" onclick="detTab(&#39;info&#39;)">신청 조건</div>
-    <div class="det-tab" onclick="detTab(&#39;history&#39;)">연락 이력 <span id="dt-hist-cnt"></span></div>
-    <div class="det-tab" onclick="detTab(&#39;status&#39;)">상태 이력 <span id="dt-stat-cnt">(4)</span></div>
-    <div class="det-tab" onclick="detTab(&#39;memo&#39;)">메모</div>
+    <div class="det-tab on" onclick="detTab('info')">신청 조건</div>
+    <div class="det-tab" onclick="detTab('history')">연락 이력 <span id="dt-hist-cnt"></span></div>
+    <div class="det-tab" onclick="detTab('status')">상태 이력 <span id="dt-stat-cnt"></span></div>
+    <div class="det-tab" onclick="detTab('memo')">메모</div>
   </div>
 
   <div class="det-body" id="detBody"></div>
@@ -1878,134 +1594,103 @@ input,select,textarea{font-family:inherit;outline:none;}
 <!-- ══ 바텀시트들 ══ -->
 
 <!-- 통화 결과 -->
-<div class="bs-ov" id="crOv" onclick="closeBS(&#39;cr&#39;)"></div>
+<div class="bs-ov" id="crOv" onclick="closeBS('cr')"></div>
 <div class="bs" id="crBS">
   <div class="bs-handle"></div>
-  <div class="bs-title" style="position:relative;">통화 결과를 선택해주세요<button class="bs-close" onclick="closeBS(&#39;cr&#39;)">✕</button></div>
-  <div class="cr-item" onclick="onCallResult(&#39;connected&#39;)"><div class="cr-icon" style="background:#ECFDF5;">📞</div><div><div class="cr-label">상담 연결</div><div class="cr-desc">고객과 통화했어요</div></div></div>
-  <div class="cr-item" onclick="onCallResult(&#39;absence&#39;)"><div class="cr-icon" style="background:#FFF7ED;">📵</div><div><div class="cr-label">부재</div><div class="cr-desc">전화를 받지 않았어요</div></div></div>
-  <div class="cr-item" onclick="onCallResult(&#39;recare&#39;)"><div class="cr-icon" style="background:#F5F3FF;">🔄</div><div><div class="cr-label">재케어 요청</div><div class="cr-desc">나중에 다시 연락 원해요</div></div></div>
-  <div class="cr-item" onclick="onCallResult(&#39;rejected&#39;)"><div class="cr-icon" style="background:#FEF2F2;">✋</div><div><div class="cr-label">거절 / 구매 의사 없음</div><div class="cr-desc">구매 거절 의사 확인</div></div></div>
-  <div class="cr-item" onclick="onCallResult(&#39;invalid_number&#39;)"><div class="cr-icon" style="background:#F3F4F6;">❓</div><div><div class="cr-label">잘못된 번호</div><div class="cr-desc">번호 오류 및 기타</div></div></div>
+  <div class="bs-title" style="position:relative;">통화 결과를 선택해주세요<button class="bs-close" onclick="closeBS('cr')">✕</button></div>
+  <div class="cr-item" onclick="onCallResult('connected')"><div class="cr-icon" style="background:#ECFDF5;">📞</div><div><div class="cr-label">상담 연결</div><div class="cr-desc">고객과 통화했어요</div></div></div>
+  <div class="cr-item" onclick="onCallResult('absence')"><div class="cr-icon" style="background:#FFF7ED;">📵</div><div><div class="cr-label">부재</div><div class="cr-desc">전화를 받지 않았어요</div></div></div>
+  <div class="cr-item" onclick="onCallResult('recare')"><div class="cr-icon" style="background:#F5F3FF;">🔄</div><div><div class="cr-label">재케어 요청</div><div class="cr-desc">나중에 다시 연락 원해요</div></div></div>
+  <div class="cr-item" onclick="onCallResult('rejected')"><div class="cr-icon" style="background:#FEF2F2;">✋</div><div><div class="cr-label">거절 / 구매 의사 없음</div><div class="cr-desc">구매 거절 의사 확인</div></div></div>
+  <div class="cr-item" onclick="onCallResult('invalid_number')"><div class="cr-icon" style="background:#F3F4F6;">❓</div><div><div class="cr-label">잘못된 번호</div><div class="cr-desc">번호 오류 및 기타</div></div></div>
 </div>
 
 <!-- 부재케어 등록 -->
-<div class="bs-ov" id="absOv" onclick="closeBS(&#39;abs&#39;)"></div>
+<div class="bs-ov" id="absOv" onclick="closeBS('abs')"></div>
 <div class="bs" id="absBS">
   <div class="bs-handle"></div>
-  <div class="bs-title" style="position:relative;">부재케어 등록<button class="bs-close" onclick="closeBS(&#39;abs&#39;)">✕</button></div>
+  <div class="bs-title" style="position:relative;">부재케어 등록<button class="bs-close" onclick="closeBS('abs')">✕</button></div>
   <div class="bs-sec">부재 사유 (필수)</div>
   <div class="chip-grid" id="absReasonGrid">
-    <button class="sel-chip" data-v="no_answer" onclick="chip(this,&#39;absReason&#39;)">전화 미수신</button>
-    <button class="sel-chip" data-v="busy" onclick="chip(this,&#39;absReason&#39;)">통화중</button>
-    <button class="sel-chip" data-v="power_off" onclick="chip(this,&#39;absReason&#39;)">전원 꺼짐</button>
-    <button class="sel-chip" data-v="call_reject" onclick="chip(this,&#39;absReason&#39;)">수신 거부</button>
-    <button class="sel-chip" data-v="invalid_number" onclick="chip(this,&#39;absReason&#39;)">잘못된 번호</button>
-    <button class="sel-chip" data-v="sms_after_retry" onclick="chip(this,&#39;absReason&#39;)">문자 후 재시도</button>
-    <button class="sel-chip" data-v="etc" onclick="chip(this,&#39;absReason&#39;)" style="grid-column:span 2;">기타</button>
+    <button class="sel-chip" data-v="no_answer" onclick="chip(this,'absReason')">전화 미수신</button>
+    <button class="sel-chip" data-v="busy" onclick="chip(this,'absReason')">통화중</button>
+    <button class="sel-chip" data-v="power_off" onclick="chip(this,'absReason')">전원 꺼짐</button>
+    <button class="sel-chip" data-v="call_reject" onclick="chip(this,'absReason')">수신 거부</button>
+    <button class="sel-chip" data-v="invalid_number" onclick="chip(this,'absReason')">잘못된 번호</button>
+    <button class="sel-chip" data-v="sms_after_retry" onclick="chip(this,'absReason')">문자 후 재시도</button>
+    <button class="sel-chip" data-v="etc" onclick="chip(this,'absReason')" style="grid-column:span 2;">기타</button>
   </div>
   <div class="bs-sec">다음 연락 예정 (필수)</div>
   <div class="chip-grid chip-grid-3" id="absTimeGrid" style="grid-template-columns:1fr 1fr 1fr;">
-    <button class="sel-chip" data-v="30m" onclick="chip(this,&#39;absTime&#39;)">30분 뒤</button>
-    <button class="sel-chip" data-v="1h" onclick="chip(this,&#39;absTime&#39;)">1시간 뒤</button>
-    <button class="sel-chip" data-v="afternoon" onclick="chip(this,&#39;absTime&#39;)">오늘 오후</button>
-    <button class="sel-chip" data-v="custom" onclick="chip(this,&#39;absTime&#39;)" style="grid-column:span 3;">직접 선택</button>
+    <button class="sel-chip" data-v="30m" onclick="chip(this,'absTime')">30분 뒤</button>
+    <button class="sel-chip" data-v="1h" onclick="chip(this,'absTime')">1시간 뒤</button>
+    <button class="sel-chip" data-v="afternoon" onclick="chip(this,'absTime')">오늘 오후</button>
+    <button class="sel-chip" data-v="custom" onclick="chip(this,'absTime')" style="grid-column:span 3;">직접 선택</button>
   </div>
   <div class="dt-preview" id="absDtPreview">📅 <span id="absDtText"></span></div>
   <div class="custom-dt" id="absCustomDt"><input type="datetime-local" id="absCustomInp"></div>
-  <div class="bs-sec">문자 발송</div>
-  <div class="sms-open-row">
-    <button class="sms-open-btn" type="button" onclick="openAbsSmsApp()">📱 문자앱 열기</button>
-  </div>
+  <div class="bs-sec">문자 발송 여부</div>
   <div class="sms-toggle">
-    <button class="sms-chip" data-v="sent" onclick="smsChip(this,&#39;absSms&#39;)">✅ 문자 보냈음</button>
-    <button class="sms-chip" data-v="not_sent" onclick="smsChip(this,&#39;absSms&#39;)">미발송</button>
+    <button class="sms-chip" data-v="sent" onclick="smsChip(this,'absSms')">✅ 발송 완료</button>
+    <button class="sms-chip" data-v="not_sent" onclick="smsChip(this,'absSms')">미발송</button>
   </div>
   <div class="bs-memo">
-    <textarea id="absMemo" placeholder="메모 (선택)" maxlength="200" oninput="document.getElementById(&#39;absMemoCnt&#39;).textContent=this.value.length+&#39;/200&#39;"></textarea>
+    <textarea id="absMemo" placeholder="메모 (선택)" maxlength="200" oninput="document.getElementById('absMemoCnt').textContent=this.value.length+'/200'"></textarea>
     <div class="bs-memo-cnt" id="absMemoCnt">0/200</div>
   </div>
   <button class="bs-submit pink" onclick="submitAbs()">부재케어 등록</button>
 </div>
 
 <!-- 재케어 등록 -->
-<div class="bs-ov" id="rcOv" onclick="closeBS(&#39;rc&#39;)"></div>
+<div class="bs-ov" id="rcOv" onclick="closeBS('rc')"></div>
 <div class="bs" id="rcBS">
   <div class="bs-handle"></div>
-  <div class="bs-title" style="position:relative;">재케어 등록<button class="bs-close" onclick="closeBS(&#39;rc&#39;)">✕</button></div>
+  <div class="bs-title" style="position:relative;">재케어 등록<button class="bs-close" onclick="closeBS('rc')">✕</button></div>
   <div class="bs-sec">재케어 사유 (필수)</div>
   <div class="chip-grid" id="rcReasonGrid">
-    <button class="sel-chip" data-v="family_discussion" onclick="chip(this,&#39;rcReason&#39;)">가족과 상의</button>
-    <button class="sel-chip" data-v="customer_request" onclick="chip(this,&#39;rcReason&#39;)">고객 요청</button>
-    <button class="sel-chip" data-v="policy_check" onclick="chip(this,&#39;rcReason&#39;)">정책 확인</button>
-    <button class="sel-chip" data-v="stock_check" onclick="chip(this,&#39;rcReason&#39;)">재고 확인</button>
-    <button class="sel-chip" data-v="visit_scheduled" onclick="chip(this,&#39;rcReason&#39;)">방문 예정</button>
-    <button class="sel-chip" data-v="etc" onclick="chip(this,&#39;rcReason&#39;)">기타</button>
+    <button class="sel-chip" data-v="family_discussion" onclick="chip(this,'rcReason')">가족과 상의</button>
+    <button class="sel-chip" data-v="customer_request" onclick="chip(this,'rcReason')">고객 요청</button>
+    <button class="sel-chip" data-v="policy_check" onclick="chip(this,'rcReason')">정책 확인</button>
+    <button class="sel-chip" data-v="stock_check" onclick="chip(this,'rcReason')">재고 확인</button>
+    <button class="sel-chip" data-v="visit_scheduled" onclick="chip(this,'rcReason')">방문 예정</button>
+    <button class="sel-chip" data-v="etc" onclick="chip(this,'rcReason')">기타</button>
   </div>
   <div class="bs-sec">다음 연락 예정 (필수)</div>
   <div class="chip-grid" id="rcTimeGrid">
-    <button class="sel-chip" data-v="1h" onclick="chip(this,&#39;rcTime&#39;)">1시간 뒤</button>
-    <button class="sel-chip" data-v="afternoon" onclick="chip(this,&#39;rcTime&#39;)">오늘 오후</button>
-    <button class="sel-chip" data-v="tomorrow" onclick="chip(this,&#39;rcTime&#39;)">내일</button>
-    <button class="sel-chip" data-v="custom" onclick="chip(this,&#39;rcTime&#39;)">직접 선택</button>
+    <button class="sel-chip" data-v="1h" onclick="chip(this,'rcTime')">1시간 뒤</button>
+    <button class="sel-chip" data-v="afternoon" onclick="chip(this,'rcTime')">오늘 오후</button>
+    <button class="sel-chip" data-v="tomorrow" onclick="chip(this,'rcTime')">내일</button>
+    <button class="sel-chip" data-v="custom" onclick="chip(this,'rcTime')">직접 선택</button>
   </div>
   <div class="dt-preview" id="rcDtPreview">📅 <span id="rcDtText"></span></div>
   <div class="custom-dt" id="rcCustomDt"><input type="datetime-local" id="rcCustomInp"></div>
   <div class="bs-memo">
-    <textarea id="rcMemo" placeholder="메모 (선택)" maxlength="200" oninput="document.getElementById(&#39;rcMemoCnt&#39;).textContent=this.value.length+&#39;/200&#39;"></textarea>
+    <textarea id="rcMemo" placeholder="메모 (선택)" maxlength="200" oninput="document.getElementById('rcMemoCnt').textContent=this.value.length+'/200'"></textarea>
     <div class="bs-memo-cnt" id="rcMemoCnt">0/200</div>
   </div>
   <button class="bs-submit blue" onclick="submitRc()">재케어 등록</button>
 </div>
 
 <!-- 상태 변경 -->
-<div class="bs-ov" id="stOv" onclick="closeBS(&#39;st&#39;)"></div>
+<div class="bs-ov" id="stOv" onclick="closeBS('st')"></div>
 <div class="bs" id="stBS">
   <div class="bs-handle"></div>
-  <div class="bs-title" style="position:relative;">상태 변경<button class="bs-close" onclick="closeBS(&#39;st&#39;)">✕</button></div>
-  <div class="status-list" id="statusList">
-    <div class="status-item" onclick="onStatusChange(&#39;신규&#39;)">
-      <div class="status-dot" style="background:#074BF4;"></div>
-      <span style="font-size:14px;font-weight:600;">신규</span>
-    </div>
-    <div class="status-item" onclick="onStatusChange(&#39;연락중&#39;)">
-      <div class="status-dot" style="background:#074BF4;"></div>
-      <span style="font-size:14px;font-weight:600;">연락중</span>
-    </div>
-    <div class="status-item" onclick="onStatusChange(&#39;재케어&#39;)">
-      <div class="status-dot" style="background:#8B5CF6;"></div>
-      <span style="font-size:14px;font-weight:600;">재케어</span>
-    </div>
-    <div class="status-item" onclick="onStatusChange(&#39;부재케어&#39;)">
-      <div class="status-dot" style="background:#F97316;"></div>
-      <span style="font-size:14px;font-weight:600;">부재케어</span>
-    </div>
-    <div class="status-item" onclick="onStatusChange(&#39;성공&#39;)">
-      <div class="status-dot" style="background:#E6007E;"></div>
-      <span style="font-size:14px;font-weight:600;">성공</span>
-    </div>
-    <div class="status-item" onclick="onStatusChange(&#39;개통완료&#39;)">
-      <div class="status-dot" style="background:#10B981;"></div>
-      <span style="font-size:14px;font-weight:600;">개통완료</span>
-    </div>
-    <div class="status-item" onclick="onStatusChange(&#39;실패&#39;)">
-      <div class="status-dot" style="background:#9CA3AF;"></div>
-      <span style="font-size:14px;font-weight:600;">실패</span>
-    </div></div>
+  <div class="bs-title" style="position:relative;">상태 변경<button class="bs-close" onclick="closeBS('st')">✕</button></div>
+  <div class="status-list" id="statusList"></div>
 </div>
 
 <!-- 실패 사유 -->
-<div class="bs-ov" id="failOv" onclick="closeBS(&#39;fail&#39;)"></div>
+<div class="bs-ov" id="failOv" onclick="closeBS('fail')"></div>
 <div class="bs" id="failBS">
   <div class="bs-handle"></div>
-  <div class="bs-title" style="position:relative;">실패 사유 선택<button class="bs-close" onclick="closeBS(&#39;fail&#39;)">✕</button></div>
+  <div class="bs-title" style="position:relative;">실패 사유 선택<button class="bs-close" onclick="closeBS('fail')">✕</button></div>
   <div class="chip-grid" id="failReasonGrid">
-    <button class="sel-chip" data-v="price" onclick="chip(this,&#39;failReason&#39;)">가격 이유</button>
-    <button class="sel-chip" data-v="no_device" onclick="chip(this,&#39;failReason&#39;)">원하는 기기 없음</button>
-    <button class="sel-chip" data-v="competitor" onclick="chip(this,&#39;failReason&#39;)">타사로 결정</button>
-    <button class="sel-chip" data-v="no_response" onclick="chip(this,&#39;failReason&#39;)">연락 두절</button>
-    <button class="sel-chip" data-v="delay" onclick="chip(this,&#39;failReason&#39;)">개통 보류</button>
-    <button class="sel-chip" data-v="etc" onclick="chip(this,&#39;failReason&#39;)">기타</button>
+    <button class="sel-chip" data-v="price" onclick="chip(this,'failReason')">가격 이유</button>
+    <button class="sel-chip" data-v="no_device" onclick="chip(this,'failReason')">원하는 기기 없음</button>
+    <button class="sel-chip" data-v="competitor" onclick="chip(this,'failReason')">타사로 결정</button>
+    <button class="sel-chip" data-v="no_response" onclick="chip(this,'failReason')">연락 두절</button>
+    <button class="sel-chip" data-v="delay" onclick="chip(this,'failReason')">개통 보류</button>
+    <button class="sel-chip" data-v="etc" onclick="chip(this,'failReason')">기타</button>
   </div>
   <div class="bs-memo">
     <textarea id="failMemo" placeholder="메모 (선택)" maxlength="200"></textarea>
@@ -2014,31 +1699,31 @@ input,select,textarea{font-family:inherit;outline:none;}
 </div>
 
 <!-- 메모 -->
-<div class="bs-ov" id="memoOv" onclick="closeBS(&#39;memo&#39;)"></div>
+<div class="bs-ov" id="memoOv" onclick="closeBS('memo')"></div>
 <div class="bs" id="memoBS">
   <div class="bs-handle"></div>
-  <div class="bs-title" style="position:relative;">메모 추가<button class="bs-close" onclick="closeBS(&#39;memo&#39;)">✕</button></div>
+  <div class="bs-title" style="position:relative;">메모 추가<button class="bs-close" onclick="closeBS('memo')">✕</button></div>
   <div class="bs-memo" style="padding-top:12px;">
-    <textarea id="memoInp" placeholder="메모를 입력하세요" maxlength="200" style="height:100px;" oninput="document.getElementById(&#39;memoInpCnt&#39;).textContent=this.value.length+&#39;/200&#39;"></textarea>
+    <textarea id="memoInp" placeholder="메모를 입력하세요" maxlength="200" style="height:100px;" oninput="document.getElementById('memoInpCnt').textContent=this.value.length+'/200'"></textarea>
     <div class="bs-memo-cnt" id="memoInpCnt">0/200</div>
   </div>
   <button class="bs-submit blue" onclick="submitMemo()">저장</button>
 </div>
 
 <!-- 담당자 배정 -->
-<div class="bs-ov" id="assignOv" onclick="closeBS(&#39;assign&#39;)"></div>
+<div class="bs-ov" id="assignOv" onclick="closeBS('assign')"></div>
 <div class="bs" id="assignBS">
   <div class="bs-handle"></div>
-  <div class="bs-title" style="position:relative;">담당자 배정<button class="bs-close" onclick="closeBS(&#39;assign&#39;)">✕</button></div>
+  <div class="bs-title" style="position:relative;">담당자 배정<button class="bs-close" onclick="closeBS('assign')">✕</button></div>
   <div class="chip-grid" id="assignGrid"></div>
   <button class="bs-submit blue" onclick="submitAssign()">배정 완료</button>
 </div>
 
 <!-- 고객 정보 수정 -->
-<div class="bs-ov" id="editOv" onclick="closeBS(&#39;edit&#39;)"></div>
+<div class="bs-ov" id="editOv" onclick="closeBS('edit')"></div>
 <div class="bs" id="editBS">
   <div class="bs-handle"></div>
-  <div class="bs-title" style="position:relative;">✏️ 고객 정보 수정<button class="bs-close" onclick="closeBS(&#39;edit&#39;)">✕</button></div>
+  <div class="bs-title" style="position:relative;">✏️ 고객 정보 수정<button class="bs-close" onclick="closeBS('edit')">✕</button></div>
   <div style="padding:12px 16px;display:flex;flex-direction:column;gap:10px;">
     <div>
       <div class="bs-sec" style="padding:0 0 4px;">고객명</div>
@@ -2110,14 +1795,12 @@ let currentUser={
   uid:''
 };
 let allStaff={};
-// ── 권한 체크: 관리자/대표만 최고 권한
-const MASTER_ROLES=['관리자','대표','대표관리자'];
-const getUserRole=()=>currentUser?.role||currentUser?.title||'';
-const isMasterAdmin=()=>currentUser?.type==='admin'||MASTER_ROLES.includes(getUserRole());
-const canDeletePermanent=()=>isMasterAdmin();
-const canAccessStats=()=>isMasterAdmin();
-const canAddStaff=()=>isMasterAdmin();
-const canManagePerm=()=>isMasterAdmin();
+
+// 권한 체크
+const canDeletePermanent=()=>['대표','대표관리자'].includes(currentUser.role)||currentUser.type==='admin';
+const canAccessStats=()=>['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+const canAddStaff=()=>['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+const canManagePerm=()=>['대표','대표관리자'].includes(currentUser.role)||currentUser.type==='admin';
 
 const $=id=>document.getElementById(id);
 
@@ -2156,7 +1839,6 @@ const elapsedClass=ms=>{
 };
 const barClass=(status,ms)=>{
   if(status==='개통완료')return'cbar-green';
-  if(status==='성공'||status==='개통케어')return'cbar-pink';
   if(status==='실패')return'cbar-gray';
   if(status==='재케어')return'cbar-purple';
   if(status==='부재케어')return'cbar-orange';
@@ -2167,20 +1849,16 @@ const barClass=(status,ms)=>{
   if(m>=10)return'cbar-yellow';
   return'cbar-blue';
 };
-const displayStatus=(s)=>(s==='개통케어'?'성공':(s||'신규'));
 const statusBadge=(s)=>{
-  const ns=displayStatus(s);
-  const map={신규:'blue',연락중:'blue',재케어:'purple',부재케어:'orange',성공:'pink',개통완료:'green',실패:'gray'};
-  return`<span class="badge badge-${map[ns]||'gray'}">${ns}</span>`;
+  const map={신규:'blue',연락중:'blue',재케어:'purple',부재케어:'orange',개통완료:'green',실패:'gray'};
+  return`<span class="badge badge-${map[s]||'gray'}">${s||'신규'}</span>`;
 };
 const statusColor=(s)=>{
-  const ns=(s==='개통케어')?'성공':s;
-  const map={신규:'blue',연락중:'blue',재케어:'purple',부재케어:'orange',성공:'pink',개통완료:'green',실패:'gray'};
-  return map[ns]||'gray';
+  const map={신규:'blue',연락중:'blue',재케어:'purple',부재케어:'orange',개통완료:'green',실패:'gray'};
+  return map[s]||'gray';
 };
 const barColor=(status,ms)=>{
   if(status==='개통완료')return'green';
-  if(status==='성공'||status==='개통케어')return'pink';
   if(status==='실패')return'gray';
   if(status==='재케어')return'purple';
   if(status==='부재케어')return'orange';
@@ -2271,19 +1949,27 @@ onValue(ref(db,'consultations'),snap=>{
 }
 
 function applyPermUI(){
-  // 관리자/대표가 아니면 성과 분석과 핵심 설정 메뉴를 아예 숨김
-  const blockedPrefixes=['stat-'];
-  const blockedExact=['set-staff','set-store','set-perm','set-archive'];
-  document.querySelectorAll('.pc-nav-item').forEach(el=>{
-    const on=el.getAttribute('onclick')||'';
-    const isBlocked=blockedPrefixes.some(p=>on.includes(p))||blockedExact.some(p=>on.includes(p));
-    if(isBlocked && !isMasterAdmin()) el.style.display='none';
-    else if(isBlocked && isMasterAdmin()) el.style.display='flex';
-  });
-
-  // 삭제 버튼 - 관리자/대표만 완전삭제, 그 외는 휴지통 처리로 표기
+  // 성과분석 - 부사장 이상만
+  if(!canAccessStats()){
+    document.querySelectorAll('.pc-nav-item').forEach(el=>{
+      if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes('stat-')){
+        el.style.display='none';
+      }
+    });
+  }
+  // 권한관리 - 대표/대표관리자만
+  if(!canManagePerm()){
+    document.querySelectorAll('.pc-nav-item').forEach(el=>{
+      if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes('set-perm')){
+        el.style.display='none';
+      }
+    });
+  }
+  // 삭제 버튼 - 대표/대표관리자만 완전삭제 표시
   const delBtn=document.querySelector('[onclick="deleteConsult()"]');
-  if(delBtn && !canDeletePermanent()) delBtn.textContent='🗑️ 휴지통';
+  if(delBtn){
+    if(!canDeletePermanent()) delBtn.textContent='🗑️ 휴지통';
+  }
 }
 
 // ── Firebase Auth 로그인 ──
@@ -2391,7 +2077,7 @@ function renderStaffTable(){
   const tbody=document.getElementById('staffTbody');
   if(!tbody)return;
   const stores=['남양시장점','중곡점','구미사점'];
-  const roles=['대표','부사장','팀장','플래너'];
+  const roles=['부사장','팀장','플래너'];
   tbody.innerHTML=Object.entries(allStaff).map(([uid,s])=>`
     <tr>
       <td style="font-weight:700;">${s.name}</td>
@@ -2437,7 +2123,6 @@ const TAB_STATUS_MAP={
   'page-contact': c=>['연락중','상담중'].includes(c.status),
   'page-recare': c=>c.status==='재케어',
   'page-absence': c=>c.status==='부재케어',
-  'page-success': c=>c.status==='성공'||c.status==='개통케어',
   'page-done': c=>c.status==='개통완료',
   'page-fail': c=>c.status==='실패',
 };
@@ -2463,7 +2148,6 @@ function getTabList(pageId){
 const TAB_TBODY_MAP={
   'page-urgent':'urgentTbody','page-contact':'contactTbody',
   'page-recare':'recareTbody','page-absence':'absenceTbody',
-  'page-success':'successTbody',
   'page-done':'doneTbody','page-fail':'failTbody',
 };
 
@@ -2508,7 +2192,7 @@ window.downloadTabCSV=function(pageId){
   const headers=['접수시간','경과','고객명','전화번호','상태','기기','요금제','담당자'];
   const rows=list.map(c=>[
     fmtDate(c.createdAt),elapsedLabel(elapsedMs(c.createdAt)),
-    c.name||'',c.phone||'',displayStatus(c.status)||'',
+    c.name||'',c.phone||'',c.status||'',
     `${c.device||''}${c.storage?' '+c.storage:''}`,c.plan||'',
     `${c.assignedStore||''}${c.assignedTo?' '+c.assignedTo:''}`
   ]);
@@ -2528,7 +2212,6 @@ function updateTabBadges(){
   const nb=document.getElementById('nav-badge-contact');if(nb)nb.textContent=contact.length||'●';
   const nr=document.getElementById('nav-badge-recare');if(nr)nr.textContent=recare.length||'●';
   const na=document.getElementById('nav-badge-absence');if(na)na.textContent=absence.length||'●';
-  const ns=document.getElementById('nav-badge-success');if(ns)ns.textContent=ALL.filter(c=>c.status==='성공'||c.status==='개통케어').length||'●';
   const nd=document.getElementById('nav-badge-done');if(nd)nd.textContent=done.length||'●';
 }
 
@@ -2605,9 +2288,38 @@ window.openStaffDetail=function(staffName){
         <button class="sd-filter-btn" onclick=\"sdFilter(this,'개통완료')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">✅ 개통완료 ${done.length}</button>
         <button class="sd-filter-btn" onclick=\"sdFilter(this,'실패')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">❌ 실패 ${fail.length}</button>
       </div>
+
+    // 제품/컬러 집계
+    function getProductStats(){
+      const doneList=allList.filter(c=>c.status==='개통완료');
+      const failList=allList.filter(c=>c.status==='실패');
+      function topItems(list,n=3){
+        const map={};
+        list.forEach(c=>{
+          const k=(c.device||'미기재')+(c.color?' · '+c.color:'');
+          map[k]=(map[k]||0)+1;
+        });
+        return Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,n);
+      }
+      const doneTop=topItems(doneList);
+      const failTop=topItems(failList);
+      if(!doneTop.length&&!failTop.length)return'';
+      return\`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 0 12px;">
+        <div style="background:#ECFDF5;border-radius:12px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:8px;">✅ 개통 TOP 기기</div>
+          \${doneTop.length?doneTop.map(([k,v])=>\`<div style="font-size:12px;margin-bottom:4px;"><b>\${k}</b> <span style="color:var(--green);">\${v}건</span></div>\`).join(''):'<div style="font-size:12px;color:var(--muted);">없음</div>'}
+        </div>
+        <div style="background:#FEF2F2;border-radius:12px;padding:12px;">
+          <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:8px;">❌ 실패 TOP 기기</div>
+          \${failTop.length?failTop.map(([k,v])=>\`<div style="font-size:12px;margin-bottom:4px;"><b>\${k}</b> <span style="color:var(--red);">\${v}건</span></div>\`).join(''):'<div style="font-size:12px;color:var(--muted);">없음</div>'}
+        </div>
+      </div>\`;
+    }
+      <!-- 제품/컬러 집계 -->
+      <div style="flex-shrink:0;">\${getProductStats()}</div>
       <!-- DB 목록 -->
       <div style="overflow-y:auto;flex:1;">
-        <table style="width:100%;border-collapse:collapse;">
+        \${isMobile?'<div id="sdTbody">'+getRows('')+'</div>':\`<table style="width:100%;border-collapse:collapse;">
           <thead style="position:sticky;top:0;background:#fff;z-index:1;">
             <tr style="border-bottom:2px solid var(--line);font-size:11px;color:var(--muted);">
               <th style="padding:8px;text-align:left;">접수</th>
@@ -2620,8 +2332,8 @@ window.openStaffDetail=function(staffName){
               <th style="padding:8px;text-align:left;">상태</th>
             </tr>
           </thead>
-          <tbody id="sdTbody">${getRows('')}</tbody>
-        </table>
+          <tbody id="sdTbody">\${getRows('')}</tbody>
+        </table>\`}
       </div>
     </div>`;
 
@@ -2660,7 +2372,6 @@ function renderTabs(){
   const newList=ALL.filter(c=>['신규','연락중'].includes(c.status)||(!c.status));
   const recare=ALL.filter(c=>c.status==='재케어');
   const absence=ALL.filter(c=>c.status==='부재케어');
-  const success=ALL.filter(c=>c.status==='성공'||c.status==='개통케어');
   const todayDone=ALL.filter(c=>c.status==='개통완료'&&isToday(c.createdAt));
 
   // 탭 카운트
@@ -2668,7 +2379,6 @@ function renderTabs(){
   const tcN=$('tc-new'); if(tcN)tcN.textContent=newList.length;
   const tcR=$('tc-recare'); if(tcR)tcR.textContent=recare.length;
   const tcA=$('tc-absence'); if(tcA)tcA.textContent=absence.length;
-  const tcS=$('tc-success'); if(tcS)tcS.textContent=success.length;
 
   // 요약 카드
   const scU=$('sc-urgent'); if(scU)scU.textContent=urgent.length;
@@ -2715,7 +2425,6 @@ function getList(){
     case'new':    list=ALL.filter(c=>['신규','연락중'].includes(c.status)||(!c.status)); break;
     case'recare': list=ALL.filter(c=>c.status==='재케어'); break;
     case'absence':list=ALL.filter(c=>c.status==='부재케어'); break;
-    case'success':list=ALL.filter(c=>c.status==='성공'||c.status==='개통케어'); break;
     case'done':   list=ALL.filter(c=>c.status==='개통완료'); break;
     case'mine':   list=myName?ALL.filter(c=>c.assignedTo===myName):ALL; break;
     case'store':  list=myStore?ALL.filter(c=>c.assignedStore===myStore):ALL; break;
@@ -2929,7 +2638,7 @@ function makeRow(c,dupPhones){
       <td><span class="${ec}">${elapsedLabel(ms)}</span></td>
       <td style="font-weight:700;">${c.name||'-'}${isDup?'<span class="badge badge-yellow" style="margin-left:4px;font-size:9px;">중복</span>':''}</td>
       <td style="color:var(--blue);">${c.phone||'-'}</td>
-      <td><span class="badge badge-${sc}">${displayStatus(c.status)||'신규'}</span></td>
+      <td><span class="badge badge-${sc}">${c.status||'신규'}</span></td>
       <td style="color:var(--muted);">${c.nextContactAt?fmtDate(c.nextContactAt):'-'}</td>
       <td>${c.device||'-'} ${c.storage?'·'+c.storage:''}</td>
       <td style="font-size:11px;">${c.plan||'-'}</td>
@@ -2949,7 +2658,7 @@ function renderDashboard(){
       <td><span class="${ec}">${elapsedLabel(ms)}</span></td>
       <td style="font-weight:700;">${c.name||'-'}</td>
       <td style="color:var(--blue);">${c.phone||'-'}</td>
-      <td><span class="badge badge-${sc}">${displayStatus(c.status)||'신규'}</span></td>
+      <td><span class="badge badge-${sc}">${c.status||'신규'}</span></td>
       <td>${c.device||'-'}</td>
       <td style="font-size:11px;">${c.plan||'-'}</td>
       <td style="font-size:11px;">${c.assignedStore||'미배정'} ${c.assignedTo?'·'+c.assignedTo:''}</td>
@@ -3016,7 +2725,7 @@ function renderUrgentTable(){
       <td><span class="${elapsedClass(ms,c.status)} blink">${elapsedLabel(ms)}</span></td>
       <td style="font-weight:700;">${c.name||'-'}</td>
       <td style="color:var(--blue);">${c.phone||'-'}</td>
-      <td><span class="badge badge-${statusColor(c.status)}">${displayStatus(c.status)||'신규'}</span></td>
+      <td><span class="badge badge-${statusColor(c.status)}">${c.status||'신규'}</span></td>
       <td style="font-size:11px;">${c.assignedStore||'미배정'} ${c.assignedTo?'·'+c.assignedTo:''}</td>
       <td>${c.device||'-'}</td>
     </tr>`;
@@ -3266,7 +2975,13 @@ window.openStoreDetail=function(store,initStatus){
           <div style="font-size:22px;font-weight:900;color:var(--red);">${fail.length}</div>
         </div>
       </div>
-      <!-- 필터 -->
+      <!-- 직원 필터 -->
+      <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;margin-bottom:4px;">
+        <span style="font-size:11px;color:var(--muted);align-self:center;">담당자:</span>
+        <button class="sd-staff-btn active" data-staff="" style="height:26px;padding:0 10px;border-radius:50px;border:1.5px solid var(--blue);background:var(--blue);color:#fff;font-size:11px;font-weight:600;cursor:pointer;">전체</button>
+        ${Object.values(allStaff).filter(s=>s.active!==false&&allList.some(c=>c.assignedTo===s.name)).map(s=>`<button class="sd-staff-btn" data-staff="${s.name}" style="height:26px;padding:0 10px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:11px;font-weight:600;cursor:pointer;">${s.name}</button>`).join('')}
+      </div>
+      <!-- 상태 필터 -->
       <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;">
         <button class="sd-filter-btn${!initStatus?' active':''}" onclick=\"sdFilterStore(this,'')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid ${!initStatus?'var(--blue)':'var(--line)'};background:${!initStatus?'var(--blue)':'#fff'};color:${!initStatus?'#fff':'var(--ink)'};font-size:12px;font-weight:600;cursor:pointer;">전체 ${allList.length}</button>
         <button class="sd-filter-btn${initStatus==='연락중'?' active':''}" onclick=\"sdFilterStore(this,'연락중')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">📞 연락중 ${contact.length}</button>
@@ -3298,8 +3013,27 @@ window.openStoreDetail=function(store,initStatus){
     </div>`;
 
   modal._getRows=getRows;
+  modal._allList=allList;
   modal.onclick=e=>{if(e.target===modal)modal.remove();};
   document.body.appendChild(modal);
+
+  // 직원 필터 이벤트
+  modal.querySelectorAll('.sd-staff-btn').forEach(btn=>{
+    btn.onclick=function(e){
+      e.stopPropagation();
+      const staff=this.getAttribute('data-staff');
+      modal.querySelectorAll('.sd-staff-btn').forEach(b=>{
+        b.style.background='#fff';b.style.color='var(--ink)';b.style.borderColor='var(--line)';
+      });
+      this.style.background='var(--blue)';this.style.color='#fff';this.style.borderColor='var(--blue)';
+      // allList 필터링
+      allList=staff?modal._allList.filter(c=>c.assignedTo===staff):modal._allList;
+      modal._getRows=getRows;
+      const tbody=modal.querySelector('#sdStoreTbody');
+      const activeStat=modal.querySelector('.sd-filter-btn[style*="var(--blue)"]')?.getAttribute('data-status')||'';
+      if(tbody)tbody.innerHTML=getRows(activeStat);
+    };
+  });
 };
 
 window.sdFilterStore=function(btn,status){
@@ -3520,7 +3254,7 @@ let analyticsUnlocked=false;
 let analyticsPassword='';
 onValue(ref(db,'analyticsPassword'),snap=>{ analyticsPassword=snap.val()||''; });
 
-const STAT_PAGES=['stat-staff','stat-store','stat-device','stat-channel','stat-archive'];
+const STAT_PAGES=['stat-staff','stat-store','stat-device','stat-channel'];
 
 function renderDeviceStat(){
   const wrap=document.getElementById('device-stat-wrap');
@@ -3565,9 +3299,18 @@ function renderDeviceStat(){
 }
 
 function pcNav(page){
-  const MASTER_ONLY_PAGES=['set-staff','set-store','set-perm','set-archive'];
-  if((STAT_PAGES.includes(page)||MASTER_ONLY_PAGES.includes(page))&&!isMasterAdmin()){
-    alert('관리자/대표 권한만 접근할 수 있습니다.');return;
+  // 성과분석: 부사장 이상은 바로 접근, 팀장/플래너는 비밀번호
+  if(STAT_PAGES.includes(page)){
+    if(!canAccessStats()&&!analyticsUnlocked){
+      const input=prompt('성과 분석 페이지 접근 비밀번호를 입력하세요:');
+      if(input===null)return;
+      if(input!==String(analyticsPassword)){alert('비밀번호가 올바르지 않습니다.');return;}
+      analyticsUnlocked=true;
+    }
+  }
+  // 권한관리: 대표/대표관리자만
+  if(page==='set-perm'&&!canManagePerm()){
+    alert('접근 권한이 없습니다.');return;
   }
   document.querySelectorAll('.pc-nav-item').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.pc-page').forEach(el=>el.classList.remove('active'));
@@ -3575,7 +3318,7 @@ function pcNav(page){
   if(p)p.classList.add('active');
   event?.target?.classList.add('active');
   // 탭별 테이블 렌더링
-  const tabPages=['urgent','contact','recare','absence','success','done','fail'];
+  const tabPages=['urgent','contact','recare','absence','done','fail'];
   if(tabPages.includes(page)) renderTabTable(`page-${page}`);
   if(page==='stat-staff') renderStatStaff();
   if(page==='stat-store') renderStatStore();
@@ -4111,10 +3854,7 @@ function renderMenuStats(){
   const defaultStaffs=['여인국','황제필','강용민'];
   const sList=staffNames.length>0?staffNames:defaultStaffs;
   const staffRows=$('menuStaffRows');
-  if(staffRows && staffRows.parentElement){
-    staffRows.parentElement.style.display=canAccessStats()?'block':'none';
-  }
-  if(staffRows && canAccessStats()){
+  if(staffRows){
     const maxDone=Math.max(1,...sList.map(n=>list.filter(c=>c.assignedTo===n&&c.status==='개통완료').length));
     staffRows.innerHTML=sList.map(name=>{
       const mine=list.filter(c=>c.assignedTo===name);
@@ -4157,10 +3897,7 @@ function renderMenuStats(){
   // 매장별 카드
   const stores=['남양시장점','중곡점','구미사점'];
   const storeRows=$('menuStoreRows');
-  if(storeRows && storeRows.parentElement){
-    storeRows.parentElement.style.display=canAccessStats()?'block':'none';
-  }
-  if(storeRows && canAccessStats()){
+  if(storeRows){
     const maxStoreDone=Math.max(1,...stores.map(s=>list.filter(c=>c.assignedStore===s&&c.status==='개통완료').length));
     storeRows.innerHTML=stores.map(s=>{
       const mine=list.filter(c=>c.assignedStore===s);
@@ -4215,7 +3952,6 @@ function bottomNav(n){
   else if(n==='new') switchTab('new');
   else if(n==='recare') switchTab('recare');
   else if(n==='absence') switchTab('absence');
-  else if(n==='success') switchTab('success');
   else if(n==='done') switchTab('done');
   else if(n==='contact') switchTab('new');
   else if(n==='urgent') switchTab('urgent');
@@ -4457,8 +4193,6 @@ function renderDetBody(c,tab){
 
 // ── 바텀시트 ──
 function openBS(key){
-  const pcMini=document.getElementById('pcMiniModal');
-  if(pcMini) pcMini.remove();
   if(key==='abs'){resetChips('abs');$('absOv').classList.add('open');$('absBS').classList.add('open');}
   else if(key==='rc'){resetChips('rc');$('rcOv').classList.add('open');$('rcBS').classList.add('open');}
   else if(key==='cr'){$('crOv').classList.add('open');$('crBS').classList.add('open');}
@@ -4595,30 +4329,6 @@ window.onCallResult=async function(result){
   }
 };
 
-// ── 부재 문자앱 열기 ──
-function cleanPhoneForSms(phone){
-  return String(phone||'').replace(/[^0-9+]/g,'');
-}
-function getAbsSmsTemplate(c){
-  const name=(c?.name||'고객님').trim();
-  return `[VIVID] ${name}, 통화 연결이 어려워 문자드립니다.\n편하실 때 회신 주시면 확인 후 상담 도와드리겠습니다.`;
-}
-window.openAbsSmsApp=function(){
-  const c=ALL.find(x=>x._id===selId);
-  if(!c){alert('고객 정보가 없습니다.');return;}
-  const phone=cleanPhoneForSms(c.phone);
-  if(!phone){alert('고객 전화번호가 없습니다.');return;}
-  const isMobileDevice=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-  if(!isMobileDevice){
-    alert('문자앱 열기는 모바일에서 사용하세요.\nPC에서는 문자 내용만 복사해 사용해주세요.');
-    return;
-  }
-  const msg=encodeURIComponent(getAbsSmsTemplate(c));
-  const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const sep=isIOS?'&':'?';
-  window.location.href=`sms:${phone}${sep}body=${msg}`;
-};
-
 // ── 부재케어 ──
 window.submitAbs=async function(){
   if(!bsState.absReason){alert('부재 사유를 선택해주세요.');return;}
@@ -4685,7 +4395,6 @@ function renderStatusList(){
   const statuses=[
     {v:'신규',c:'blue'},{v:'연락중',c:'blue'},
     {v:'재케어',c:'purple'},{v:'부재케어',c:'orange'},
-    {v:'성공',c:'pink'},
     {v:'개통완료',c:'green'},{v:'실패',c:'gray'}
   ];
   const dotColors={blue:'#074BF4',purple:'#8B5CF6',orange:'#F97316',pink:'#E6007E',green:'#10B981',gray:'#9CA3AF'};
@@ -4710,7 +4419,6 @@ window.onStatusChange=async function(newStatus){
   }
   const upd={};
   upd[`consultations/${selId}/status`]=newStatus;
-  if(newStatus==='성공')upd[`consultations/${selId}/successAt`]=now();
   if(newStatus==='개통완료')upd[`consultations/${selId}/doneAt`]=now();
   pushStatHist(c,newStatus,upd);
   await update(ref(db),upd);
@@ -4841,6 +4549,5 @@ window.openMenuBS=function(){
   renderMenuStats();
 };
 </script>
-
-
-</body></html>
+</body>
+</html>
