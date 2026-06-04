@@ -1705,7 +1705,7 @@ input,select,textarea{font-family:inherit;outline:none;}
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import{getDatabase,ref,onValue,update,push as fbPush,remove as fbRemove}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import{getDatabase,ref,onValue,update,push as fbPush,remove as fbRemove,get}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
 const FB={
@@ -2949,12 +2949,13 @@ function initArchivePage(){
   if(al) al.textContent=`🔄 다음달 유지: 진행중 ${active.length}건`;
 }
 
-function initArchiveListPage(){
-  const archiveRef=ref(db,'archive');
-  onValue(archiveRef,snap=>{
+async function initArchiveListPage(){
+  const list=document.getElementById('archiveList');
+  if(!list)return;
+  list.innerHTML='<div style="font-size:13px;color:var(--muted);">불러오는 중...</div>';
+  try{
+    const snap=await get(ref(db,'archive'));
     const data=snap.val()||{};
-    const list=document.getElementById('archiveList');
-    if(!list)return;
     const months=Object.keys(data).sort().reverse();
     if(!months.length){list.innerHTML='<div style="font-size:13px;color:var(--muted);">아카이브 없음</div>';return;}
     list.innerHTML=months.map(m=>{
@@ -2973,7 +2974,9 @@ function initArchiveListPage(){
         </div>
       </div>`;
     }).join('');
-  },{onlyOnce:true});
+  }catch(e){
+    list.innerHTML='<div style="font-size:13px;color:var(--red);">불러오기 실패: '+e.message+'</div>';
+  }
 }
 
 window.doArchive=function(){
@@ -3023,46 +3026,123 @@ window.rollbackArchive=function(ym){
   },{onlyOnce:true});
 };
 
-window.viewArchive=function(ym){
-  const archiveRef=ref(db,`archive/${ym}`);
-  onValue(archiveRef,snap=>{
+window.viewArchive=async function(ym){
+  try{
+    const snap=await get(ref(db,`archive/${ym}`));
     const data=snap.val()||{};
-    const list=Object.values(data).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    if(!list.length){alert('데이터 없음');return;}
-    const rows=list.map(c=>`
-      <tr style="border-bottom:1px solid var(--line);font-size:12px;">
-        <td style="padding:8px;">${fmtDate(c.createdAt)}</td>
-        <td style="padding:8px;font-weight:600;">${c.name||'-'}</td>
-        <td style="padding:8px;">${c.phone||'-'}</td>
-        <td style="padding:8px;">${c.device||'-'} ${c.storage||''}</td>
-        <td style="padding:8px;">${c.plan||'-'}</td>
-        <td style="padding:8px;font-weight:700;color:${c.status==='개통완료'?'var(--green)':'var(--red)'};">${c.status}</td>
-        <td style="padding:8px;">${c.assignedStore||'-'} · ${c.assignedTo||'-'}</td>
-      </tr>`).join('');
+    let allList=Object.values(data).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    if(!allList.length){alert('데이터 없음');return;}
+
+    function getFiltered(){
+      const name=modal.querySelector('#af-name').value.trim();
+      const phone=modal.querySelector('#af-phone').value.trim();
+      const device=modal.querySelector('#af-device').value.trim();
+      const status=modal.querySelector('#af-status').value;
+      const store=modal.querySelector('#af-store').value;
+      let f=allList;
+      if(name) f=f.filter(c=>(c.name||'').includes(name));
+      if(phone) f=f.filter(c=>(c.phone||'').includes(phone));
+      if(device) f=f.filter(c=>(c.device||'').includes(device));
+      if(status) f=f.filter(c=>c.status===status);
+      if(store) f=f.filter(c=>c.assignedStore===store);
+      return f;
+    }
+
+    function renderRows(items){
+      return items.map(c=>`
+        <tr style="border-bottom:1px solid var(--line);font-size:12px;">
+          <td style="padding:8px;">${fmtDate(c.createdAt)}</td>
+          <td style="padding:8px;font-weight:600;">${c.name||'-'}</td>
+          <td style="padding:8px;">${c.phone||'-'}</td>
+          <td style="padding:8px;">${c.birth||'-'}</td>
+          <td style="padding:8px;">${(c.device||'-')+' '+(c.storage||'')}</td>
+          <td style="padding:8px;">${c.color||'-'}</td>
+          <td style="padding:8px;">${c.plan||'-'}</td>
+          <td style="padding:8px;font-weight:700;color:${c.status==='개통완료'?'var(--green)':'var(--red)'};">${c.status||'-'}</td>
+          <td style="padding:8px;">${c.assignedStore||'-'}·${c.assignedTo||'-'}</td>
+        </tr>`).join('');
+    }
+
+    function downloadCSVArchive(items){
+      const headers=['접수시간','고객명','전화번호','생년월일','기기','용량','색상','요금제','상태','매장','담당자'];
+      const rows=items.map(c=>[
+        fmtDate(c.createdAt),c.name||'',c.phone||'',c.birth||'',
+        c.device||'',c.storage||'',c.color||'',c.plan||'',
+        c.status||'',c.assignedStore||'',c.assignedTo||''
+      ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','));
+      const csv='﻿'+[headers.join(','),...rows].join('
+');
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+      a.download=`아카이브_${ym}.csv`;a.click();
+    }
+
     const modal=document.createElement('div');
     modal.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;';
     modal.innerHTML=`
-      <div style="background:#fff;border-radius:16px;padding:24px;width:min(900px,95vw);max-height:80vh;overflow-y:auto;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <div style="font-size:16px;font-weight:800;">${ym} 아카이브 <span style="color:var(--muted);font-size:13px;font-weight:400;">${list.length}건</span></div>
-          <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+      <div style="background:#fff;border-radius:16px;padding:24px;width:min(960px,95vw);max-height:88vh;display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+          <div style="font-size:16px;font-weight:800;">${ym} 아카이브 <span id="av-count" style="color:var(--muted);font-size:13px;font-weight:400;">${allList.length}건</span></div>
+          <div style="display:flex;gap:8px;">
+            <button id="av-csv" style="height:32px;padding:0 14px;background:#EEF2FF;color:var(--blue);border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">⬇ CSV</button>
+            <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+          </div>
         </div>
-        <table style="width:100%;border-collapse:collapse;">
-          <thead><tr style="border-bottom:2px solid var(--line);font-size:12px;color:var(--muted);">
-            <th style="padding:8px;text-align:left;">접수</th>
-            <th style="padding:8px;text-align:left;">고객명</th>
-            <th style="padding:8px;text-align:left;">전화번호</th>
-            <th style="padding:8px;text-align:left;">기기</th>
-            <th style="padding:8px;text-align:left;">요금제</th>
-            <th style="padding:8px;text-align:left;">상태</th>
-            <th style="padding:8px;text-align:left;">매장·담당</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0;">
+          <input id="af-name" type="text" placeholder="고객명" style="height:32px;border:1.5px solid var(--line);border-radius:8px;padding:0 10px;font-size:12px;width:100px;">
+          <input id="af-phone" type="text" placeholder="전화번호" style="height:32px;border:1.5px solid var(--line);border-radius:8px;padding:0 10px;font-size:12px;width:120px;">
+          <input id="af-device" type="text" placeholder="기기명" style="height:32px;border:1.5px solid var(--line);border-radius:8px;padding:0 10px;font-size:12px;width:100px;">
+          <select id="af-status" style="height:32px;border:1.5px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px;">
+            <option value="">상태 전체</option>
+            <option value="개통완료">개통완료</option>
+            <option value="실패">실패</option>
+            <option value="연락중">연락중</option>
+            <option value="재케어">재케어</option>
+            <option value="부재케어">부재케어</option>
+          </select>
+          <select id="af-store" style="height:32px;border:1.5px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px;">
+            <option value="">매장 전체</option>
+            <option value="남양시장점">남양시장점</option>
+            <option value="중곡점">중곡점</option>
+            <option value="구미사점">구미사점</option>
+          </select>
+        </div>
+        <div style="overflow-y:auto;flex:1;">
+          <table style="width:100%;border-collapse:collapse;">
+            <thead style="position:sticky;top:0;background:#fff;z-index:1;">
+              <tr style="border-bottom:2px solid var(--line);font-size:12px;color:var(--muted);">
+                <th style="padding:8px;text-align:left;">접수</th>
+                <th style="padding:8px;text-align:left;">고객명</th>
+                <th style="padding:8px;text-align:left;">전화번호</th>
+                <th style="padding:8px;text-align:left;">생년월일</th>
+                <th style="padding:8px;text-align:left;">기기</th>
+                <th style="padding:8px;text-align:left;">색상</th>
+                <th style="padding:8px;text-align:left;">요금제</th>
+                <th style="padding:8px;text-align:left;">상태</th>
+                <th style="padding:8px;text-align:left;">매장·담당</th>
+              </tr>
+            </thead>
+            <tbody id="av-tbody"></tbody>
+          </table>
+        </div>
       </div>`;
     modal.onclick=e=>{if(e.target===modal)modal.remove();};
     document.body.appendChild(modal);
-  },{onlyOnce:true});
+
+    function refresh(){
+      const f=getFiltered();
+      modal.querySelector('#av-tbody').innerHTML=renderRows(f);
+      modal.querySelector('#av-count').textContent=f.length+'건';
+    }
+    refresh();
+
+    ['#af-name','#af-phone','#af-device','#af-status','#af-store'].forEach(s=>{
+      modal.querySelector(s).addEventListener('input',refresh);
+      modal.querySelector(s).addEventListener('change',refresh);
+    });
+    modal.querySelector('#av-csv').addEventListener('click',()=>downloadCSVArchive(getFiltered()));
+
+  }catch(e){alert('오류: '+e.message);}
 };
 window.clearBell=function(){const b=$('bellBadge');if(b){b.textContent='0';b.style.display='none';}};
 
