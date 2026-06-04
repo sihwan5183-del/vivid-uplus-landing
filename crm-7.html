@@ -2244,7 +2244,7 @@ window.openStaffDetail=function(staffName){
   }
 
   modal.innerHTML=`
-    <div style="background:#fff;border-radius:20px;padding:28px;width:min(900px,95vw);max-height:88vh;display:flex;flex-direction:column;gap:16px;">
+    <div id="staffDetailModalInner" style="background:#fff;border-radius:20px;padding:28px;width:min(900px,95vw);max-height:88vh;display:flex;flex-direction:column;gap:16px;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
         <div>
           <div style="font-size:20px;font-weight:900;">👤 ${staffName}</div>
@@ -2314,14 +2314,16 @@ window.openStaffDetail=function(staffName){
 };
 
 window.sdFilter=function(btn,status){
-  const modal=btn.closest('div[style*="position:fixed"]');
-  if(!modal)return;
-  modal.querySelectorAll('.sd-filter-btn').forEach(b=>{
+  // 가장 가까운 조상 중 _getRows 가진 엘리먼트 찾기
+  let el=btn.parentElement;
+  while(el&&!el._getRows) el=el.parentElement;
+  if(!el||!el._getRows) return;
+  el.querySelectorAll('.sd-filter-btn').forEach(b=>{
     b.style.background='#fff';b.style.color='var(--ink)';b.style.borderColor='var(--line)';
   });
   btn.style.background='var(--blue)';btn.style.color='#fff';btn.style.borderColor='var(--blue)';
-  const tbody=modal.querySelector('#sdTbody');
-  if(tbody&&modal._getRows)tbody.innerHTML=modal._getRows(status);
+  const tbody=el.querySelector('#sdTbody');
+  if(tbody) tbody.innerHTML=el._getRows(status);
 };
 
 window.closeStaffDetailModal=function(){
@@ -2981,14 +2983,15 @@ window.openStoreDetail=function(store,initStatus){
 };
 
 window.sdFilterStore=function(btn,status){
-  const modal=btn.closest('div[style*="position:fixed"]');
-  if(!modal)return;
-  modal.querySelectorAll('.sd-filter-btn').forEach(b=>{
+  let el=btn.parentElement;
+  while(el&&!el._getRows) el=el.parentElement;
+  if(!el||!el._getRows) return;
+  el.querySelectorAll('.sd-filter-btn').forEach(b=>{
     b.style.background='#fff';b.style.color='var(--ink)';b.style.borderColor='var(--line)';
   });
   btn.style.background='var(--blue)';btn.style.color='#fff';btn.style.borderColor='var(--blue)';
-  const tbody=modal.querySelector('#sdStoreTbody');
-  if(tbody&&modal._getRows)tbody.innerHTML=modal._getRows(status);
+  const tbody=el.querySelector('#sdStoreTbody');
+  if(tbody) tbody.innerHTML=el._getRows(status);
 };
 
 function renderStatStore(){
