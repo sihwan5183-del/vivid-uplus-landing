@@ -2139,13 +2139,18 @@ window.renderTabTable=function(pageId){
     const tbody=TAB_TBODY_MAP[pageId];
     if(!tbody||!$(tbody))return;
     if(!list.length){$(tbody).innerHTML=`<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted);">데이터 없음</td></tr>`;return;}
+    // 중복 전화번호 체크
+    const phoneCount={};
+    ALL.forEach(c=>{if(c.phone){const p=c.phone.replace(/-/g,'');phoneCount[p]=(phoneCount[p]||0)+1;}});
+    const dupPhones=new Set(Object.keys(phoneCount).filter(p=>phoneCount[p]>1));
     $(tbody).innerHTML=list.map(c=>{
       const ms=elapsedMs(c.createdAt);
       const ec=elapsedClass(ms);
+      const isDup=c.phone&&dupPhones.has(c.phone.replace(/-/g,''));
       return`<tr onclick="selectConsult('${c._id}')">
         <td>${fmtDate(c.createdAt)}</td>
         <td><span class="${ec}">${elapsedLabel(ms)}</span></td>
-        <td style="font-weight:700;">${c.name||'-'}</td>
+        <td style="font-weight:700;">${c.name||'-'}${isDup?'<span class="badge badge-yellow" style="margin-left:4px;font-size:9px;">중복</span>':''}</td>
         <td style="color:var(--blue);">${c.phone||'-'}</td>
         <td>${statusBadge(c.status||'신규')}</td>
         <td>${c.device||'-'} ${c.storage?'·'+c.storage:''}</td>
