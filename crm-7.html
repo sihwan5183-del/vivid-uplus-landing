@@ -2296,10 +2296,11 @@ window.openStaffDetail=function(staffName){
               <th style="padding:8px;text-align:left;">접수</th>
               <th style="padding:8px;text-align:left;">고객명</th>
               <th style="padding:8px;text-align:left;">전화번호</th>
-              <th style="padding:8px;text-align:left;">생년월일</th>
               <th style="padding:8px;text-align:left;">기기</th>
-              <th style="padding:8px;text-align:left;">상태</th>
+              <th style="padding:8px;text-align:left;">용량</th>
+              <th style="padding:8px;text-align:left;">색상</th>
               <th style="padding:8px;text-align:left;">요금제</th>
+              <th style="padding:8px;text-align:left;">상태</th>
             </tr>
           </thead>
           <tbody id="sdTbody">${getRows('')}</tbody>
@@ -2895,11 +2896,12 @@ function openStoreDetail(store,initStatus){
         <td style="padding:8px;">${fmtDate(c.createdAt)}</td>
         <td style="padding:8px;font-weight:700;">${c.name||'-'}</td>
         <td style="padding:8px;color:var(--blue);">${c.phone||'-'}</td>
-        <td style="padding:8px;">${c.birth||'-'}</td>
-        <td style="padding:8px;">${(c.device||'-')+' '+(c.storage||'')}</td>
+        <td style="padding:8px;font-weight:600;">${c.device||'-'}</td>
+        <td style="padding:8px;">${c.storage||'-'}</td>
+        <td style="padding:8px;">${c.color||'-'}</td>
+        <td style="padding:8px;font-size:11px;">${c.plan||'-'}</td>
         <td style="padding:8px;">${statusBadge(c.status||'신규')}</td>
         <td style="padding:8px;">${c.assignedTo||'-'}</td>
-        <td style="padding:8px;font-size:11px;">${c.plan||'-'}</td>
       </tr>`).join('');
   }
 
@@ -2957,11 +2959,12 @@ function openStoreDetail(store,initStatus){
               <th style="padding:8px;text-align:left;">접수</th>
               <th style="padding:8px;text-align:left;">고객명</th>
               <th style="padding:8px;text-align:left;">전화번호</th>
-              <th style="padding:8px;text-align:left;">생년월일</th>
               <th style="padding:8px;text-align:left;">기기</th>
+              <th style="padding:8px;text-align:left;">용량</th>
+              <th style="padding:8px;text-align:left;">색상</th>
+              <th style="padding:8px;text-align:left;">요금제</th>
               <th style="padding:8px;text-align:left;">상태</th>
               <th style="padding:8px;text-align:left;">담당자</th>
-              <th style="padding:8px;text-align:left;">요금제</th>
             </tr>
           </thead>
           <tbody id="sdStoreTbody">${getRows(initStatus)}</tbody>
@@ -2993,7 +2996,7 @@ function renderStatStore(){
     const rate=mine.length?Math.round(done.length/mine.length*100):0;
     const td=(v,color,st)=>`<td style="cursor:pointer;${color?'color:'+color+';':''};font-weight:${v?'700':'400'};" onclick="openStoreDetail('${s}','${st}')">${v}</td>`;
     return`<tr>
-      <td style="font-weight:800;cursor:pointer;color:var(--blue);text-decoration:underline;" onclick="openStoreDashboard('${s}')">${s}</td>
+      <td style="font-weight:800;cursor:pointer;color:var(--blue);text-decoration:underline;" onclick="openStoreDetail('${s}','')">${s}</td>
       ${td(mine.length,'','접수')}
       ${td(urgent.length,'var(--red)','긴급지연')}
       ${td(absent.length,'var(--orange)','부재중')}
@@ -3798,7 +3801,7 @@ function renderMenuStats(){
       const rc=mine.filter(c=>c.status==='재케어');
       const r=mine.length?Math.round(d.length/mine.length*100):0;
       const barW=Math.round(d.length/maxDone*100);
-      return`<div style="background:#fff;border-radius:14px;border:1.5px solid var(--line);padding:14px 16px;margin-bottom:8px;">
+      return`<div onclick="openStaffDetail('${name}')" style="background:#fff;border-radius:14px;border:1.5px solid var(--line);padding:14px 16px;margin-bottom:8px;cursor:pointer;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
           <span style="font-size:14px;font-weight:800;">👤 ${name}</span>
           <span style="font-size:20px;font-weight:900;color:${r>=70?'var(--green)':r>=40?'var(--blue)':'var(--red)'};">${r}%</span>
@@ -3841,7 +3844,7 @@ function renderMenuStats(){
       const f=mine.filter(c=>c.status==='실패');
       const r=mine.length?Math.round(d.length/mine.length*100):0;
       const barW=Math.round(d.length/maxStoreDone*100);
-      return`<div style="background:#fff;border-radius:14px;border:1.5px solid var(--line);padding:14px 16px;margin-bottom:8px;">
+      return`<div onclick="openStoreDetail('${s}','')" style="background:#fff;border-radius:14px;border:1.5px solid var(--line);padding:14px 16px;margin-bottom:8px;cursor:pointer;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
           <span style="font-size:14px;font-weight:800;">🏪 ${s}</span>
           <span style="font-size:20px;font-weight:900;color:${r>=70?'var(--green)':r>=40?'var(--blue)':'var(--red)'};">${r}%</span>
