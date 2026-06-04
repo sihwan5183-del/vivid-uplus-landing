@@ -691,6 +691,11 @@ input,select,textarea{font-family:inherit;outline:none;}
   .kpi-dash-grid > div{padding:10px 6px!important;}
   .kpi-dash-grid > div > div:last-child{font-size:18px!important;}
 }
+
+@media(max-width:1023px){
+  body{overflow:auto;height:auto;}
+  #app{overflow:auto;height:auto;}
+}
 </style>
 </head>
 <body>
@@ -1746,7 +1751,7 @@ input,select,textarea{font-family:inherit;outline:none;}
 </div>
 
 <script type="module">
-const isMobile = window.innerWidth < 1024 || /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const isMobile=window.innerWidth<1024||/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import{getDatabase,ref,onValue,update,push as fbPush,remove as fbRemove,get}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
