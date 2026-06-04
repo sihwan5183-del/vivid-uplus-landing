@@ -1867,11 +1867,10 @@ const calcNext=(val,customId)=>{
 
 // ── Firebase Auth + 로드 ──
 function initApp(){
-  $('appLoading').style.display='none';
+  const al=$('appLoading');if(al)al.style.display='none';
   if(isMobile){
-    $('app').style.display='flex';
-    $('app').style.flexDirection='column';
-    $('app').style.height='100vh';
+    const ap=$('app');
+    if(ap){ap.style.display='flex';ap.style.flexDirection='column';ap.style.height='100vh';}
     renderAll();
   } else {
     const pcApp=document.getElementById('pcApp');
