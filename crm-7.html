@@ -114,7 +114,7 @@ input,select,textarea{font-family:inherit;outline:none;}
 }
 
 /* ── 카드 목록 ── */
-.card-list{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
+.card-list{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
 
 /* ── 고객 카드 ── */
 .ccard{
@@ -690,8 +690,6 @@ input,select,textarea{font-family:inherit;outline:none;}
   .kpi-dash-grid{grid-template-columns:repeat(3,1fr)!important;}
   .kpi-dash-grid > div{padding:10px 6px!important;}
   .kpi-dash-grid > div > div:last-child{font-size:18px!important;}
-}
-
 }
 </style>
 </head>
@@ -1747,8 +1745,26 @@ input,select,textarea{font-family:inherit;outline:none;}
   <button class="bs-submit blue" onclick="submitEdit()">수정 완료</button>
 </div>
 
+<script>
+window.addEventListener('error',function(e){
+  const al=document.getElementById('appLoading');if(al)al.style.display='none';
+  const lw=document.getElementById('loginWrap');if(lw)lw.style.display='grid';
+});
+window.addEventListener('unhandledrejection',function(e){
+  const al=document.getElementById('appLoading');if(al)al.style.display='none';
+  const lw=document.getElementById('loginWrap');if(lw)lw.style.display='grid';
+});
+setTimeout(function(){
+  const al=document.getElementById('appLoading');
+  if(al&&al.style.display!=='none'){
+    al.style.display='none';
+    const lw=document.getElementById('loginWrap');if(lw)lw.style.display='grid';
+  }
+},4000);
+</script>
 <script type="module">
 const isMobile=window.innerWidth<1024||/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import{getDatabase,ref,onValue,update,push as fbPush,remove as fbRemove,get}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -1900,7 +1916,7 @@ onValue(ref(db,'trash'),snap=>{
 // ── 앱 시작 ──
 function startApp(userData){
   // 브라우저 알림 권한 요청
-  if(Notification.permission==='default') Notification.requestPermission();
+  if('Notification' in window&&Notification.permission==='default'){try{Notification.requestPermission();}catch(e){}}
   currentUser=userData;
   const _lw=document.getElementById('loginWrap');if(_lw)_lw.style.display='none';
 
@@ -2317,7 +2333,6 @@ window.closeStaffDetailModal=function(){
 function renderAll(){
   renderTabs();
   renderList();
-  if(typeof renderMenuStats==='function') renderMenuStats();
 }
 
 
