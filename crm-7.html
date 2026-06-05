@@ -114,7 +114,7 @@ input,select,textarea{font-family:inherit;outline:none;}
 }
 
 /* ── 카드 목록 ── */
-.card-list{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;}
+.card-list{flex:1;overflow-y:auto;padding:10px 12px 80px;display:flex;flex-direction:column;gap:8px;}
 
 /* ── 고객 카드 ── */
 .ccard{
@@ -1899,7 +1899,7 @@ function initApp(){
 
 // ── staff DB 구독 ──
 onValue(ref(db,'staff'),snap=>{ allStaff=snap.val()||{}; if(document.getElementById('staffTbody')) renderStaffTable(); });
-let smsAbsenceTemplate='안녕하세요, 고객님.\n혜택을 전하는 비비드입니다.\n상담 신청서를 확인하고 연락드렸지만 연결되지 않아 문자 남깁니다.\n혹시 바쁘셨거나 통화가 어려운 상황이셨다면 괜찮습니다.\n편하신 시간에 회신 주시면 고객님 상황에 맞는 조건을 함께 확인해드리겠습니다.\n급하게 결정하실 필요는 없습니다.\n편하실 때 연락 주세요 :)';
+let smsAbsenceTemplate='안녕하세요, 고객님! 비비드입니다. 상담 신청 확인 후 연락드렸으나 부재중이라 문자 남깁니다. 편하실 때 회신 주세요 :)';
 onValue(ref(db,'smsTemplates/absence'),snap=>{ if(snap.val()) smsAbsenceTemplate=snap.val(); });
 onValue(ref(db,'trash'),snap=>{
   const raw=snap.val()||{};
