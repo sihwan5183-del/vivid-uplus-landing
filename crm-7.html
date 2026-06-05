@@ -555,6 +555,14 @@ input,select,textarea{font-family:inherit;outline:none;}
 .pc-header-bell:hover{background:var(--bg);}
 .pc-header-bell-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid #fff;}
 .pc-header-admin{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;}
+.pc-back-btn{
+  display:none;align-items:center;gap:5px;
+  height:32px;padding:0 12px;border-radius:8px;
+  font-size:12px;font-weight:600;color:var(--sub);
+  border:1.5px solid var(--line);background:#fff;cursor:pointer;transition:.15s;
+}
+.pc-back-btn:hover{background:var(--bg);border-color:var(--blue);color:var(--blue);}
+.pc-back-btn.visible{display:flex;}
 
 .pc-content{flex:1;overflow-y:auto;padding:24px;}
 .pc-page{display:none;}
@@ -589,6 +597,37 @@ input,select,textarea{font-family:inherit;outline:none;}
 .urgent-card.type-gray{border-left:3px solid var(--gray);}
 .urgent-card-label{font-size:11px;color:var(--muted);font-weight:600;}
 .urgent-card-count{font-size:22px;font-weight:800;}
+
+/* ── 대시보드 2단 레이아웃 (PC 전용) ── */
+.dash-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.dash-panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;}
+.dash-panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.dash-panel-title{font-size:14px;font-weight:700;}
+.dash-urgent-list{display:flex;flex-direction:column;gap:8px;}
+.dash-urgent-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:8px;cursor:pointer;transition:.15s;border:1px solid var(--line);}
+.dash-urgent-item:hover{border-color:var(--blue);background:var(--blue-light);}
+.dash-urgent-item.c-red{border-left:3px solid var(--red);}
+.dash-urgent-item.c-orange{border-left:3px solid var(--orange);}
+.dash-urgent-item.c-purple{border-left:3px solid var(--purple);}
+.dash-urgent-item.c-yellow{border-left:3px solid var(--yellow);}
+.dash-urgent-item.c-gray{border-left:3px solid var(--gray);}
+.dash-urgent-label{font-size:12px;font-weight:600;color:var(--sub);}
+.dash-urgent-count{font-size:18px;font-weight:800;}
+.dash-urgent-count.red{color:var(--red);}
+.dash-urgent-count.orange{color:var(--orange);}
+.dash-urgent-count.zero{color:var(--gray);}
+.staff-stat-table{width:100%;border-collapse:collapse;font-size:12px;}
+.staff-stat-table th{padding:8px 10px;text-align:center;font-size:11px;font-weight:700;color:var(--muted);border-bottom:2px solid var(--line);white-space:nowrap;}
+.staff-stat-table th:first-child{text-align:left;}
+.staff-stat-table td{padding:9px 10px;text-align:center;border-bottom:1px solid var(--line);font-size:12px;white-space:nowrap;}
+.staff-stat-table td:first-child{text-align:left;font-weight:700;}
+.staff-stat-table tr:last-child td{border-bottom:none;}
+.staff-stat-table tr:hover td{background:#FAFAFA;cursor:pointer;}
+.db-summary-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;}
+.db-sum-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:.15s;}
+.db-sum-card:hover{border-color:var(--blue);background:var(--blue-light);}
+.db-sum-label{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px;}
+.db-sum-val{font-size:22px;font-weight:800;}
 
 /* 검색/필터 */
 .filter-bar{
@@ -852,6 +891,11 @@ input,select,textarea{font-family:inherit;outline:none;}
         상담 DB
         <span class="pc-nav-badge" id="nav-badge-new">0</span>
       </div>
+      <div class="pc-nav-item" onclick="pcNav('unassigned')" id="nav-unassigned">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        미배정
+        <span class="pc-nav-badge" id="nav-badge-unassigned" style="background:var(--orange);">0</span>
+      </div>
       <div class="pc-nav-item" onclick="pcNav('urgent')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
         긴급·연락지연
@@ -917,6 +961,10 @@ input,select,textarea{font-family:inherit;outline:none;}
   <div class="pc-main" id="pcMain">
     <div class="pc-header">
       <span class="pc-header-date" id="pc-today-date"></span>
+      <button class="pc-back-btn" id="pcBackBtn" onclick="pcGoBack()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        뒤로
+      </button>
       <div class="pc-header-spacer"></div>
       <div class="pc-header-bell">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -935,39 +983,156 @@ input,select,textarea{font-family:inherit;outline:none;}
           <h1 style="font-size:20px;font-weight:800;">오늘의 현황</h1>
           <span style="font-size:13px;color:var(--muted);" id="pc-total-count"></span>
         </div>
+
+        <!-- KPI 6개 -->
         <div class="kpi-grid" id="kpiGrid">
           <div class="kpi-card" onclick="pcNav('db')"><div class="kpi-label">오늘 신규 접수</div><div class="kpi-value" id="kpi-today">0</div><div class="kpi-prev" id="kpi-today-prev">어제 0건</div></div>
-          <div class="kpi-card warning" onclick="pcNav('db')"><div class="kpi-label">미배정</div><div class="kpi-value" id="kpi-unassigned">0</div><div class="kpi-prev">즉시 배정 필요</div></div>
+          <div class="kpi-card warning" onclick="pcNav('unassigned')"><div class="kpi-label">미배정</div><div class="kpi-value" id="kpi-unassigned">0</div><div class="kpi-prev">즉시 배정 필요</div></div>
           <div class="kpi-card urgent" onclick="pcNav('urgent')"><div class="kpi-label">30분 이상 연락지연</div><div class="kpi-value" id="kpi-delay30">0</div><div class="kpi-prev kpi-delay-prev"></div></div>
           <div class="kpi-card" onclick="pcNav('recare')"><div class="kpi-label">재케어 예정</div><div class="kpi-value" id="kpi-recare">0</div><div class="kpi-prev"></div></div>
           <div class="kpi-card" onclick="pcNav('absence')"><div class="kpi-label">부재케어 재시도</div><div class="kpi-value" id="kpi-absence">0</div><div class="kpi-prev"></div></div>
           <div class="kpi-card" style="border-left:3px solid var(--green);" onclick="pcNav('done')"><div class="kpi-label">이번 달 개통완료</div><div class="kpi-value" style="color:var(--green);" id="kpi-done">0</div><div class="kpi-prev" id="kpi-done-rate"></div></div>
         </div>
 
-        <div class="urgent-section">
-          <div class="section-header">
-            <div class="section-title">⚡ 긴급 처리 필요</div>
-            <button class="btn btn-outline btn-sm" onclick="pcNav('urgent')">전체 보기</button>
+        <!-- 2단: 긴급처리 + 담당자 현황 -->
+        <div class="dash-2col">
+          <!-- 긴급 처리 필요 -->
+          <div class="dash-panel">
+            <div class="dash-panel-hdr">
+              <span class="dash-panel-title">⚡ 긴급 처리 필요</span>
+              <button class="btn btn-outline btn-sm" onclick="pcNav('urgent')">전체 보기</button>
+            </div>
+            <div class="dash-urgent-list">
+              <div class="dash-urgent-item c-red" onclick="pcNav('urgent')">
+                <span class="dash-urgent-label">30분 이상 연락 지연</span>
+                <span class="dash-urgent-count red" id="urg-30m">0</span>
+              </div>
+              <div class="dash-urgent-item c-red" onclick="pcNav('urgent')">
+                <span class="dash-urgent-label">1시간 이상 연락 지연</span>
+                <span class="dash-urgent-count red" id="urg-1h">0</span>
+              </div>
+              <div class="dash-urgent-item c-orange" onclick="pcNav('recare')">
+                <span class="dash-urgent-label">재케어 시간 초과</span>
+                <span class="dash-urgent-count orange" id="urg-recare">0</span>
+              </div>
+              <div class="dash-urgent-item c-purple" onclick="pcNav('absence')">
+                <span class="dash-urgent-label">부재케어 재시도 누락</span>
+                <span class="dash-urgent-count orange" id="urg-absence">0</span>
+              </div>
+              <div class="dash-urgent-item c-gray" onclick="pcNav('unassigned')">
+                <span class="dash-urgent-label">담당자 미배정</span>
+                <span class="dash-urgent-count" id="urg-unassign">0</span>
+              </div>
+            </div>
           </div>
-          <div class="urgent-grid">
-            <div class="urgent-card type-red"><div class="urgent-card-label">1시간 이상 지연</div><div class="urgent-card-count" id="urg-1h">0</div></div>
-            <div class="urgent-card type-orange"><div class="urgent-card-label">재케어 시간 초과</div><div class="urgent-card-count" id="urg-recare">0</div></div>
-            <div class="urgent-card type-purple"><div class="urgent-card-label">부재케어 재시도 누락</div><div class="urgent-card-count" id="urg-absence">0</div></div>
-            <div class="urgent-card type-gray"><div class="urgent-card-label">담당자 미배정</div><div class="urgent-card-count" id="urg-unassign">0</div></div>
+
+          <!-- 담당자 현황 -->
+          <div class="dash-panel">
+            <div class="dash-panel-hdr">
+              <span class="dash-panel-title">👤 담당자 현황 <span style="font-size:11px;color:var(--muted);font-weight:400;">(오늘)</span></span>
+              <button class="btn btn-outline btn-sm" onclick="pcNav('stat-staff')">실적 전체</button>
+            </div>
+            <table class="staff-stat-table">
+              <thead>
+                <tr>
+                  <th>담당자</th><th>신규 배정</th><th>연락중</th><th>재케어</th><th>부재케어</th><th>개통완료</th><th>개통률</th><th>마지막 활동</th>
+                </tr>
+              </thead>
+              <tbody id="dash-staff-tbody">
+                <tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">데이터 로딩 중...</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <div class="section-header">
-          <div class="section-title">최근 접수</div>
-          <button class="btn btn-outline btn-sm" onclick="pcNav('db')">전체 보기</button>
+        <!-- 2단: 최근 접수 + 활동 로그 자리 -->
+        <div class="dash-2col">
+          <!-- 최근 접수 -->
+          <div class="dash-panel">
+            <div class="dash-panel-hdr">
+              <span class="dash-panel-title">📋 최근 접수</span>
+              <button class="btn btn-outline btn-sm" onclick="pcNav('db')">전체 보기</button>
+            </div>
+            <table class="staff-stat-table">
+              <thead>
+                <tr><th style="text-align:left;">접수시간</th><th style="text-align:left;">고객명</th><th>전화번호</th><th>기기</th><th>요금제</th><th>담당자</th></tr>
+              </thead>
+              <tbody id="dash-recent-tbody">
+                <tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">데이터 없음</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 담당자 활동 로그 (로그 시스템 구현 전 placeholder) -->
+          <div class="dash-panel">
+            <div class="dash-panel-hdr">
+              <span class="dash-panel-title">🔔 담당자 활동 로그</span>
+              <span style="font-size:11px;color:var(--muted);">3단계 구현 예정</span>
+            </div>
+            <div id="dash-log-list" style="display:flex;flex-direction:column;"></div>
+          </div>
         </div>
-        <div class="table-wrap" id="dashboard-table-wrap">
+
+        <!-- 상담 DB 요약 -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div class="section-title">📊 상담 DB 요약</div>
+          <button class="btn btn-primary btn-sm" onclick="pcNav('db')">상담 DB 전체 보기 →</button>
+        </div>
+        <div class="db-summary-grid">
+          <div class="db-sum-card" onclick="filterDbAndNav('신규')">
+            <div class="db-sum-label">🆕 신규</div>
+            <div class="db-sum-val" id="dbs-new" style="color:var(--blue);">0</div>
+          </div>
+          <div class="db-sum-card" onclick="filterDbAndNav('연락중')">
+            <div class="db-sum-label">📞 연락중</div>
+            <div class="db-sum-val" id="dbs-contact" style="color:var(--blue);">0</div>
+          </div>
+          <div class="db-sum-card" onclick="filterDbAndNav('재케어')">
+            <div class="db-sum-label">🔁 재케어</div>
+            <div class="db-sum-val" id="dbs-recare" style="color:var(--purple);">0</div>
+          </div>
+          <div class="db-sum-card" onclick="filterDbAndNav('부재케어')">
+            <div class="db-sum-label">📵 부재케어</div>
+            <div class="db-sum-val" id="dbs-absence" style="color:var(--orange);">0</div>
+          </div>
+          <div class="db-sum-card" onclick="filterDbAndNav('개통완료')">
+            <div class="db-sum-label">✅ 개통완료</div>
+            <div class="db-sum-val" id="dbs-done" style="color:var(--green);">0</div>
+          </div>
+          <div class="db-sum-card" onclick="filterDbAndNav('실패')">
+            <div class="db-sum-label">❌ 실패</div>
+            <div class="db-sum-val" id="dbs-fail" style="color:var(--red);">0</div>
+          </div>
+        </div>
+
+        <!-- 대시보드 하단 미리보기 테이블 (기존 dashboard-tbody 유지) -->
+        <div class="table-wrap" id="dashboard-table-wrap" style="display:none;">
           <table class="data-table" id="dashboard-table">
             <thead><tr>
               <th>접수시간</th><th>경과</th><th>고객명</th><th>전화번호</th>
               <th>상태</th><th>기기</th><th>요금제</th><th>매장·담당자</th>
             </tr></thead>
             <tbody id="dashboard-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- 미배정 -->
+      <div class="pc-page" id="page-unassigned">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:20px;">
+          <h1 style="font-size:20px;font-weight:800;">미배정</h1>
+          <span style="font-size:13px;color:var(--muted);" id="unassigned-count-label"></span>
+        </div>
+        <div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#92400E;">
+          ⚠️ 담당자가 배정되지 않은 고객입니다. 즉시 배정 처리해주세요.
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr>
+              <td><input type="checkbox" id="unassign-chk-all" onclick="unassignToggleAll(this)"></td>
+              <th>접수시간</th><th>경과</th><th>고객명</th><th>전화번호</th>
+              <th>기기</th><th>요금제</th><th>메모</th>
+            </tr></thead>
+            <tbody id="unassigned-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -1023,7 +1188,7 @@ input,select,textarea{font-family:inherit;outline:none;}
               <th><input type="checkbox" id="chkAll" onchange="toggleAllCheck(this)"></th>
               <th>접수</th><th>경과</th><th>고객명</th><th>전화번호</th>
               <th>상태</th><th>다음연락</th><th>기기</th><th>요금제</th>
-              <th>매장·담당</th><th>최근메모</th>
+              <th>매장·담당</th><th>유입</th><th>최근메모</th>
             </tr></thead>
             <tbody id="dbTbody"></tbody>
           </table>
@@ -2432,6 +2597,10 @@ function renderAll(){
   renderTabs();
   renderList();
   if(typeof renderMenuStats==='function') renderMenuStats();
+  renderStaffStatus();
+  renderRecentEntries();
+  renderDbSummary();
+  renderUnassigned();
 }
 
 
@@ -2672,6 +2841,8 @@ function renderKPI(){
 
   // 긴급
   $('urg-1h').textContent=ALL.filter(c=>!['개통완료','실패'].includes(c.status)&&elapsedMs(c.createdAt)>=3600000).length;
+  if($('urg-30m'))$('urg-30m').textContent=delay30.length;
+  if($('nav-badge-unassigned'))$('nav-badge-unassigned').textContent=ALL.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
   $('urg-recare').textContent=ALL.filter(c=>c.status==='재케어'&&c.nextContactAt&&c.nextContactAt<now).length;
   $('urg-absence').textContent=ALL.filter(c=>c.status==='부재케어'&&c.nextContactAt&&c.nextContactAt<now).length;
   $('urg-unassign').textContent=ALL.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
@@ -2712,6 +2883,7 @@ function makeRow(c,dupPhones){
       <td>${c.device||'-'} ${c.storage?'·'+c.storage:''}</td>
       <td style="font-size:11px;">${c.plan||'-'}</td>
       <td style="font-size:11px;">${c.assignedStore||'미배정'} ${c.assignedTo?'·'+c.assignedTo:''}</td>
+      <td style="font-size:11px;color:var(--muted);">${c.utm_source?`${c.utm_source}${c.utm_campaign?' / '+c.utm_campaign:''}${c.landing_type?' / '+c.landing_type:''}`:'- '}</td>
       <td style="font-size:11px;color:var(--muted);max-width:120px;overflow:hidden;text-overflow:ellipsis;">${c.latestMemo||''}</td>
     </tr>`;
 }
@@ -2734,7 +2906,120 @@ function renderDashboard(){
     </tr>`;
   }).join('');
   $('dashboard-tbody').innerHTML=rows||'<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">접수된 상담이 없습니다</td></tr>';
+  renderStaffStatus();
+  renderRecentEntries();
+  renderDbSummary();
 }
+
+// ── 담당자 현황 테이블 ──
+function renderStaffStatus(){
+  const tbody=$('dash-staff-tbody');
+  if(!tbody)return;
+  const staffNames=Object.values(allStaff).filter(s=>s.active!==false).map(s=>s.name);
+  if(!staffNames.length){
+    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">등록된 직원 없음</td></tr>';
+    return;
+  }
+  const rows=staffNames.map(name=>{
+    const mine=ALL.filter(c=>c.assignedTo===name);
+    const today=mine.filter(c=>isToday(c.createdAt));
+    const contact=mine.filter(c=>c.status==='연락중').length;
+    const recare=mine.filter(c=>c.status==='재케어').length;
+    const absence=mine.filter(c=>c.status==='부재케어').length;
+    const done=mine.filter(c=>c.status==='개통완료'&&isThisMonth(c.doneAt||c.createdAt)).length;
+    const total=mine.filter(c=>isThisMonth(c.createdAt)).length;
+    const rate=total?Math.round(done/total*100):0;
+    const rateColor=rate>=70?'var(--green)':rate>=40?'var(--orange)':'var(--red)';
+    return `<tr onclick="openStaffDetail('${name}')">
+      <td>${name}</td>
+      <td>${today.length}</td>
+      <td>${contact}</td>
+      <td>${recare}</td>
+      <td>${absence}</td>
+      <td style="color:var(--green);font-weight:700;">${done}</td>
+      <td style="color:${rateColor};font-weight:700;">${rate}%</td>
+      <td style="color:var(--muted);">-</td>
+    </tr>`;
+  }).join('');
+  tbody.innerHTML=rows||'<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">데이터 없음</td></tr>';
+}
+
+// ── 최근 접수 테이블 ──
+function renderRecentEntries(){
+  const tbody=$('dash-recent-tbody');
+  if(!tbody)return;
+  const rows=ALL.slice(0,8).map(c=>`
+    <tr onclick="selectConsult('${c._id}')">
+      <td>${fmtDate(c.createdAt)}</td>
+      <td style="font-weight:700;">${c.name||'-'}</td>
+      <td style="color:var(--blue);">${c.phone||'-'}</td>
+      <td>${c.device||'-'}${c.storage?' '+c.storage:''}</td>
+      <td style="font-size:11px;">${c.plan||'-'}</td>
+      <td style="font-size:11px;">${c.assignedTo||'<span style="color:var(--red);">미배정</span>'}</td>
+    </tr>`).join('');
+  tbody.innerHTML=rows||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">접수된 상담이 없습니다</td></tr>';
+}
+
+// ── 상담 DB 요약 ──
+function renderDbSummary(){
+  const s=status=>[
+    $(`dbs-new`),$(`dbs-contact`),$(`dbs-recare`),$(`dbs-absence`),$(`dbs-done`),$(`dbs-fail`)
+  ];
+  const counts={
+    신규:ALL.filter(c=>!c.status||c.status==='신규').length,
+    연락중:ALL.filter(c=>c.status==='연락중').length,
+    재케어:ALL.filter(c=>c.status==='재케어').length,
+    부재케어:ALL.filter(c=>c.status==='부재케어').length,
+    개통완료:ALL.filter(c=>c.status==='개통완료').length,
+    실패:ALL.filter(c=>c.status==='실패').length,
+  };
+  if($('dbs-new'))$('dbs-new').textContent=counts['신규'];
+  if($('dbs-contact'))$('dbs-contact').textContent=counts['연락중'];
+  if($('dbs-recare'))$('dbs-recare').textContent=counts['재케어'];
+  if($('dbs-absence'))$('dbs-absence').textContent=counts['부재케어'];
+  if($('dbs-done'))$('dbs-done').textContent=counts['개통완료'];
+  if($('dbs-fail'))$('dbs-fail').textContent=counts['실패'];
+}
+
+// ── 미배정 목록 ──
+function renderUnassigned(){
+  const list=ALL.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status));
+  if($('unassigned-count-label'))$('unassigned-count-label').textContent=`총 ${list.length}건`;
+  if($('nav-badge-unassigned'))$('nav-badge-unassigned').textContent=list.length;
+  const tbody=$('unassigned-tbody');
+  if(!tbody)return;
+  if(!list.length){
+    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">미배정 고객이 없습니다 ✅</td></tr>';
+    return;
+  }
+  tbody.innerHTML=list.map(c=>{
+    const ms=elapsedMs(c.createdAt);
+    const ec=elapsedClass(ms,c.status);
+    return `<tr onclick="selectConsult('${c._id}')">
+      <td><input type="checkbox" class="unassign-chk" data-id="${c._id}" onclick="event.stopPropagation()"></td>
+      <td>${fmtDate(c.createdAt)}</td>
+      <td><span class="${ec}">${elapsedLabel(ms)}</span></td>
+      <td style="font-weight:700;">${c.name||'-'}</td>
+      <td style="color:var(--blue);">${c.phone||'-'}</td>
+      <td>${c.device||'-'}${c.storage?' '+c.storage:''}</td>
+      <td style="font-size:11px;">${c.plan||'-'}</td>
+      <td style="font-size:11px;color:var(--muted);">${c.latestMemo||'-'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── 상담 DB 필터 후 이동 ──
+window.filterDbAndNav=function(status){
+  pcNav('db');
+  setTimeout(()=>{
+    const sel=$('f-status');
+    if(sel){sel.value=status;debounceFilter();}
+  },100);
+};
+
+window.unassignToggleAll=function(el){
+  document.querySelectorAll('.unassign-chk').forEach(c=>c.checked=el.checked);
+};
 
 // ── 상담 DB 테이블 ──
 let dbPage=1;const DB_PER_PAGE=30;
@@ -3367,6 +3652,40 @@ function renderDeviceStat(){
     </table>`;
 }
 
+// ── PC 뒤로가기 스택 ──
+let pcNavStack=[];
+let pcCurrentPage='dashboard';
+
+function pcUpdateBackBtn(){
+  const btn=document.getElementById('pcBackBtn');
+  if(!btn)return;
+  if(pcNavStack.length>0) btn.classList.add('visible');
+  else btn.classList.remove('visible');
+}
+
+window.pcGoBack=function(){
+  if(!pcNavStack.length)return;
+  const prev=pcNavStack.pop();
+  pcCurrentPage=prev;
+  document.querySelectorAll('.pc-nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.pc-page').forEach(el=>el.classList.remove('active'));
+  const p=document.getElementById('page-'+prev);
+  if(p)p.classList.add('active');
+  document.querySelectorAll('.pc-nav-item').forEach(el=>{
+    if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes("'"+prev+"'"))
+      el.classList.add('active');
+  });
+  // 탭별 렌더링
+  const tabPages=['urgent','contact','recare','absence','done','fail'];
+  if(tabPages.includes(prev)) renderTabTable('page-'+prev);
+  if(prev==='stat-staff') renderStatStaff();
+  if(prev==='stat-store') renderStatStore();
+  if(prev==='stat-device') renderDeviceStat();
+  if(prev==='unassigned') renderUnassigned();
+  if(prev==='dashboard'){renderStaffStatus();renderRecentEntries();renderDbSummary();}
+  pcUpdateBackBtn();
+};
+
 function pcNav(page){
   // 성과분석: 부사장 이상은 바로 접근, 팀장/플래너는 비밀번호
   if(STAT_PAGES.includes(page)){
@@ -3395,6 +3714,20 @@ function pcNav(page){
   if(page==='set-archive') initArchivePage();
   if(page==='set-template'){const ta=document.getElementById('smsAbsTextarea');if(ta){ta.value=smsAbsenceTemplate;document.getElementById('smsCharCount').textContent=smsAbsenceTemplate.length+'자';}}
   if(page==='stat-archive') initArchiveListPage();
+  if(page==='unassigned') renderUnassigned();
+  if(page==='dashboard'){renderStaffStatus();renderRecentEntries();renderDbSummary();}
+  // 사이드바 active 정확히 반영
+  document.querySelectorAll('.pc-nav-item').forEach(el=>{
+    if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes(`'${page}'`)){
+      el.classList.add('active');
+    }
+  });
+  // 뒤로가기 스택
+  if(page!==pcCurrentPage){
+    pcNavStack.push(pcCurrentPage);
+    pcCurrentPage=page;
+  }
+  pcUpdateBackBtn();
 }
 window.pcNav=pcNav;
 
@@ -3792,6 +4125,7 @@ window.submitPcAssign=async function(){
   upd['consultations/'+selId+'/assignedStore']=store;
   if(c) pushAssignHist(c,name,store,upd);
   await update(ref(db),upd);
+  logAction({customerId:selId,customerName:c?.name||'-',customerPhone:c?.phone||'-',staffName:currentUser.name||currentUser.email||'담당자',staffRole:currentUser.role||'-',actionType:'assign_change',actionLabel:'담당자 변경',beforeValue:c?.assignedTo||'미배정',afterValue:name||'-',memo:''});
   document.getElementById('pcMiniModal')?.remove();
   const fresh=ALL.find(x=>x._id===selId);if(fresh)renderDetTop(fresh);
 };
@@ -3833,6 +4167,7 @@ window.submitPcMemo=async function(){
   upd['consultations/'+selId+'/memo']=memo;
   pushMemoHist(c,memo,upd);
   await update(ref(db),upd);
+  logAction({customerId:selId,customerName:c?.name||'-',customerPhone:c?.phone||'-',staffName:currentUser.name||currentUser.email||'담당자',staffRole:currentUser.role||'-',actionType:'memo_add',actionLabel:'메모 등록',beforeValue:'',afterValue:'',memo});
   document.getElementById('pcMiniModal')?.remove();
   const fresh=ALL.find(x=>x._id===selId);if(fresh)renderDetTop(fresh);
 };
@@ -4549,6 +4884,7 @@ window.onStatusChange=async function(newStatus){
   if(newStatus==='개통완료')upd[`consultations/${selId}/doneAt`]=now();
   pushStatHist(c,newStatus,upd);
   await update(ref(db),upd);
+  logAction({customerId:selId,customerName:c.name||'-',customerPhone:c.phone||'-',staffName:currentUser.name||currentUser.email||'담당자',staffRole:currentUser.role||'-',actionType:'status_change',actionLabel:'상태 변경',beforeValue:c.status||'신규',afterValue:newStatus,memo:''});
   const fresh=ALL.find(x=>x._id===selId);if(fresh)renderDetTop(fresh);
 };
 
@@ -4556,9 +4892,11 @@ window.onStatusChange=async function(newStatus){
 window.submitMemo=async function(){
   const memo=$('memoInp').value.trim();
   if(!memo)return;
+  const c=ALL.find(x=>x._id===selId);
   await update(ref(db,`consultations/${selId}`),{latestMemo:memo});
+  logAction({customerId:selId,customerName:c?.name||'-',customerPhone:c?.phone||'-',staffName:currentUser.name||currentUser.email||'담당자',staffRole:currentUser.role||'-',actionType:'memo_add',actionLabel:'메모 등록',beforeValue:'',afterValue:'',memo});
   closeBS('memo');
-  const c=ALL.find(x=>x._id===selId);if(c)renderDetBody(c,'memo');
+  if(c)renderDetBody(c,'memo');
 };
 
 // ── 담당자 배정 ──
@@ -4579,7 +4917,9 @@ window.submitAssign=async function(){
   upd2[`consultations/${selId}/assignedTo`]=name||'';
   upd2[`consultations/${selId}/assignedStore`]=store||'';
   if(c2) pushAssignHist(c2,name,store,upd2);
+  const prevAssign=ALL.find(x=>x._id===selId);
   await update(ref(db),upd2);
+  logAction({customerId:selId,customerName:prevAssign?.name||'-',customerPhone:prevAssign?.phone||'-',staffName:currentUser.name||currentUser.email||'담당자',staffRole:currentUser.role||'-',actionType:'assign_change',actionLabel:'담당자 변경',beforeValue:prevAssign?.assignedTo||'미배정',afterValue:name||'-',memo:''});
   closeBS('assign');
   const c=ALL.find(x=>x._id===selId);
   if(c){
@@ -4587,6 +4927,61 @@ window.submitAssign=async function(){
     else renderList();
   }
 };
+
+// ── 활동 로그 ──
+async function logAction(payload){
+  try{
+    await fbPush(ref(db,'activityLogs'),{
+      ...payload,
+      createdAt:Date.now()
+    });
+  }catch(e){
+    console.warn('activity log failed',e);
+  }
+}
+
+let ACTIVITY_LOGS=[];
+onValue(ref(db,'activityLogs'),snap=>{
+  const data=snap.val()||{};
+  ACTIVITY_LOGS=Object.values(data).sort((a,b)=>b.createdAt-a.createdAt);
+  renderActivityLog();
+});
+
+function renderActivityLog(){
+  const el=document.getElementById('dash-log-list');
+  if(!el)return;
+  const logs=ACTIVITY_LOGS.slice(0,10);
+  if(!logs.length){
+    el.innerHTML='<div style="text-align:center;padding:32px 0;color:var(--muted);font-size:12px;">최근 활동이 없습니다.</div>';
+    return;
+  }
+  const typeColors={
+    assign_change:'var(--blue)',
+    status_change:'var(--purple)',
+    memo_add:'var(--green)',
+  };
+  const typeLabels={
+    assign_change:'담당자 변경',
+    status_change:'상태 변경',
+    memo_add:'메모 등록',
+  };
+  el.innerHTML=logs.map(log=>{
+    const color=typeColors[log.actionType]||'var(--muted)';
+    const label=typeLabels[log.actionType]||log.actionType;
+    const elapsed=elapsedLabel(Date.now()-log.createdAt);
+    const detail=log.actionType==='assign_change'
+      ?`${log.beforeValue||'미배정'} → ${log.afterValue||'-'}`
+      :log.actionType==='status_change'
+      ?`${log.beforeValue||'-'} → ${log.afterValue||'-'}`
+      :log.memo||'-';
+    return`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);">
+      <span style="flex-shrink:0;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;background:${color}22;color:${color};">${label}</span>
+      <span style="font-weight:700;font-size:12px;flex-shrink:0;">${log.staffName||'-'}</span>
+      <span style="font-size:12px;color:var(--sub);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${log.customerName||''} ${detail}</span>
+      <span style="font-size:11px;color:var(--muted);flex-shrink:0;">${elapsed}</span>
+    </div>`;
+  }).join('');
+}
 
 // ── 상태 이력 누적 ──
 function pushStatHist(c,newStatus,upd,reason=''){
