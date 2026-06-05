@@ -2328,10 +2328,10 @@ window.openStaffDetail=function(staffName){
       </div>\`;
     }
       <!-- 제품/컬러 집계 -->
-      <div style="flex-shrink:0;">\${getProductStats()}</div>
+      <div style="flex-shrink:0;">${getProductStats()}</div>
       <!-- DB 목록 -->
       <div style="overflow-y:auto;flex:1;">
-        \${isMobile?'<div id="sdTbody">'+getRows('')+'</div>':\`<table style="width:100%;border-collapse:collapse;">
+        <table style="width:100%;border-collapse:collapse;">
           <thead style="position:sticky;top:0;background:#fff;z-index:1;">
             <tr style="border-bottom:2px solid var(--line);font-size:11px;color:var(--muted);">
               <th style="padding:8px;text-align:left;">접수</th>
@@ -2344,8 +2344,8 @@ window.openStaffDetail=function(staffName){
               <th style="padding:8px;text-align:left;">상태</th>
             </tr>
           </thead>
-          <tbody id="sdTbody">\${getRows('')}</tbody>
-        </table>\`}
+          <tbody id="sdTbody">${getRows('')}</tbody>
+        </table>
       </div>
     </div>`;
 
