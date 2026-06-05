@@ -1218,7 +1218,8 @@ input,select,textarea{font-family:inherit;outline:none;}
         <div style="display:flex;flex-direction:column;gap:12px;">
           <div class="filter-bar">
             <div style="font-size:13px;font-weight:700;margin-bottom:8px;">부재케어 문자</div>
-            <textarea style="width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px;font-size:13px;resize:vertical;min-height:80px;">안녕하세요. LG U+ 공식 인증 매장 VIVID입니다.\n신청해주신 상담 내용 확인 후 연락드렸으나 연결되지 않아 문자 남겨드립니다.\n편하신 시간에 회신 주시면 확인 후 다시 연락드리겠습니다.</textarea>
+            <textarea id="smsAbsTextarea" style="width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px;font-size:13px;resize:vertical;min-height:120px;"></textarea>
+            <button onclick="saveSmsTemplate()" style="margin-top:8px;height:40px;padding:0 20px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">저장</button>
           </div>
         </div>
       </div>
@@ -1898,6 +1899,8 @@ function initApp(){
 
 // ── staff DB 구독 ──
 onValue(ref(db,'staff'),snap=>{ allStaff=snap.val()||{}; if(document.getElementById('staffTbody')) renderStaffTable(); });
+let smsAbsenceTemplate='안녕하세요, 고객님.\n혜택을 전하는 비비드입니다.\n상담 신청서를 확인하고 연락드렸지만 연결되지 않아 문자 남깁니다.\n혹시 바쁘셨거나 통화가 어려운 상황이셨다면 괜찮습니다.\n편하신 시간에 회신 주시면 고객님 상황에 맞는 조건을 함께 확인해드리겠습니다.\n급하게 결정하실 필요는 없습니다.\n편하실 때 연락 주세요 :)';
+onValue(ref(db,'smsTemplates/absence'),snap=>{ if(snap.val()) smsAbsenceTemplate=snap.val(); });
 onValue(ref(db,'trash'),snap=>{
   const raw=snap.val()||{};
   TRASH=Object.entries(raw).map(([k,v])=>({...v,_tid:k}))
@@ -2342,35 +2345,6 @@ window.openStaffDetail=function(staffName){
   document.body.appendChild(modal);
 };
 
-
-// 바텀시트를 중앙 모달로 표시
-window.openCenterModal=function(key){
-  resetChips(key);
-  const bsEl=document.getElementById(key+'BS');
-  if(!bsEl) return;
-  const inner=bsEl.querySelector('.bs-inner')||bsEl;
-  const m=document.createElement('div');
-  m.id='centerModal_'+key;
-  m.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;';
-  const box=document.createElement('div');
-  box.style.cssText='background:#fff;border-radius:20px;width:min(480px,94vw);max-height:85vh;overflow-y:auto;padding:24px;';
-  box.innerHTML=inner.innerHTML;
-  // 닫기 버튼 이벤트
-  m.appendChild(box);
-  m.onclick=e=>{if(e.target===m)m.remove();};
-  box.querySelectorAll('.bs-close').forEach(btn=>{
-    btn.onclick=()=>m.remove();
-  });
-  // 등록 버튼 이벤트 연결
-  const submitBtns={'abs':'submitAbs','rc':'submitRc','fail':'submitFail'};
-  const origSubmit=window[submitBtns[key]];
-  if(origSubmit){
-    box.querySelectorAll('button[onclick*="'+submitBtns[key]+'"]').forEach(btn=>{
-      btn.onclick=async()=>{await origSubmit();m.remove();};
-    });
-  }
-  document.body.appendChild(m);
-};
 window.sdFilter=function(btn,status){
   // 가장 가까운 조상 중 _getRows 가진 엘리먼트 찾기
   let el=btn.parentElement;
@@ -3354,6 +3328,10 @@ function pcNav(page){
   if(page==='stat-store') renderStatStore();
   if(page==='stat-device') renderDeviceStat();
   if(page==='set-archive') initArchivePage();
+  if(page==='set-template'){
+    const ta=document.getElementById('smsAbsTextarea');
+    if(ta) ta.value=smsAbsenceTemplate;
+  }
   if(page==='stat-archive') initArchiveListPage();
 }
 window.pcNav=pcNav;
@@ -3589,6 +3567,13 @@ window.viewArchive=async function(ym){
     modal.querySelector('#av-csv').addEventListener('click',()=>downloadCSVArchive(getFiltered()));
 
   }catch(e){alert('오류: '+e.message);}
+};
+window.saveSmsTemplate=async function(){
+  const ta=document.getElementById('smsAbsTextarea');
+  if(!ta) return;
+  await update(ref(db,'smsTemplates'),{absence:ta.value});
+  smsAbsenceTemplate=ta.value;
+  alert('저장되었습니다.');
 };
 window.clearBell=function(){const b=$('bellBadge');if(b){b.textContent='0';b.style.display='none';}};
 
@@ -4318,6 +4303,15 @@ window.smsChip=function(el,key){
   el.closest('.sms-toggle').querySelectorAll('.sms-chip').forEach(c=>c.classList.remove('on'));
   el.classList.add('on');
   bsState[key]=el.dataset.v;
+  // 발송완료 선택 시 문자앱 열기 (모바일만)
+  if(isMobile && el.dataset.v==='sent'){
+    const c=ALL.find(x=>x._id===selId);
+    if(c&&c.phone){
+      const phone=c.phone.replace(/-/g,'');
+      const body=encodeURIComponent(smsAbsenceTemplate);
+      window.location.href='sms:'+phone+'?body='+body;
+    }
+  }
 };
 
 // ── 통화결과 ──
@@ -4434,37 +4428,13 @@ function renderStatusList(){
       <span style="font-size:14px;font-weight:600;">${s.v}</span>
     </div>`).join('');
 }
-window.openStatusBS=function(){
-  if(isMobile){
-    // 모바일에서도 중앙 모달로
-    renderStatusList();
-    setTimeout(function(){
-      const statusHTML=document.getElementById('statusList').innerHTML;
-      const m=document.createElement('div');
-      m.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;';
-      m.innerHTML=`<div style="background:#fff;border-radius:20px;padding:24px;width:min(320px,90vw);max-height:80vh;overflow-y:auto;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <div style="font-size:17px;font-weight:800;">상태 변경</div>
-          <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);">×</button>
-        </div>
-        <div class="status-list">${statusHTML}</div>
-      </div>`;
-      m.onclick=e=>{if(e.target===m)m.remove();};
-      document.body.appendChild(m);
-    },50);
-  } else {
-    openBS('st');
-  }
-};
+window.openStatusBS=()=>openBS('st');
 
 window.onStatusChange=async function(newStatus){
   closeBS('st');
-  // 중앙 모달도 닫기
-  document.querySelectorAll('div[style*="z-index:99999"]').forEach(m=>m.remove());
-  document.querySelectorAll('div[style*="z-index: 99999"]').forEach(m=>m.remove());
-  if(newStatus==='부재케어'){openCenterModal('abs');return;}
-  if(newStatus==='재케어'){openCenterModal('rc');return;}
-  if(newStatus==='실패'){openCenterModal('fail');return;}
+  if(newStatus==='부재케어'){openBS('abs');return;}
+  if(newStatus==='재케어'){openBS('rc');return;}
+  if(newStatus==='실패'){openBS('fail');return;}
   const c=ALL.find(x=>x._id===selId);if(!c)return;
   // 권한 체크: 일반 직원은 본인 담당 건만 상태 변경 가능
   const canAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
