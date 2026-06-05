@@ -1760,8 +1760,6 @@ window.addEventListener('unhandledrejection',function(e){
 const isMobile=window.innerWidth<1024||/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 window.crmLoginFn=null;
 
-const isMobile=window.innerWidth<1024||/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import{getDatabase,ref,onValue,update,push as fbPush,remove as fbRemove,get}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
