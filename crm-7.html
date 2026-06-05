@@ -1760,6 +1760,8 @@ window.addEventListener('unhandledrejection',function(e){
 const isMobile=window.innerWidth<1024||/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 window.crmLoginFn=null;
 
+const isMobile=window.innerWidth<1024||/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import{getDatabase,ref,onValue,update,push as fbPush,remove as fbRemove,get}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -2363,6 +2365,7 @@ window.closeStaffDetailModal=function(){
 function renderAll(){
   renderTabs();
   renderList();
+  if(typeof renderMenuStats==='function') renderMenuStats();
 }
 
 
@@ -4296,7 +4299,7 @@ window.onCallResult=async function(result){
   const c=ALL.find(x=>x._id===selId);
   if(!c)return;
   const n=now();
-  const histEntry={at:n,result,by:'담당자'};
+  const histEntry={at:n,result,by:currentUser.name||'담당자'};
 
   if(result==='connected'){
     const upd={};
@@ -4337,7 +4340,7 @@ window.submitAbs=async function(){
   const n=now();
   const nextAt=calcNext(bsState.absTime,'absCustomInp');
   const reasons={no_answer:'전화 미수신',busy:'통화중',power_off:'전원 꺼짐',call_reject:'수신 거부',invalid_number:'잘못된 번호',sms_after_retry:'문자 후 재시도',etc:'기타'};
-  const histEntry={at:n,result:'부재',reason:bsState.absReason,memo:$('absMemo').value,by:'담당자'};
+  const histEntry={at:n,result:'부재',reason:bsState.absReason,memo:$('absMemo').value,by:currentUser.name||'담당자'};
   const upd={};
   upd[`consultations/${selId}/status`]='부재케어';
   upd[`consultations/${selId}/absenceReason`]=bsState.absReason;
@@ -4361,7 +4364,7 @@ window.submitRc=async function(){
   const n=now();
   const nextAt=calcNext(bsState.rcTime,'rcCustomInp');
   const reasons={family_discussion:'가족과 상의',customer_request:'고객 요청',policy_check:'정책 확인',stock_check:'재고 확인',visit_scheduled:'방문 예정',etc:'기타'};
-  const histEntry={at:n,result:'재케어',reason:bsState.rcReason,memo:$('rcMemo').value,by:'담당자'};
+  const histEntry={at:n,result:'재케어',reason:bsState.rcReason,memo:$('rcMemo').value,by:currentUser.name||'담당자'};
   const upd={};
   upd[`consultations/${selId}/status`]='재케어';
   upd[`consultations/${selId}/recareReason`]=bsState.rcReason;
