@@ -690,6 +690,32 @@ input,select,textarea{font-family:inherit;outline:none;}
   .kpi-dash-grid{grid-template-columns:repeat(3,1fr)!important;}
   .kpi-dash-grid > div{padding:10px 6px!important;}
   .kpi-dash-grid > div > div:last-child{font-size:18px!important;}
+
+  /* ── 실적 모달 테이블 가로 스크롤 (모바일 전용) ── */
+  #staffDetailModalInner > div[style*="overflow"],
+  #staffDetailModalInner > div[style*="flex:1"],
+  .store-modal-inner > div[style*="overflow"],
+  .store-modal-inner > div[style*="flex:1"]{
+    overflow:auto!important;
+  }
+  #staffDetailModalInner table,
+  .store-modal-inner table{
+    width:max-content!important;
+    min-width:100%;
+  }
+  #staffDetailModalInner th,
+  #staffDetailModalInner td,
+  .store-modal-inner th,
+  .store-modal-inner td{
+    white-space:nowrap!important;
+  }
+  /* 모달 컨테이너 여백 축소 */
+  #staffDetailModalInner,
+  .store-modal-inner{
+    padding:16px!important;
+    width:96vw!important;
+    max-height:92vh!important;
+  }
 }
 
 @media(max-width:768px){
@@ -2925,7 +2951,7 @@ window.openStoreDetail=function(store,initStatus){
   }
 
   modal.innerHTML=`
-    <div style="background:#fff;border-radius:20px;padding:28px;width:min(960px,95vw);max-height:88vh;display:flex;flex-direction:column;gap:16px;">
+    <div class="store-modal-inner" style="background:#fff;border-radius:20px;padding:28px;width:min(960px,95vw);max-height:88vh;display:flex;flex-direction:column;gap:16px;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
         <div>
           <div style="font-size:20px;font-weight:900;">🏪 ${store}</div>
