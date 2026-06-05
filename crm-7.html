@@ -2342,6 +2342,35 @@ window.openStaffDetail=function(staffName){
   document.body.appendChild(modal);
 };
 
+
+// 바텀시트를 중앙 모달로 표시
+window.openCenterModal=function(key){
+  resetChips(key);
+  const bsEl=document.getElementById(key+'BS');
+  if(!bsEl) return;
+  const inner=bsEl.querySelector('.bs-inner')||bsEl;
+  const m=document.createElement('div');
+  m.id='centerModal_'+key;
+  m.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;';
+  const box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:20px;width:min(480px,94vw);max-height:85vh;overflow-y:auto;padding:24px;';
+  box.innerHTML=inner.innerHTML;
+  // 닫기 버튼 이벤트
+  m.appendChild(box);
+  m.onclick=e=>{if(e.target===m)m.remove();};
+  box.querySelectorAll('.bs-close').forEach(btn=>{
+    btn.onclick=()=>m.remove();
+  });
+  // 등록 버튼 이벤트 연결
+  const submitBtns={'abs':'submitAbs','rc':'submitRc','fail':'submitFail'};
+  const origSubmit=window[submitBtns[key]];
+  if(origSubmit){
+    box.querySelectorAll('button[onclick*="'+submitBtns[key]+'"]').forEach(btn=>{
+      btn.onclick=async()=>{await origSubmit();m.remove();};
+    });
+  }
+  document.body.appendChild(m);
+};
 window.sdFilter=function(btn,status){
   // 가장 가까운 조상 중 _getRows 가진 엘리먼트 찾기
   let el=btn.parentElement;
@@ -3640,7 +3669,7 @@ function openMiniModal(title, bodyHTML, footerHTML){
   document.getElementById('pcMiniModal')?.remove();
   const m=document.createElement('div');
   m.id='pcMiniModal';
-  m.style.cssText='position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;';
+  m.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;';
   m.innerHTML=`<div style="background:#fff;border-radius:16px;width:min(420px,92vw);max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line);">
       <div style="font-size:16px;font-weight:800;">${title}</div>
@@ -4405,13 +4434,37 @@ function renderStatusList(){
       <span style="font-size:14px;font-weight:600;">${s.v}</span>
     </div>`).join('');
 }
-window.openStatusBS=()=>openBS('st');
+window.openStatusBS=function(){
+  if(isMobile){
+    // 모바일에서도 중앙 모달로
+    renderStatusList();
+    setTimeout(function(){
+      const statusHTML=document.getElementById('statusList').innerHTML;
+      const m=document.createElement('div');
+      m.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;';
+      m.innerHTML=`<div style="background:#fff;border-radius:20px;padding:24px;width:min(320px,90vw);max-height:80vh;overflow-y:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div style="font-size:17px;font-weight:800;">상태 변경</div>
+          <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);">×</button>
+        </div>
+        <div class="status-list">${statusHTML}</div>
+      </div>`;
+      m.onclick=e=>{if(e.target===m)m.remove();};
+      document.body.appendChild(m);
+    },50);
+  } else {
+    openBS('st');
+  }
+};
 
 window.onStatusChange=async function(newStatus){
   closeBS('st');
-  if(newStatus==='부재케어'){openBS('abs');return;}
-  if(newStatus==='재케어'){openBS('rc');return;}
-  if(newStatus==='실패'){openBS('fail');return;}
+  // 중앙 모달도 닫기
+  document.querySelectorAll('div[style*="z-index:99999"]').forEach(m=>m.remove());
+  document.querySelectorAll('div[style*="z-index: 99999"]').forEach(m=>m.remove());
+  if(newStatus==='부재케어'){openCenterModal('abs');return;}
+  if(newStatus==='재케어'){openCenterModal('rc');return;}
+  if(newStatus==='실패'){openCenterModal('fail');return;}
   const c=ALL.find(x=>x._id===selId);if(!c)return;
   // 권한 체크: 일반 직원은 본인 담당 건만 상태 변경 가능
   const canAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
