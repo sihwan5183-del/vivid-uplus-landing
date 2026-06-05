@@ -2301,34 +2301,6 @@ window.openStaffDetail=function(staffName){
         <button class="sd-filter-btn" onclick=\"sdFilter(this,'실패')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">❌ 실패 ${fail.length}</button>
       </div>
 
-    // 제품/컬러 집계
-    function getProductStats(){
-      const doneList=allList.filter(c=>c.status==='개통완료');
-      const failList=allList.filter(c=>c.status==='실패');
-      function topItems(list,n=3){
-        const map={};
-        list.forEach(c=>{
-          const k=(c.device||'미기재')+(c.color?' · '+c.color:'');
-          map[k]=(map[k]||0)+1;
-        });
-        return Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,n);
-      }
-      const doneTop=topItems(doneList);
-      const failTop=topItems(failList);
-      if(!doneTop.length&&!failTop.length)return'';
-      return\`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 0 12px;">
-        <div style="background:#ECFDF5;border-radius:12px;padding:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:8px;">✅ 개통 TOP 기기</div>
-          \${doneTop.length?doneTop.map(([k,v])=>\`<div style="font-size:12px;margin-bottom:4px;"><b>\${k}</b> <span style="color:var(--green);">\${v}건</span></div>\`).join(''):'<div style="font-size:12px;color:var(--muted);">없음</div>'}
-        </div>
-        <div style="background:#FEF2F2;border-radius:12px;padding:12px;">
-          <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:8px;">❌ 실패 TOP 기기</div>
-          \${failTop.length?failTop.map(([k,v])=>\`<div style="font-size:12px;margin-bottom:4px;"><b>\${k}</b> <span style="color:var(--red);">\${v}건</span></div>\`).join(''):'<div style="font-size:12px;color:var(--muted);">없음</div>'}
-        </div>
-      </div>\`;
-    }
-      <!-- 제품/컬러 집계 -->
-      <div style="flex-shrink:0;">${getProductStats()}</div>
       <!-- DB 목록 -->
       <div style="overflow-y:auto;flex:1;">
         <table style="width:100%;border-collapse:collapse;">
