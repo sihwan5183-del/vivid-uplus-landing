@@ -44,7 +44,7 @@ input,select,textarea{font-family:inherit;outline:none;}
 .spinner{width:36px;height:36px;border:3px solid var(--blue-light);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
 
 /* ── 앱 래퍼 ── */
-#app{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+#app{display:flex;flex-direction:column;height:100dvh;overflow:hidden;}
 
 /* ── 헤더 ── */
 .hdr{
@@ -1885,7 +1885,7 @@ function initApp(){
   const al=$('appLoading');if(al)al.style.display='none';
   if(isMobile){
     const ap=$('app');
-    if(ap){ap.style.display='flex';ap.style.flexDirection='column';ap.style.height='100vh';}
+    if(ap){ap.style.display='flex';ap.style.flexDirection='column';ap.style.height='100dvh';}
     renderAll();
   } else {
     const pcApp=document.getElementById('pcApp');
