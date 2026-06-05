@@ -719,11 +719,69 @@ input,select,textarea{font-family:inherit;outline:none;}
 }
 
 @media(max-width:768px){
-  html,body{min-height:100%;height:auto;overflow-x:hidden;overflow-y:auto;}
-  body{background:var(--bg);}
-  #app{min-height:100dvh;height:auto;overflow:visible;}
-  .card-list{flex:none;overflow-y:visible;padding:10px 12px calc(90px + env(safe-area-inset-bottom));}
-  .btmnav{position:fixed;left:0;right:0;bottom:0;z-index:100;background:#fff;}
+  html{
+    height:auto!important;
+    min-height:100%!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+  }
+  body{
+    height:auto!important;
+    min-height:100%!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    background:var(--bg)!important;
+  }
+  #app{
+    display:flex!important;
+    flex-direction:column!important;
+    min-height:100dvh!important;
+    height:auto!important;
+    overflow:visible!important;
+    padding-bottom:calc(68px + env(safe-area-inset-bottom))!important;
+  }
+  .hdr,.tabs,.urg-bar,.searchbar,.summary-cards{
+    flex-shrink:0!important;
+  }
+  .card-list{
+    flex:none!important;
+    height:auto!important;
+    min-height:auto!important;
+    overflow:visible!important;
+    padding:10px 12px calc(96px + env(safe-area-inset-bottom))!important;
+  }
+  .btmnav{
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    z-index:300!important;
+    background:#fff!important;
+    box-shadow:0 -2px 12px rgba(0,0,0,.08)!important;
+    padding-bottom:env(safe-area-inset-bottom)!important;
+  }
+  .detail{
+    position:fixed!important;
+    inset:0!important;
+    height:100dvh!important;
+    overflow:hidden!important;
+  }
+  .det-body{
+    flex:1!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  .menu-screen{
+    position:fixed!important;
+    inset:0!important;
+    height:100dvh!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  #pcApp,#pcApp.show{
+    height:100vh!important;
+    overflow:hidden!important;
+  }
 }
 </style>
 </head>
@@ -3582,6 +3640,10 @@ window.saveSmsTemplate=async function(){
 };
 window.doRefresh=function(){
   if(typeof renderAll==='function') renderAll();
+  // Firebase onValue는 실시간 리스너라 별도 reload 불필요
+  // 강제 새로고침이 필요한 경우를 위한 fallback
+  const btn=document.querySelector('.hdr-btn [data-refresh]');
+  if(btn){btn.style.transform='rotate(360deg)';btn.style.transition='transform .4s';setTimeout(()=>{btn.style.transform='';},450);}
 };
 window.clearBell=function(){const b=$('bellBadge');if(b){b.textContent='0';b.style.display='none';}};
 
