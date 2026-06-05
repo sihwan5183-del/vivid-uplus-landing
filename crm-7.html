@@ -2245,18 +2245,18 @@ window.openStaffDetail=function(staffName){
     if(!list.length) return '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">데이터 없음</td></tr>';
     return list.map(c=>`
       <tr onclick="this.closest('div[style*=fixed]').remove();pcNav('db');selectConsult('${c._id}')" style="cursor:pointer;border-bottom:1px solid var(--line);font-size:12px;">
-        <td style="padding:8px;">${fmtDate(c.createdAt)}</td>
-        <td style="padding:8px;font-weight:700;">${c.name||'-'}</td>
-        <td style="padding:8px;color:var(--blue);">${c.phone||'-'}</td>
-        <td style="padding:8px;">${c.birth||'-'}</td>
-        <td style="padding:8px;">${(c.device||'-')+' '+(c.storage||'')}</td>
-        <td style="padding:8px;">${statusBadge(c.status||'신규')}</td>
-        <td style="padding:8px;font-size:11px;">${c.plan||'-'}</td>
+        <td style="padding:8px;white-space:nowrap;">${fmtDate(c.createdAt)}</td>
+        <td style="padding:8px;font-weight:700;white-space:nowrap;">${c.name||'-'}</td>
+        <td style="padding:8px;color:var(--blue);white-space:nowrap;">${c.phone||'-'}</td>
+        <td style="padding:8px;white-space:nowrap;">${c.birth||'-'}</td>
+        <td style="padding:8px;white-space:nowrap;">${(c.device||'-')+' '+(c.storage||'')}</td>
+        <td style="padding:8px;white-space:nowrap;">${statusBadge(c.status||'신규')}</td>
+        <td style="padding:8px;font-size:11px;white-space:nowrap;">${c.plan||'-'}</td>
       </tr>`).join('');
   }
 
   modal.innerHTML=`
-    <div id="staffDetailModalInner" style="background:#fff;border-radius:20px;padding:28px;width:min(900px,95vw);max-height:88vh;display:flex;flex-direction:column;gap:16px;">
+    <div id="staffDetailModalInner" style="background:#fff;border-radius:20px;padding:20px;width:min(900px,96vw);max-height:90vh;display:flex;flex-direction:column;gap:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
         <div>
           <div style="font-size:20px;font-weight:900;">👤 ${staffName}</div>
@@ -2302,18 +2302,18 @@ window.openStaffDetail=function(staffName){
       </div>
 
       <!-- DB 목록 -->
-      <div style="overflow-y:auto;flex:1;">
-        <table style="width:100%;border-collapse:collapse;">
+      <div style="overflow:auto;flex:1;">
+        <table style="width:max-content;min-width:100%;border-collapse:collapse;">
           <thead style="position:sticky;top:0;background:#fff;z-index:1;">
             <tr style="border-bottom:2px solid var(--line);font-size:11px;color:var(--muted);">
-              <th style="padding:8px;text-align:left;">접수</th>
-              <th style="padding:8px;text-align:left;">고객명</th>
-              <th style="padding:8px;text-align:left;">전화번호</th>
-              <th style="padding:8px;text-align:left;">기기</th>
-              <th style="padding:8px;text-align:left;">용량</th>
-              <th style="padding:8px;text-align:left;">색상</th>
-              <th style="padding:8px;text-align:left;">요금제</th>
-              <th style="padding:8px;text-align:left;">상태</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">접수</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">고객명</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">전화번호</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">기기</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">용량</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">색상</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">요금제</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">상태</th>
             </tr>
           </thead>
           <tbody id="sdTbody">${getRows('')}</tbody>
@@ -2912,20 +2912,20 @@ window.openStoreDetail=function(store,initStatus){
     if(!list.length) return '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">데이터 없음</td></tr>';
     return list.map(c=>`
       <tr onclick="this.closest('div[style*=fixed]').remove();pcNav('db');selectConsult('${c._id}')" style="cursor:pointer;border-bottom:1px solid var(--line);font-size:12px;">
-        <td style="padding:8px;">${fmtDate(c.createdAt)}</td>
-        <td style="padding:8px;font-weight:700;">${c.name||'-'}</td>
-        <td style="padding:8px;color:var(--blue);">${c.phone||'-'}</td>
-        <td style="padding:8px;font-weight:600;">${c.device||'-'}</td>
-        <td style="padding:8px;">${c.storage||'-'}</td>
-        <td style="padding:8px;">${c.color||'-'}</td>
-        <td style="padding:8px;font-size:11px;">${c.plan||'-'}</td>
-        <td style="padding:8px;">${statusBadge(c.status||'신규')}</td>
-        <td style="padding:8px;">${c.assignedTo||'-'}</td>
+        <td style="padding:8px;white-space:nowrap;">${fmtDate(c.createdAt)}</td>
+        <td style="padding:8px;font-weight:700;white-space:nowrap;">${c.name||'-'}</td>
+        <td style="padding:8px;color:var(--blue);white-space:nowrap;">${c.phone||'-'}</td>
+        <td style="padding:8px;font-weight:600;white-space:nowrap;">${c.device||'-'}</td>
+        <td style="padding:8px;white-space:nowrap;">${c.storage||'-'}</td>
+        <td style="padding:8px;white-space:nowrap;">${c.color||'-'}</td>
+        <td style="padding:8px;font-size:11px;white-space:nowrap;">${c.plan||'-'}</td>
+        <td style="padding:8px;white-space:nowrap;">${statusBadge(c.status||'신규')}</td>
+        <td style="padding:8px;white-space:nowrap;">${c.assignedTo||'-'}</td>
       </tr>`).join('');
   }
 
   modal.innerHTML=`
-    <div style="background:#fff;border-radius:20px;padding:28px;width:min(960px,95vw);max-height:88vh;display:flex;flex-direction:column;gap:16px;">
+    <div style="background:#fff;border-radius:20px;padding:20px;width:min(960px,96vw);max-height:90vh;display:flex;flex-direction:column;gap:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
         <div>
           <div style="font-size:20px;font-weight:900;">🏪 ${store}</div>
@@ -2977,19 +2977,19 @@ window.openStoreDetail=function(store,initStatus){
         <button class="sd-filter-btn${initStatus==='실패'?' active':''}" onclick=\"sdFilterStore(this,'실패')\" style="height:30px;padding:0 14px;border-radius:50px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;">❌ 실패 ${fail.length}</button>
       </div>
       <!-- DB 목록 -->
-      <div style="overflow-y:auto;flex:1;">
-        <table style="width:100%;border-collapse:collapse;">
+      <div style="overflow:auto;flex:1;">
+        <table style="width:max-content;min-width:100%;border-collapse:collapse;">
           <thead style="position:sticky;top:0;background:#fff;z-index:1;">
             <tr style="border-bottom:2px solid var(--line);font-size:11px;color:var(--muted);">
-              <th style="padding:8px;text-align:left;">접수</th>
-              <th style="padding:8px;text-align:left;">고객명</th>
-              <th style="padding:8px;text-align:left;">전화번호</th>
-              <th style="padding:8px;text-align:left;">기기</th>
-              <th style="padding:8px;text-align:left;">용량</th>
-              <th style="padding:8px;text-align:left;">색상</th>
-              <th style="padding:8px;text-align:left;">요금제</th>
-              <th style="padding:8px;text-align:left;">상태</th>
-              <th style="padding:8px;text-align:left;">담당자</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">접수</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">고객명</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">전화번호</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">기기</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">용량</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">색상</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">요금제</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">상태</th>
+              <th style="padding:8px;text-align:left;white-space:nowrap;">담당자</th>
             </tr>
           </thead>
           <tbody id="sdStoreTbody">${getRows(initStatus)}</tbody>
