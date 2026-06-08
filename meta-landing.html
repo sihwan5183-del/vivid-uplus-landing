@@ -565,6 +565,14 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 </section>
 
 <!-- FOOTER -->
+<div class="mobile-receipt-bar" id="mobileReceiptBar" style="display:none;">
+  <div class="bar-top">
+    <span class="bar-title">예상 월 부담금</span>
+    <div><span class="bar-amount" id="barAmount">-</span><span class="bar-unit">원</span></div>
+  </div>
+  <div class="bar-detail" id="barDetail">조건을 선택하면 금액이 표시됩니다.</div>
+  <button class="bar-btn" onclick="goConsult()">🎧 상담 신청하기</button>
+</div>
 <footer class="footer">
   <b>VIVID는 LG U+ 공식 대리점입니다.</b><br>
   © VIVID. All rights reserved.
@@ -858,6 +866,38 @@ function updateReceipt() {
   }
 
   body.innerHTML = rows;
+
+  // 모바일 바텀 바 업데이트
+  if(window.innerWidth <= 768){
+    const bar = document.getElementById('mobileReceiptBar');
+    const barAmount = document.getElementById('barAmount');
+    const barDetail = document.getElementById('barDetail');
+    if(bar){
+      if(sel.plan && sel.carrier){
+        const device2 = sel.device ? devices[sel.device] : null;
+        const plan2 = plans[sel.plan];
+        const matched2 = matchPolicy();
+        const lp2 = device2?.launchPrice||0;
+        const ov2 = matched2?.deviceOverrides?.[sel.device];
+        const pub2 = ov2?.pubSupport ?? matched2?.pubSupport ?? 0;
+        const sd2 = (ov2?.rebate??matched2?.rebate??0)+(ov2?.distribution??matched2?.distribution??0)+(ov2?.structure??matched2?.structure??0)+(ov2?.extraPolicy??matched2?.extraPolicy??0);
+        const dc2 = Math.max(0, lp2-pub2-sd2);
+        const m2 = plan2?.monthlyPrice||0;
+        const total2 = dc2>0 ? Math.round(dc2/24)+m2 : m2;
+        bar.style.display='block';
+        barAmount.textContent = total2.toLocaleString();
+        const parts = [];
+        if(sel.carrierName) parts.push(sel.carrierName);
+        if(device2) parts.push(device2.name);
+        if(plan2) parts.push(plan2.name);
+        barDetail.textContent = parts.join(' · ');
+      } else {
+        bar.style.display = sel.carrier ? 'block' : 'none';
+        barAmount.textContent = '-';
+        barDetail.textContent = '요금제까지 선택하면 금액이 표시됩니다.';
+      }
+    }
+  }
 }
 
 // STEP NAVIGATION
