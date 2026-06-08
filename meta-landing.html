@@ -631,8 +631,8 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let devices={}, plans={}, policies={}, carriers={}, joinTypes={}, categories={};
-let sel = { carrier:null, carrierName:null, device:null, plan:null, color:null, jointype:null };
-let lastCalc = { pubSupport:0, selfDiscount:0, deviceCost:0, totalMonthly:0, launchPrice:0, monthly:0 };
+window.sel = { carrier:null, carrierName:null, device:null, plan:null, color:null, jointype:null };
+window.lastCalc = { pubSupport:0, selfDiscount:0, deviceCost:0, totalMonthly:0, launchPrice:0, monthly:0 };
 let currentStep = 1;
 
 // Load data
@@ -974,14 +974,14 @@ window.goStep = (n) => {
 };
 
 window.buildConsultURL = () => {
-  const device = sel.device ? devices[sel.device] : null;
-  const plan = sel.plan ? plans[sel.plan] : null;
-  const colorName = sel.color ? (sel.color.includes('|') ? sel.color.split('|').pop() : sel.color) : '';
+  const device = window.sel.device ? devices[window.sel.device] : null;
+  const plan = window.sel.plan ? plans[window.sel.plan] : null;
+  const colorName = window.sel.color ? (window.sel.color.includes('|') ? window.sel.color.split('|').pop() : window.sel.color) : '';
   // updateReceipt에서 저장한 계산값 사용
-  const { pubSupport, selfDiscount, deviceCost, totalMonthly, launchPrice, monthly } = lastCalc;
+  const { pubSupport, selfDiscount, deviceCost, totalMonthly, launchPrice, monthly } = window.lastCalc;
   const params = new URLSearchParams({
     device: device?.name||'',
-    carrier: sel.carrierName||'',
+    carrier: window.sel.carrierName||'',
     storage: '256GB',
     color: colorName,
     plan: plan?.name||'',
@@ -993,7 +993,7 @@ window.buildConsultURL = () => {
     realPrice: deviceCost,
     planPrice: monthly
   });
-  return 'https://sihwan5183-del.github.io/vivid-uplus-landing/consult-9.html?' + params.toString();
+  return 'https://vivid-uplus-landing.pages.dev/consult-9.html?' + params.toString();
 };
 
 window.goConsult = () => {
