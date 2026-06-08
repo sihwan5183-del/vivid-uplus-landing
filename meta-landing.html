@@ -529,7 +529,7 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
       <div class="receipt-card">
         <div class="receipt-header">
           <div>
-            <div class="vivid-logo">VIVID 영수증</div>
+            <div class="vivid-logo">VIVID 월 부담 영수증</div>
             
           </div>
         </div>
@@ -576,7 +576,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let devices={}, plans={}, policies={}, carriers={}, joinTypes={}, categories={};
-let sel = { carrier:null, carrierName:null, device:null, plan:null, color:null };
+let sel = { carrier:null, carrierName:null, device:null, plan:null, color:null, jointype:null };
 let currentStep = 1;
 
 // Load data
@@ -585,6 +585,7 @@ onValue(ref(db,'plans'), s=>{ plans=s.val()||{}; if(currentStep===3) renderPlans
 onValue(ref(db,'policy2'), s=>{ policies=s.val()||{}; updateReceipt(); });
 onValue(ref(db,'carriers'), s=>{ carriers=s.val()||{}; renderCarriers(); });
   onValue(ref(db,'categories'), s=>{ categories=s.val()||{}; });
+  onValue(ref(db,'joinTypes'), s=>{ joinTypes=s.val()||{}; });
 onValue(ref(db,'joinTypes'), s=>{ joinTypes=s.val()||{}; });
 
 // RENDER CARRIERS
@@ -605,6 +606,31 @@ window.selectCarrier = (k, name) => {
   document.getElementById('car_'+k)?.classList.add('selected');
   updateReceipt();
   setTimeout(()=>goStep(2), 300);
+};
+
+// RENDER JOINTYPES
+function renderJoinTypes() {
+  const grid = document.getElementById('joinTypeGrid');
+  if(!grid) return;
+  const list = Object.entries(joinTypes).filter(([k,v])=>v.visible!==false);
+  if(!list.length){
+    grid.innerHTML='<div class="loading">가입유형 정보 없음</div>'; return;
+  }
+  const icons = {'기기변경':'📱','번호이동':'🔄','신규가입':'✨'};
+  grid.innerHTML = list.map(([k,v])=>`
+    <div class="option-card" onclick="selectJoinType('${k}','${v.name||k}')" id="jt_${k}">
+      <div style="font-size:28px">${icons[v.name]||'📋'}</div>
+      <div class="option-name">${v.name||k}</div>
+    </div>
+  `).join('');
+}
+
+window.selectJoinType = (k, name) => {
+  sel.jointype = name;
+  document.querySelectorAll('#joinTypeGrid .option-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('jt_'+k)?.classList.add('selected');
+  updateReceipt();
+  setTimeout(()=>goStep(6), 300);
 };
 
 // RENDER CATEGORIES
@@ -638,7 +664,6 @@ window.selectCategory = (k) => {
   document.getElementById('deviceGridWrap').style.display = 'block';
   renderDevicesByCat(k);
   sel.device = null; sel.color = null;
-  document.getElementById('nextBtn2').disabled = true;
 };
 
 // RENDER DEVICES BY CATEGORY
@@ -724,19 +749,28 @@ function matchPolicy() {
   if(!plan) return null;
   const pg = String(Math.round((plan.monthlyPrice||0)/1000));
   const cn = sel.carrierName || '';
-  const jt = 'all';
-  console.log('[matchPolicy] carrierName:', cn, 'plangroup:', pg, 'policies count:', Object.keys(policies).length);
-  const priority = [
-    [jt,cn,pg],[jt,cn,'all'],[jt,'all',pg],[jt,'all','all'],
-    ['all',cn,pg],['all',cn,'all'],['all','all',pg],['all','all','all']
+  // carrier 콤마 분리, plangroup 콤마 분리 매칭
+  const matchCarrier = (polCarrier, target) => {
+    if(!polCarrier || polCarrier==='all') return true;
+    return polCarrier.split(',').map(s=>s.trim()).includes(target);
+  };
+  const matchPlangroup = (polPg, target) => {
+    if(!polPg || polPg==='all') return true;
+    return polPg.split(',').map(s=>s.trim()).includes(target);
+  };
+
+  // 우선순위: 정확한 carrier+plangroup → carrier만 → plangroup만 → all
+  const priorityFns = [
+    pol => matchCarrier(pol.carrier, cn) && pol.carrier!=='all' && matchPlangroup(pol.plangroup, pg) && pol.plangroup!=='all',
+    pol => matchCarrier(pol.carrier, cn) && pol.carrier!=='all' && (!pol.plangroup || pol.plangroup==='all'),
+    pol => (!pol.carrier || pol.carrier==='all') && matchPlangroup(pol.plangroup, pg) && pol.plangroup!=='all',
+    pol => (!pol.carrier || pol.carrier==='all') && (!pol.plangroup || pol.plangroup==='all'),
   ];
-  for(const [j,ca,p] of priority){
-    const found = Object.values(policies).find(pol=>
-      pol.visible!==false && pol.jointype===j && pol.carrier===ca && pol.plangroup===p
-    );
-    if(found){ console.log('[matchPolicy] matched:', j, ca, p, found); return found; }
+
+  for(const fn of priorityFns){
+    const found = Object.values(policies).find(pol => pol.visible && fn(pol));
+    if(found) return found;
   }
-  console.log('[matchPolicy] no match. policy samples:', Object.values(policies).slice(0,2));
   return null;
 }
 
@@ -777,8 +811,12 @@ function updateReceipt() {
   if(sel.plan && sel.carrier){
     const matched = matchPolicy();
     const launchPrice = device?.launchPrice||0;
-    const pubSupport = matched?.deviceOverrides?.[sel.device]?.pubSupport ?? matched?.pubSupport ?? 0;
-    const selfDiscount = (matched?.rebate||0)+(matched?.distribution||0)+(matched?.structure||0)+(matched?.extraPolicy||0);
+    const ov = matched?.deviceOverrides?.[sel.device];
+    const pubSupport = ov?.pubSupport ?? matched?.pubSupport ?? 0;
+    const selfDiscount = (ov?.rebate ?? matched?.rebate ?? 0)
+      + (ov?.distribution ?? matched?.distribution ?? 0)
+      + (ov?.structure ?? matched?.structure ?? 0)
+      + (ov?.extraPolicy ?? matched?.extraPolicy ?? 0);
     const deviceCost = Math.max(0, launchPrice - pubSupport - selfDiscount);
     const monthly = plan?.monthlyPrice||0;
     const totalMonthly = deviceCost > 0 ? Math.round(deviceCost/24) + monthly : monthly;
@@ -867,7 +905,7 @@ window.goConsult = () => {
 }
 
 window.resetAll = () => {
-  sel = {carrier:null, carrierName:null, device:null, plan:null, color:null};
+  sel = {carrier:null, carrierName:null, device:null, plan:null, color:null, jointype:null};
   currentStep = 1;
   goStep(1);
   updateReceipt();
