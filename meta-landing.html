@@ -56,6 +56,13 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 .btn-consult:hover { background:#0540d4; }
 .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; }
 .hamburger span { width:24px; height:2px; background:var(--dark); border-radius:2px; }
+.mobile-menu {
+  display:none; position:fixed; top:72px; left:0; right:0; z-index:99;
+  background:#fff; border-bottom:1px solid var(--line);
+  padding:20px; flex-direction:column; gap:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+.mobile-menu.open { display:flex; }
 
 /* HERO */
 .hero {
@@ -225,7 +232,7 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 .color-label-chip.selected { border-color:var(--blue); background:var(--blue-light); color:var(--blue); }
 
 /* PLAN OPTIONS */
-.plan-list { display:flex; flex-direction:column; gap:8px; margin-bottom:24px; max-height:280px; overflow-y:auto; }
+.plan-list { display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
 .plan-item {
   border:2px solid var(--line); border-radius:12px; padding:14px 16px;
   display:flex; align-items:center; justify-content:space-between;
@@ -361,6 +368,7 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
+  .hero-cta { display:none; }
   .nav { padding:0 20px; }
   .nav-btns { display:none; }
   .hamburger { display:flex; }
@@ -402,6 +410,10 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
     <span></span><span></span><span></span>
   </div>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="goConsult();return false;" class="cta-main" style="justify-content:center;">🎧 상담 신청하기</a>
+  <button class="cta-kakao" onclick="openKakao()" style="justify-content:center;">💬 카톡 상담하기</button>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -699,7 +711,7 @@ window.selectDevice = (k) => {
 function renderPlans() {
   const list2 = document.getElementById('planList');
   const list = Object.entries(plans).filter(([k,v])=>v.visible!==false)
-    .sort((a,b)=>(b[1].monthlyPrice||0)-(a[1].monthlyPrice||0));
+    .sort((a,b)=>(a[1].monthlyPrice||0)-(b[1].monthlyPrice||0));
   if(!list.length){ list2.innerHTML='<div class="loading">요금제 정보 없음</div>'; return; }
   list2.innerHTML = list.map(([k,v])=>`
     <div class="plan-item" onclick="selectPlan('${k}')" id="pln_${k}">
@@ -714,7 +726,14 @@ window.selectPlan = (k) => {
   document.querySelectorAll('#planList .plan-item').forEach(c=>c.classList.remove('selected'));
   document.getElementById('pln_'+k)?.classList.add('selected');
   updateReceipt();
-  setTimeout(()=>goStep(5), 300);
+  setTimeout(()=>{
+    goStep(5);
+    // 모바일에서 영수증 섹션으로 스크롤
+    if(window.innerWidth <= 768){
+      const receipt = document.querySelector('.receipt-panel');
+      if(receipt) receipt.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }, 300);
 };
 
 // RENDER COLORS
@@ -832,7 +851,7 @@ function updateReceipt() {
       <div class="total-row">
         <div class="total-amount">${totalMonthly.toLocaleString()}<span class="total-unit">원</span></div>
       </div>
-      <div class="total-note">* 본 금액은 예시이며 실제와 다를 수 있습니다.</div>
+      
     </div>`;
   } else if(!sel.plan){
     rows += `<div style="text-align:center;padding:16px;font-size:13px;color:var(--gray);">요금제를 선택하면<br>할인 혜택이 계산됩니다.</div>`;
@@ -912,7 +931,7 @@ window.resetAll = () => {
 };
 
 window.openKakao = () => { alert('카카오 상담 링크를 연결해주세요.'); };
-window.toggleMenu = () => {};
+window.toggleMenu = () => { document.getElementById('mobileMenu').classList.toggle('open'); };
 
 </script>
 </body>
