@@ -870,15 +870,12 @@ function updateReceipt() {
   const device = sel.device ? devices[sel.device] : null;
   const plan = sel.plan ? plans[sel.plan] : null;
 
-  // 아무것도 선택 안됨
   if(!sel.carrier && !sel.device){
     body.innerHTML=`<div class="receipt-placeholder"><div class="icon">🧾</div><p>조건을 선택하면<br>예상 혜택이 여기에<br>실시간으로 표시됩니다.</p></div>`;
     return;
   }
 
-  let rows = '';
-
-  // 기기 이미지 - 컬러 선택 시 해당 컬러 img, 아니면 기기 기본 img
+  // 컬러별 이미지
   let displayImg = null;
   if(sel.color && device?.colors){
     const colorObj = device.colors.find(c=>(c.name||c)===sel.color || (c.name||c).split('|').pop()===sel.color);
@@ -887,51 +884,59 @@ function updateReceipt() {
     displayImg = device.img;
   }
 
-  if(displayImg){
-    rows += `<div style="text-align:center;padding:16px 0 8px;"><img src="${displayImg}" style="height:260px;object-fit:contain;" onerror="this.style.display='none'"></div>`;
-  }
+  // 정보 rows
+  let infoRows = '';
+  if(sel.carrierName) infoRows += `<div class="receipt-row"><span class="label">통신사</span><span class="value">${sel.carrierName}</span></div>`;
+  if(device) infoRows += `<div class="receipt-row"><span class="label">기기</span><span class="value">${device.name||'-'}</span></div>`;
+  if(sel.color){ const cn=sel.color.includes('|')?sel.color.split('|').pop():sel.color; infoRows += `<div class="receipt-row"><span class="label">색상/용량</span><span class="value">${cn}/256G</span></div>`; }
+  if(device) infoRows += `<div class="receipt-row"><span class="label">출고가</span><span class="value">${(device.launchPrice||0).toLocaleString()}원</span></div>`;
 
-  // 기본 정보 표시
-  if(sel.carrierName) rows += `<div class="receipt-row"><span class="label">통신사</span><span class="value">${sel.carrierName}</span></div>`;
-  if(device) rows += `<div class="receipt-row"><span class="label">기기</span><span class="value">${device.name||'-'}</span></div>`;
-  if(sel.color){ const cn=sel.color.includes('|')?sel.color.split('|').pop():sel.color; rows += `<div class="receipt-row"><span class="label">색상 / 용량</span><span class="value">${cn} / 256GB</span></div>`; }
-  if(device) rows += `<div class="receipt-row"><span class="label">출고가</span><span class="value">${(device.launchPrice||0).toLocaleString()}원</span></div>`;
+  let discountRows = '';
+  let totalHtml = '';
 
-  // 요금제 선택 후에만 정책 계산
   if(sel.plan && sel.carrier){
     const matched = matchPolicy();
     const launchPrice = device?.launchPrice||0;
     const ov = matched?.deviceOverrides?.[sel.device];
     const pubSupport = ov?.pubSupport ?? matched?.pubSupport ?? 0;
-    const selfDiscount = (ov?.rebate ?? matched?.rebate ?? 0)
-      + (ov?.distribution ?? matched?.distribution ?? 0)
-      + (ov?.structure ?? matched?.structure ?? 0)
-      + (ov?.extraPolicy ?? matched?.extraPolicy ?? 0);
+    const selfDiscount = (ov?.rebate??matched?.rebate??0)+(ov?.distribution??matched?.distribution??0)+(ov?.structure??matched?.structure??0)+(ov?.extraPolicy??matched?.extraPolicy??0);
     const deviceCost = Math.max(0, launchPrice - pubSupport - selfDiscount);
     const monthly = plan?.monthlyPrice||0;
     const totalMonthly = deviceCost > 0 ? Math.round(deviceCost/24) + monthly : monthly;
 
-    rows += `<div class="receipt-row"><span class="label">공시지원금</span><span class="value red">${pubSupport ? '-'+pubSupport.toLocaleString()+'원' : '-'}</span></div>`;
-    rows += `<div class="receipt-row"><span class="label">VIVID 추가할인</span><span class="value red">${selfDiscount ? '-'+selfDiscount.toLocaleString()+'원' : '-'}</span></div>`;
-    rows += `<div class="receipt-row"><span class="label">기기값</span><span class="value blue">${deviceCost.toLocaleString()}원</span></div>`;
-    rows += `<div class="receipt-row"><span class="label">요금제</span><span class="value">${plan.name||'-'} (${monthly.toLocaleString()}원/월)</span></div>`;
+    discountRows += `<div class="receipt-row"><span class="label">공시지원금</span><span class="value red">${pubSupport ? '-'+pubSupport.toLocaleString()+'원' : '-'}</span></div>`;
+    discountRows += `<div class="receipt-row"><span class="label">VIVID 추가할인</span><span class="value red">${selfDiscount ? '-'+selfDiscount.toLocaleString()+'원' : '-'}</span></div>`;
+    discountRows += `<div class="receipt-row"><span class="label">기기값</span><span class="value blue">${deviceCost.toLocaleString()}원</span></div>`;
+    discountRows += `<div class="receipt-row"><span class="label">요금제</span><span class="value">${plan.name||'-'} (${monthly.toLocaleString()}원/월)</span></div>`;
 
-    rows += `<hr class="receipt-subtotal-line">
+    totalHtml = `<hr class="receipt-subtotal-line">
     <div class="receipt-total">
-      <div class="total-label">예상 월 부담금 (24개월 약정 기준)</div>
-      <div class="total-row">
-        <div class="total-amount">${totalMonthly.toLocaleString()}<span class="total-unit">원</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="total-label">예상 월 부담금<br><span style="font-size:9px;color:#aaa;">(24개월 약정 기준)</span></div>
+        <div><span class="total-amount">${totalMonthly.toLocaleString()}</span><span class="total-unit">원</span></div>
       </div>
-      
     </div>`;
-  } else if(!sel.plan){
-    rows += `<div style="text-align:center;padding:16px;font-size:13px;color:var(--gray);">요금제를 선택하면<br>할인 혜택이 계산됩니다.</div>`;
+  } else {
+    discountRows = `<div style="text-align:center;padding:8px;font-size:11px;color:var(--gray);">요금제를 선택하면<br>할인 혜택이 계산됩니다.</div>`;
   }
 
-  body.innerHTML = rows;
-
-
+  // 2열 레이아웃 - 좌측 이미지, 우측 내용
+  if(displayImg){
+    body.innerHTML = `
+      <div style="display:flex;gap:8px;padding:10px 12px 6px;align-items:flex-start;">
+        <div style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;">
+          <img src="${displayImg}" style="width:80px;height:100px;object-fit:contain;" onerror="this.style.display='none'">
+        </div>
+        <div style="flex:1;min-width:0;">${infoRows}</div>
+      </div>
+      <div style="padding:0 12px;">${discountRows}</div>
+      ${totalHtml}
+    `;
+  } else {
+    body.innerHTML = `<div style="padding:10px 12px 6px;">${infoRows}${discountRows}</div>${totalHtml}`;
+  }
 }
+
 
 // STEP NAVIGATION
 window.goStep = (n) => {
