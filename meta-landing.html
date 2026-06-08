@@ -632,6 +632,7 @@ const db = getDatabase(app);
 
 let devices={}, plans={}, policies={}, carriers={}, joinTypes={}, categories={};
 let sel = { carrier:null, carrierName:null, device:null, plan:null, color:null, jointype:null };
+let lastCalc = { pubSupport:0, selfDiscount:0, deviceCost:0, totalMonthly:0, launchPrice:0, monthly:0 };
 let currentStep = 1;
 
 // Load data
@@ -975,15 +976,9 @@ window.goStep = (n) => {
 window.buildConsultURL = () => {
   const device = sel.device ? devices[sel.device] : null;
   const plan = sel.plan ? plans[sel.plan] : null;
-  const matched = (sel.plan && sel.carrier) ? matchPolicy() : null;
-  const launchPrice = device?.launchPrice||0;
-  const pubSupport = matched?.deviceOverrides?.[sel.device]?.pubSupport ?? matched?.pubSupport ?? 0;
-  const selfDiscount = (matched?.rebate||0)+(matched?.distribution||0)+(matched?.structure||0)+(matched?.extraPolicy||0);
-  const deviceCost = Math.max(0, launchPrice - pubSupport - selfDiscount);
-  const monthly = plan?.monthlyPrice||0;
-  const totalMonthly = deviceCost > 0 ? Math.round(deviceCost/24) + monthly : monthly;
   const colorName = sel.color ? (sel.color.includes('|') ? sel.color.split('|').pop() : sel.color) : '';
-
+  // updateReceipt에서 저장한 계산값 사용
+  const { pubSupport, selfDiscount, deviceCost, totalMonthly, launchPrice, monthly } = lastCalc;
   const params = new URLSearchParams({
     device: device?.name||'',
     carrier: sel.carrierName||'',
