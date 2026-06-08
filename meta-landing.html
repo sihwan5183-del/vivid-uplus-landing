@@ -368,26 +368,64 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
-  .hero-cta { display:none; }
-  .nav { padding:0 20px; }
+  .nav { padding:0 20px; height:56px; }
   .nav-btns { display:none; }
   .hamburger { display:flex; }
 
-  .hero-inner {
-    grid-template-columns:1fr; padding:40px 20px 32px;
-    gap:32px;
-  }
+  .hero { min-height:auto; padding-top:56px; }
+  .hero-inner { grid-template-columns:1fr; padding:24px 16px 16px; gap:20px; }
   .hero-left { padding-right:0; }
-  .hero-title { font-size:32px; }
-  .hero-desc { font-size:15px; }
-  .hero-right { max-width:280px; margin:0 auto; }
+  .hero-title { font-size:26px; }
+  .hero-desc { font-size:14px; margin-bottom:16px; }
+  .hero-tags { margin-bottom:20px; gap:8px; }
+  .hero-tag { font-size:12px; padding:6px 12px; }
+  .hero-right { max-width:220px; margin:0 auto; }
+  .hero-cta { display:none; }
 
-  .calc-section { padding:48px 20px; }
-  .calc-inner { grid-template-columns:1fr; gap:32px; }
-  .receipt-panel { position:static; }
-  .steps::before { left:12px; right:12px; }
-  .option-grid { grid-template-columns:1fr 1fr; }
-  .option-grid.cols-4 { grid-template-columns:repeat(2,1fr); }
+  .calc-section { padding:16px 14px 20px; border-top:1px solid var(--line); }
+  .calc-title { font-size:20px; }
+  .calc-subtitle { font-size:13px; margin-bottom:20px; }
+  .calc-inner { grid-template-columns:1fr; gap:16px; }
+
+  /* 스텝 */
+  .steps { margin-bottom:20px; }
+  .step-num { width:26px; height:26px; font-size:11px; }
+  .step-label { font-size:10px; }
+
+  /* 영수증 - 한눈에 다 보이게 */
+  .receipt-panel { display:block; position:static; }
+  .receipt-card { font-size:11px; }
+  .receipt-header { padding:8px 14px; }
+  .receipt-header .vivid-logo { font-size:13px; letter-spacing:1px; }
+  .receipt-header .sub { font-size:9px; }
+  .receipt-store-info { font-size:9px; padding-bottom:8px; margin-bottom:4px; line-height:1.6; }
+  .receipt-body { padding:6px 12px 2px; }
+  .receipt-row { padding:4px 0; font-size:11px; }
+  .receipt-row .label { font-size:10px; }
+  .receipt-row .value { font-size:11px; }
+  .receipt-subtotal-line { margin:4px 0 0; }
+  .receipt-total { padding:6px 12px 8px; }
+  .receipt-total .total-label { font-size:9px; margin-bottom:2px; }
+  .receipt-total .total-amount { font-size:26px; }
+  .receipt-total .total-unit { font-size:14px; }
+  .receipt-bottom-tear { height:6px; }
+  .receipt-cta { padding:8px 12px 10px; gap:6px; }
+  .rcta-main { padding:10px; font-size:13px; border-radius:10px; }
+  .rcta-kakao { padding:10px; font-size:13px; border-radius:10px; }
+  #receiptBody img { height:50px !important; }
+
+  .mobile-receipt-bar { display:none !important; }
+  body { padding-bottom:0; }
+
+  /* 카드 */
+  .option-card { min-height:130px !important; padding:12px 8px !important; }
+  .category-card { min-height:130px !important; padding:12px 8px !important; }
+  .option-grid { gap:10px; }
+  .plan-item { padding:10px 12px; }
+  .plan-name { font-size:13px; }
+  .plan-price { font-size:13px; }
+  .next-btn { padding:13px; font-size:14px; }
+  .back-btn { padding:10px; font-size:13px; }
 }
 </style>
 </head>
