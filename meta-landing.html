@@ -826,11 +826,6 @@ window.goStep = (n) => {
   document.getElementById('calculator')?.scrollIntoView({behavior:'smooth',block:'start'});
 };
 
-// 날짜 표시
-const d = new Date();
-const el = document.getElementById('receiptDate');
-if(el) el.textContent = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-
 window.buildConsultURL = () => {
   const device = sel.device ? devices[sel.device] : null;
   const plan = sel.plan ? plans[sel.plan] : null;
@@ -861,13 +856,15 @@ window.buildConsultURL = () => {
 };
 
 window.goConsult = () => {
-  location.href = // 날짜 표시
-const d = new Date();
-const el = document.getElementById('receiptDate');
-if(el) el.textContent = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-
-window.buildConsultURL();
+  location.href = window.buildConsultURL();
 };
+
+// 날짜 표시
+{
+  const nd = new Date();
+  const nel = document.getElementById('receiptDate');
+  if(nel) nel.textContent = `${nd.getFullYear()}-${String(nd.getMonth()+1).padStart(2,'0')}-${String(nd.getDate()).padStart(2,'0')} ${String(nd.getHours()).padStart(2,'0')}:${String(nd.getMinutes()).padStart(2,'0')}`;
+}
 
 window.resetAll = () => {
   sel = {carrier:null, carrierName:null, device:null, plan:null, color:null};
