@@ -548,7 +548,10 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
       <!-- PANEL 3: 컬러 -->
       <div class="step-panel" id="panel3">
         <div class="panel-title"><span class="num">03</span>컬러 선택</div>
-        <div class="panel-desc">원하시는 색상을 선택해주세요. (용량: 256GB 고정)</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <span style="background:var(--blue);color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:50px;">✓ 256GB</span>
+          <span style="font-size:14px;color:var(--gray);">색상을 선택해주세요.</span>
+        </div>
         <div class="color-label-row" id="colorGrid"></div>
         <button class="back-btn" onclick="goStep(2)">← 기기 다시 선택</button>
       </div>
