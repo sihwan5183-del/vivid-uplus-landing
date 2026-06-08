@@ -926,6 +926,7 @@ function updateReceipt() {
     const deviceCost = Math.max(0, launchPrice - pubSupport - selfDiscount);
     const monthly = plan?.monthlyPrice||0;
     const totalMonthly = deviceCost > 0 ? Math.round(deviceCost/24) + monthly : monthly;
+    window.lastCalc = { pubSupport, selfDiscount, deviceCost, totalMonthly, launchPrice, monthly };
 
     rows += `<div class="receipt-row"><span class="label">공시지원금</span><span class="value red">${pubSupport ? '-'+pubSupport.toLocaleString()+'원' : '-'}</span></div>`;
     rows += `<div class="receipt-row"><span class="label">VIVID 추가할인</span><span class="value red">${selfDiscount ? '-'+selfDiscount.toLocaleString()+'원' : '-'}</span></div>`;
