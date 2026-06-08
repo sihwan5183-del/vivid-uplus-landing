@@ -282,7 +282,7 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
   text-align:center; border-bottom:1px solid #eee;
 }
 .receipt-header .vivid-logo {
-  font-size:22px; font-weight:900; color:var(--blue); letter-spacing:3px;
+  font-size:44px; font-weight:900; color:var(--blue); letter-spacing:3px;
 }
 .receipt-header .sub {
   font-size:11px; color:#999; margin-top:6px; letter-spacing:2px;
@@ -369,6 +369,8 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
   .nav { padding:0 20px; height:56px; }
+  .nav-logo { visibility:visible !important; }
+  .nav-uplus-desktop { display:inline !important; font-size:28px !important; }
   .nav-btns { display:none; }
   .hamburger { display:flex; }
 
@@ -434,9 +436,8 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 
 <!-- NAV -->
 <nav class="nav">
-  <div class="nav-logo" style="visibility:hidden;">
-    <span class="uplus">U⁺</span>
-    <span>VIVID</span>
+  <div class="nav-logo">
+    <span class="uplus nav-uplus-desktop" style="">U⁺</span>
   </div>
   <div class="nav-center">
     <span>VIVID</span>
@@ -741,6 +742,13 @@ window.selectCategory = (k) => {
   document.getElementById('deviceGridWrap').style.display = 'block';
   renderDevicesByCat(k);
   sel.device = null; sel.color = null;
+  // 모바일 - 기종 목록으로 스크롤
+  if(window.innerWidth <= 768){
+    setTimeout(()=>{
+      const wrap = document.getElementById('deviceGridWrap');
+      if(wrap) wrap.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 100);
+  }
 };
 
 // RENDER DEVICES BY CATEGORY
