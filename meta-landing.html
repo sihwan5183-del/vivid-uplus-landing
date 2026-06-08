@@ -382,6 +382,7 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
   .hero-tags { margin-bottom:20px; gap:8px; }
   .hero-tag { font-size:12px; padding:6px 12px; }
   .hero-tags { justify-content:center; }
+  .hero-uplus { display:none !important; }
   .hero-right { max-width:280px; margin:0 auto; width:100%; }
   .hero-cta { display:none; }
 
@@ -399,6 +400,7 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
   .receipt-panel { display:block; position:static; }
   .receipt-card { font-size:11px; }
   .receipt-header { padding:8px 14px; }
+  .receipt-header .vivid-logo { font-size:30px !important; letter-spacing:1px !important; }
   .receipt-header .vivid-logo { font-size:13px; letter-spacing:1px; }
   .receipt-header .sub { font-size:9px; }
   .receipt-store-info { font-size:9px; padding-bottom:6px; margin-bottom:2px; line-height:1.4; }
@@ -459,7 +461,7 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-left">
-      <div style="margin-bottom:8px;"><span style="color:var(--pink);font-weight:900;font-size:36px;line-height:1;">U⁺</span></div>
+      <div class="hero-uplus" style="margin-bottom:8px;"><span style="color:var(--pink);font-weight:900;font-size:36px;line-height:1;">U⁺</span></div>
       <span class="hero-badge">⚡ 어디까지나 이해를 돕기 위한 예시입니다.</span>
       <h1 class="hero-title">
         본인의 조건을<br>
@@ -607,7 +609,7 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
   <button class="bar-btn" onclick="goConsult()">🎧 상담 신청하기</button>
 </div>
 <footer class="footer">
-  <b>VIVID는 LG U+ 공식 대리점입니다.</b><br>
+  <b>VIVID</b><br>
   © VIVID. All rights reserved.
 </footer>
 
@@ -635,7 +637,7 @@ let currentStep = 1;
 // Load data
 onValue(ref(db,'devices'), s=>{ devices=s.val()||{}; if(currentStep===2) renderDevices(); });
 onValue(ref(db,'plans'), s=>{ plans=s.val()||{}; if(currentStep===3) renderPlans(); });
-onValue(ref(db,'policy2'), s=>{ policies=s.val()||{}; updateReceipt(); });
+onValue(ref(db,'policy2'), s=>{ const raw=s.val()||{}; policies=raw; updateReceipt(); });
 onValue(ref(db,'carriers'), s=>{ carriers=s.val()||{}; renderCarriers(); });
   onValue(ref(db,'categories'), s=>{ categories=s.val()||{}; });
   onValue(ref(db,'joinTypes'), s=>{ joinTypes=s.val()||{}; });
@@ -742,13 +744,11 @@ window.selectCategory = (k) => {
   document.getElementById('deviceGridWrap').style.display = 'block';
   renderDevicesByCat(k);
   sel.device = null; sel.color = null;
-  // 모바일 - 기종 목록으로 스크롤
-  if(window.innerWidth <= 768){
-    setTimeout(()=>{
-      const wrap = document.getElementById('deviceGridWrap');
-      if(wrap) wrap.scrollIntoView({behavior:'smooth', block:'start'});
-    }, 100);
-  }
+  // PC/모바일 모두 기종 목록으로 스크롤
+  setTimeout(()=>{
+    const wrap = document.getElementById('deviceGridWrap');
+    if(wrap) wrap.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
 };
 
 // RENDER DEVICES BY CATEGORY
@@ -839,28 +839,32 @@ function matchPolicy() {
   if(!sel.carrier || !sel.plan) return null;
   const plan = plans[sel.plan];
   if(!plan) return null;
-  const pg = String(Math.round((plan.monthlyPrice||0)/1000));
-  const cn = sel.carrierName || '';
-  // carrier 콤마 분리, plangroup 콤마 분리 매칭
-  const matchCarrier = (polCarrier, target) => {
-    if(!polCarrier || polCarrier==='all') return true;
-    return polCarrier.split(',').map(s=>s.trim()).includes(target);
-  };
-  const matchPlangroup = (polPg, target) => {
-    if(!polPg || polPg==='all') return true;
-    return polPg.split(',').map(s=>s.trim()).includes(target);
-  };
 
-  // 우선순위: 정확한 carrier+plangroup → carrier만 → plangroup만 → all
-  const priorityFns = [
-    pol => matchCarrier(pol.carrier, cn) && pol.carrier!=='all' && matchPlangroup(pol.plangroup, pg) && pol.plangroup!=='all',
-    pol => matchCarrier(pol.carrier, cn) && pol.carrier!=='all' && (!pol.plangroup || pol.plangroup==='all'),
-    pol => (!pol.carrier || pol.carrier==='all') && matchPlangroup(pol.plangroup, pg) && pol.plangroup!=='all',
-    pol => (!pol.carrier || pol.carrier==='all') && (!pol.plangroup || pol.plangroup==='all'),
+  // LG U+ → 기기변경, 나머지 → 번호이동
+  const jointype = (sel.carrierName === 'LG U+') ? '기기변경' : '번호이동';
+  const carrier = sel.carrierName || 'all';
+  const pg = String(Math.round((plan.monthlyPrice||0)/1000));
+
+  const priority = [
+    [jointype,carrier,pg],[jointype,carrier,'all'],
+    [jointype,'all',pg],[jointype,'all','all'],
+    ['all',carrier,pg],['all',carrier,'all'],
+    ['all','all',pg],['all','all','all']
   ];
 
-  for(const fn of priorityFns){
-    const found = Object.values(policies).find(pol => pol.visible && fn(pol));
+  const pgMatch = (p,g) => p.plangroup==='all' || (p.plangroup||'').split(',').map(s=>s.trim()).includes(g);
+  const caMatch = (p,c) => p.carrier==='all' || c==='all' || (p.carrier||'').split(',').map(s=>s.trim()).includes(c);
+
+  const allPol = Object.entries(policies).map(([k,v])=>({_key:k,...v}));
+
+  // 1차: visible 체크
+  for(const [jt,ca,g] of priority){
+    const found = allPol.find(p => p.visible && p.jointype===jt && caMatch(p,ca) && pgMatch(p,g));
+    if(found) return found;
+  }
+  // 2차: visible 무시 재시도 (consult-9 동일)
+  for(const [jt,ca,g] of priority){
+    const found = allPol.find(p => p.jointype===jt && caMatch(p,ca) && pgMatch(p,g));
     if(found) return found;
   }
   return null;
@@ -897,11 +901,27 @@ function updateReceipt() {
   if(device) rows += `<div class="receipt-row"><span class="label">출고가</span><span class="value">${(device.launchPrice||0).toLocaleString()}원</span></div>`;
 
   if(sel.plan && sel.carrier){
-    const matched = matchPolicy();
+    let matched = matchPolicy();
     const launchPrice = device?.launchPrice||0;
+    // consult-9 동일: deviceOverrides 머지
+    // deviceOverrides 키 확인 - Firebase device 키로 조회
+    const ovKeys = matched?.deviceOverrides ? Object.keys(matched.deviceOverrides) : [];
+    console.log('[DEBUG] sel.device:', sel.device, 'ovKeys:', ovKeys, 'matched jointype:', matched?.jointype, 'carrier:', matched?.carrier, 'plangroup:', matched?.plangroup);
     const ov = matched?.deviceOverrides?.[sel.device];
-    const pubSupport = ov?.pubSupport ?? matched?.pubSupport ?? 0;
-    const selfDiscount = (ov?.rebate??matched?.rebate??0)+(ov?.distribution??matched?.distribution??0)+(ov?.structure??matched?.structure??0)+(ov?.extraPolicy??matched?.extraPolicy??0);
+    console.log('[DEBUG] ov:', ov);
+    if(ov && matched){
+      matched = {
+        ...matched,
+        pubSupport:   ov.pubSupport   ?? matched.pubSupport,
+        rebate:       ov.rebate       ?? matched.rebate,
+        distribution: ov.distribution ?? matched.distribution,
+        structure:    ov.structure    ?? matched.structure,
+        extraPolicy:  ov.extraPolicy  ?? matched.extraPolicy,
+      };
+    }
+    const pubSupport = Math.round(matched?.pubSupport||0);
+    const selfDiscount = Math.round((matched?.rebate||0)+(matched?.distribution||0)+(matched?.structure||0)+(matched?.extraPolicy||0));
+    console.log('[DEBUG] pubSupport:', pubSupport, 'selfDiscount:', selfDiscount);
     const deviceCost = Math.max(0, launchPrice - pubSupport - selfDiscount);
     const monthly = plan?.monthlyPrice||0;
     const totalMonthly = deviceCost > 0 ? Math.round(deviceCost/24) + monthly : monthly;
