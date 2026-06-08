@@ -223,13 +223,14 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
   font-size:16px; color:#fff; font-weight:700;
   text-shadow:0 1px 2px rgba(0,0,0,.4);
 }
-.color-label-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
+.color-label-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px; }
 .color-label-chip {
-  padding:6px 14px; border-radius:50px; border:1.5px solid var(--line);
-  font-size:13px; font-weight:600; cursor:pointer; transition:all .2s;
-  background:var(--white);
+  padding:16px 12px; border-radius:14px; border:2px solid var(--line);
+  font-size:14px; font-weight:700; cursor:pointer; transition:all .2s;
+  background:#fff; text-align:center; display:flex; align-items:center; justify-content:center; gap:8px;
 }
-.color-label-chip.selected { border-color:var(--blue); background:var(--blue-light); color:var(--blue); }
+.color-label-chip:hover { border-color:var(--blue); background:var(--blue-light); }
+.color-label-chip.selected { border-color:var(--blue); background:var(--blue-light); color:var(--blue); box-shadow:0 0 0 3px rgba(7,75,244,.1); }
 
 /* PLAN OPTIONS */
 .plan-list { display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
@@ -820,7 +821,7 @@ window.renderColors = () => {
     // "#XXXXXX|이름" 형식이면 이름만 추출
     const displayName = rawName.includes('|') ? rawName.split('|').pop() : rawName;
     const hex = rawName.includes('|') ? rawName.split('|')[0] : null;
-    const dotHtml = hex ? `<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${hex};border:1px solid rgba(0,0,0,.15);margin-right:6px;vertical-align:middle;"></span>` : '';
+    const dotHtml = hex ? `<span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:${hex};border:1.5px solid rgba(0,0,0,.15);flex-shrink:0;"></span>` : '';
     return `<div class="color-label-chip" onclick="selectColor(${i},'${rawName}')" id="col_${i}">
       ${dotHtml}${displayName}
     </div>`;
