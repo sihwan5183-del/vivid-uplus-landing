@@ -379,6 +379,7 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
   .hero-desc { font-size:14px; margin-bottom:16px; }
   .hero-tags { margin-bottom:20px; gap:8px; }
   .hero-tag { font-size:12px; padding:6px 12px; }
+  .hero-tags { justify-content:center; }
   .hero-right { max-width:280px; margin:0 auto; width:100%; }
   .hero-cta { display:none; }
 
@@ -457,10 +458,7 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-left">
-      <div style="margin-bottom:12px;">
-        <span style="color:var(--pink);font-weight:900;font-size:40px;line-height:1;">U⁺</span>
-      </div>
-      <span class="hero-badge">⚡ 어디까지나 이해를 돕기 위한 예시입니다.</span>
+      <span class="hero-badge"><span style="color:var(--pink);font-weight:900;margin-right:4px;">U⁺</span> ⚡ 어디까지나 이해를 돕기 위한 예시입니다.</span>
       <h1 class="hero-title">
         본인의 조건을<br>
         <span class="blue">선택하여 확인</span>해주세요!
@@ -875,7 +873,6 @@ function updateReceipt() {
     return;
   }
 
-  // 컬러별 이미지
   let displayImg = null;
   if(sel.color && device?.colors){
     const colorObj = device.colors.find(c=>(c.name||c)===sel.color || (c.name||c).split('|').pop()===sel.color);
@@ -884,15 +881,16 @@ function updateReceipt() {
     displayImg = device.img;
   }
 
-  // 정보 rows
-  let infoRows = '';
-  if(sel.carrierName) infoRows += `<div class="receipt-row"><span class="label">통신사</span><span class="value">${sel.carrierName}</span></div>`;
-  if(device) infoRows += `<div class="receipt-row"><span class="label">기기</span><span class="value">${device.name||'-'}</span></div>`;
-  if(sel.color){ const cn=sel.color.includes('|')?sel.color.split('|').pop():sel.color; infoRows += `<div class="receipt-row"><span class="label">색상/용량</span><span class="value">${cn}/256G</span></div>`; }
-  if(device) infoRows += `<div class="receipt-row"><span class="label">출고가</span><span class="value">${(device.launchPrice||0).toLocaleString()}원</span></div>`;
+  let rows = '';
 
-  let discountRows = '';
-  let totalHtml = '';
+  if(displayImg){
+    rows += `<div style="text-align:center;padding:14px 0 8px;"><img src="${displayImg}" style="height:150px;object-fit:contain;" onerror="this.style.display='none'"></div>`;
+  }
+
+  if(sel.carrierName) rows += `<div class="receipt-row"><span class="label">통신사</span><span class="value">${sel.carrierName}</span></div>`;
+  if(device) rows += `<div class="receipt-row"><span class="label">기기</span><span class="value">${device.name||'-'}</span></div>`;
+  if(sel.color){ const cn=sel.color.includes('|')?sel.color.split('|').pop():sel.color; rows += `<div class="receipt-row"><span class="label">색상 / 용량</span><span class="value">${cn} / 256GB</span></div>`; }
+  if(device) rows += `<div class="receipt-row"><span class="label">출고가</span><span class="value">${(device.launchPrice||0).toLocaleString()}원</span></div>`;
 
   if(sel.plan && sel.carrier){
     const matched = matchPolicy();
@@ -904,12 +902,11 @@ function updateReceipt() {
     const monthly = plan?.monthlyPrice||0;
     const totalMonthly = deviceCost > 0 ? Math.round(deviceCost/24) + monthly : monthly;
 
-    discountRows += `<div class="receipt-row"><span class="label">공시지원금</span><span class="value red">${pubSupport ? '-'+pubSupport.toLocaleString()+'원' : '-'}</span></div>`;
-    discountRows += `<div class="receipt-row"><span class="label">VIVID 추가할인</span><span class="value red">${selfDiscount ? '-'+selfDiscount.toLocaleString()+'원' : '-'}</span></div>`;
-    discountRows += `<div class="receipt-row"><span class="label">기기값</span><span class="value blue">${deviceCost.toLocaleString()}원</span></div>`;
-    discountRows += `<div class="receipt-row"><span class="label">요금제</span><span class="value">${plan.name||'-'} (${monthly.toLocaleString()}원/월)</span></div>`;
-
-    totalHtml = `<hr class="receipt-subtotal-line">
+    rows += `<div class="receipt-row"><span class="label">공시지원금</span><span class="value red">${pubSupport ? '-'+pubSupport.toLocaleString()+'원' : '-'}</span></div>`;
+    rows += `<div class="receipt-row"><span class="label">VIVID 추가할인</span><span class="value red">${selfDiscount ? '-'+selfDiscount.toLocaleString()+'원' : '-'}</span></div>`;
+    rows += `<div class="receipt-row"><span class="label">기기값</span><span class="value blue">${deviceCost.toLocaleString()}원</span></div>`;
+    rows += `<div class="receipt-row"><span class="label">요금제</span><span class="value">${plan.name||'-'} (${monthly.toLocaleString()}원/월)</span></div>`;
+    rows += `<hr class="receipt-subtotal-line">
     <div class="receipt-total">
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div class="total-label">예상 월 부담금<br><span style="font-size:9px;color:#aaa;">(24개월 약정 기준)</span></div>
@@ -917,24 +914,10 @@ function updateReceipt() {
       </div>
     </div>`;
   } else {
-    discountRows = `<div style="text-align:center;padding:8px;font-size:11px;color:var(--gray);">요금제를 선택하면<br>할인 혜택이 계산됩니다.</div>`;
+    rows += `<div style="text-align:center;padding:12px;font-size:12px;color:var(--gray);">요금제를 선택하면<br>할인 혜택이 계산됩니다.</div>`;
   }
 
-  // 2열 레이아웃 - 좌측 이미지, 우측 내용
-  if(displayImg){
-    body.innerHTML = `
-      <div style="display:flex;gap:8px;padding:10px 12px 6px;align-items:flex-start;">
-        <div style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;">
-          <img src="${displayImg}" style="width:80px;height:100px;object-fit:contain;" onerror="this.style.display='none'">
-        </div>
-        <div style="flex:1;min-width:0;">${infoRows}</div>
-      </div>
-      <div style="padding:0 12px;">${discountRows}</div>
-      ${totalHtml}
-    `;
-  } else {
-    body.innerHTML = `<div style="padding:10px 12px 6px;">${infoRows}${discountRows}</div>${totalHtml}`;
-  }
+  body.innerHTML = rows;
 }
 
 
