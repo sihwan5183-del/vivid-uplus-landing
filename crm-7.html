@@ -4378,10 +4378,9 @@ window.openPcStatusSheet=function(){
 window.openPcAssignSheet=function(){
   if(!isMobile){
     // 담당자 목록 생성
-    const canAssignAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
     const staffList=Object.values(allStaff).filter(s=>s.active!==false);
     const defaultStaff=[{name:'여인국',store:'남양시장점'},{name:'황제필',store:'중곡점'},{name:'강용민',store:'구미사점'}];
-    const list=canAssignAll?(staffList.length>0?staffList:defaultStaff):[{name:currentUser.name,store:currentUser.store}];
+    const list=currentUser.type==='admin'?(staffList.length>0?staffList:defaultStaff):[{name:currentUser.name,store:currentUser.store||''}];
     const chips=list.map(s=>`
       <button onclick="selectPcAssign(this,'${s.name}','${s.store||''}')" style="padding:10px 16px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:600;cursor:pointer;text-align:left;transition:all .15s;">
         <div>${s.name}</div><div style="font-size:11px;color:var(--muted);">${s.store||''}</div>
@@ -4936,25 +4935,18 @@ function openBS(key){
   else if(key==='memo'){$('memoInp').value='';$('memoOv').classList.add('open');$('memoBS').classList.add('open');}
   else if(key==='assign'){
     resetChips('assign');
-    // 권한에 따라 배정 가능 직원 목록 생성
-    const canAssignAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
     const grid=$('assignGrid');
-    if(canAssignAll){
+    // 직원(staff)이면 무조건 본인만 / 관리자(admin)만 전체 목록
+    if(currentUser.type==='admin'){
       const staffList=Object.values(allStaff).filter(s=>s.active!==false);
-      // staff DB 비어있으면 기본 목록 사용
       const defaultStaff=[{name:'여인국',store:'남양시장점'},{name:'황제필',store:'중곡점'},{name:'강용민',store:'구미사점'}];
       const list=staffList.length>0?staffList:defaultStaff;
-      grid.innerHTML=list.map(s=>`
-        <button class="sel-chip" data-v="${s.name}|${s.store}" onclick="chip(this,'assignStaff')">
-          ${s.name}<br><span style="font-size:10px;color:var(--muted);">${s.store||''}</span>
-        </button>`).join('')+`<button class="sel-chip" data-v="|미배정" onclick="chip(this,'assignStaff')">미배정</button>`;
+      grid.innerHTML=list.map(function(s){return '<button class="sel-chip" data-v="'+s.name+'|'+(s.store||'')+'" onclick="chip(this,\"assignStaff\")">'+s.name+'<br><span style="font-size:10px;color:var(--muted);">'+(s.store||'')+'</span></button>';}).join('')+'<button class="sel-chip" data-v="|미배정" onclick="chip(this,\"assignStaff\")">미배정</button>';
     } else {
       const name=currentUser.name||'';
       const store=currentUser.store||'';
-      grid.innerHTML=`<button class="sel-chip on" data-v="${name}|${store}" onclick="chip(this,'assignStaff')">
-        ${name} (나)<br><span style="font-size:10px;color:var(--muted);">${store}</span>
-      </button>`;
-      bsState.assignStaff=`${name}|${store}`;
+      grid.innerHTML='<button class="sel-chip on" data-v="'+name+'|'+store+'" onclick="chip(this,&quot;assignStaff&quot;)">'+name+' (나)<br><span style="font-size:10px;color:var(--muted);">'+store+'</span></button>';
+      bsState.assignStaff=name+'|'+store;
     }
     $('assignOv').classList.add('open');$('assignBS').classList.add('open');
   }
