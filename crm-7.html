@@ -2687,7 +2687,7 @@ function renderAll(){
 let curStaffTab='my-customers';
 let curMyCustomerTab='assigned';
 
-function switchStaffTab(tab){
+window.switchStaffTab=function(tab){
   curStaffTab=tab;
   // 탭 active 처리
   document.querySelectorAll('#staffTabBar .tab').forEach(el=>{
@@ -2716,13 +2716,16 @@ function switchStaffTab(tab){
 }
 
 function switchMyCustomerTab(tab){
-  curMyCustomerTab=tab;
-  ['assigned','tossed','pickup'].forEach(t=>{
-    const el=$('mct-'+t);
-    if(el) el.classList.toggle('on', t===tab);
-  });
-  renderMyCustomers();
+  try{
+    curMyCustomerTab=tab;
+    ['assigned','tossed','pickup'].forEach(t=>{
+      const el=$('mct-'+t);
+      if(el) el.classList.toggle('on', t===tab);
+    });
+    renderMyCustomers();
+  }catch(e){console.error('switchMyCustomerTab error:',e);}
 }
+window.switchMyCustomerTab=switchMyCustomerTab;
 
 // ── 직원 내 고객 렌더링 ──
 function renderMyCustomers(){
@@ -4461,6 +4464,20 @@ function switchTab(tab){
   // 요약카드는 홈탭에서만 표시
   const sc=$('summaryCards');
   if(sc)sc.style.display=tab==='home'?'flex':'none';
+  // 직원 모바일에서 switchTab 호출 시 cardList 보이게 + 다른 직원화면 숨기기
+  if(currentUser.type==='staff'&&isMobile){
+    const cardList=$('cardList');
+    const myCustomers=$('staffMyCustomers');
+    const unassigned=$('staffUnassignedScreen');
+    if(cardList) cardList.style.display='';
+    if(myCustomers) myCustomers.style.display='none';
+    if(unassigned) unassigned.style.display='none';
+    // 직원 탭바 active 처리
+    document.querySelectorAll('#staffTabBar .tab').forEach(el=>el.classList.remove('on'));
+    const allTab=document.querySelector('#staffTabBar [data-stab="all"]');
+    if(allTab) allTab.classList.add('on');
+    curStaffTab='all';
+  }
   renderList();
 }
 window.switchTab=switchTab;
