@@ -1737,7 +1737,10 @@ input,select,textarea{font-family:inherit;outline:none;}
 <div class="menu-screen" id="menuScreen">
   <div class="menu-hdr">
     <div class="menu-hdr-title">📊 현황 / 메뉴</div>
-    <button onclick="closeMenu()" style="font-size:20px;color:var(--muted);padding:4px;">✕</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button onclick="logout()" style="height:32px;padding:0 14px;border-radius:8px;border:1.5px solid var(--red);color:var(--red);background:#FEF2F2;font-size:12px;font-weight:700;">🚪 로그아웃</button>
+      <button onclick="closeMenu()" style="font-size:20px;color:var(--muted);padding:4px;">✕</button>
+    </div>
   </div>
 
   <!-- 기간 탭 -->
