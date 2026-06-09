@@ -1899,7 +1899,7 @@ input,select,textarea{font-family:inherit;outline:none;}
   <div class="det-body" id="detBody"></div>
 
   <div class="det-footer">
-    <button class="det-foot-btn" onclick="openStatusBS()">상태 변경</button>
+    ${(currentUser.type==='admin'||(c&&c.assignedTo&&c.assignedTo===currentUser.name))?'<button class="det-foot-btn" onclick="openStatusBS()">상태 변경</button>':''}
     <button class="det-foot-btn primary" id="detCallBtn" onclick="detCall()">📞 전화 걸기</button>
   </div>
   <div style="display:flex;gap:8px;padding:8px 14px 14px;">
@@ -5230,10 +5230,11 @@ window.onStatusChange=async function(newStatus){
     return;
   }
   const c=ALL.find(x=>x._id===selId);if(!c)return;
-  // 권한 체크: 일반 직원은 본인 담당 건만 상태 변경 가능
-  const canAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
-  if(!canAll&&c.assignedTo&&c.assignedTo!==currentUser.name){
-    alert('본인이 담당한 건만 상태를 변경할 수 있습니다.');return;
+  // 권한 체크: 직원은 본인 담당 건만 상태 변경 가능 (미배정도 불가)
+  if(currentUser.type==='staff'){
+    if(!c.assignedTo||c.assignedTo!==currentUser.name){
+      alert('본인이 담당한 건만 상태를 변경할 수 있습니다.');return;
+    }
   }
   const upd={};
   upd[`consultations/${selId}/status`]=newStatus;
