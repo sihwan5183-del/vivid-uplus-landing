@@ -2060,15 +2060,7 @@ input,select,textarea{font-family:inherit;outline:none;}
 </div>
 
 <script>
-window.addEventListener('error',function(e){
-  const al=document.getElementById('appLoading');if(al)al.style.display='none';
-  const lw=document.getElementById('loginWrap');if(lw)lw.style.display='grid';
-});
-window.addEventListener('unhandledrejection',function(e){
-  const al=document.getElementById('appLoading');if(al)al.style.display='none';
-  const lw=document.getElementById('loginWrap');if(lw)lw.style.display='grid';
-});
-
+// 전역 에러 핸들러 제거 - 에러 시 강제 로그아웃 방지
 </script>
 <script type="module">
 const isMobile=window.innerWidth<1024||/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
