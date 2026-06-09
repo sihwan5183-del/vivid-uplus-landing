@@ -1632,9 +1632,11 @@ input,select,textarea{font-family:inherit;outline:none;}
   </div>
   <!-- 탭 (직원용) -->
   <div class="tabs" id="staffTabBar" style="display:none;">
-    <div class="tab on" data-stab="my-customers" onclick="switchStaffTab('my-customers')">📋 내 고객</div>
+    <div class="tab on" data-stab="all" onclick="switchStaffTab('all')">전체현황</div>
+    <div class="tab" data-stab="my-customers" onclick="switchStaffTab('my-customers')">📋 내고객</div>
     <div class="tab" data-stab="unassigned" onclick="switchStaffTab('unassigned')">🆓 미배정 <span class="tcnt tcnt-orange" id="stc-unassigned">0</span></div>
-    <div class="tab" data-stab="all" onclick="switchStaffTab('all')">전체현황</div>
+    <div class="tab" data-stab="recare" onclick="switchStaffTab('recare')">재케어 <span class="tcnt tcnt-purple" id="stc-recare">0</span></div>
+    <div class="tab" data-stab="absence" onclick="switchStaffTab('absence')">부재케어 <span class="tcnt tcnt-orange" id="stc-absence">0</span></div>
   </div>
 
   <!-- 검색/필터 -->
@@ -2305,7 +2307,7 @@ function applyPermUI(){
     const staffTab=$('staffTabBar');
     if(adminTab) adminTab.style.display='none';
     if(staffTab) staffTab.style.display='flex';
-    switchStaffTab('my-customers');
+    switchStaffTab('all');
   }
   // ── PC: 직원이면 성과분석 메뉴 전체 숨김 (본인 실적은 대시보드에서만)
   if(isStaff){
@@ -2730,11 +2732,9 @@ let curMyCustomerTab='assigned';
 
 window.switchStaffTab=function(tab){
   curStaffTab=tab;
-  // 탭 active 처리
   document.querySelectorAll('#staffTabBar .tab').forEach(el=>{
     el.classList.toggle('on', el.dataset.stab===tab);
   });
-  // 화면 전환
   const cardList=$('cardList');
   const myCustomers=$('staffMyCustomers');
   const unassigned=$('staffUnassignedScreen');
@@ -2742,17 +2742,48 @@ window.switchStaffTab=function(tab){
   if(myCustomers) myCustomers.style.display='none';
   if(unassigned) unassigned.style.display='none';
 
-  if(tab==='my-customers'){
-    if(myCustomers) myCustomers.style.display='flex';
-    myCustomers.style.flexDirection='column';
+  if(tab==='all'){
+    if(cardList) cardList.style.display='';
+    switchTab('home');
+  } else if(tab==='my-customers'){
+    if(myCustomers){myCustomers.style.display='flex';myCustomers.style.flexDirection='column';}
     renderMyCustomers();
   } else if(tab==='unassigned'){
-    if(unassigned) unassigned.style.display='flex';
-    unassigned.style.flexDirection='column';
+    if(unassigned){unassigned.style.display='flex';unassigned.style.flexDirection='column';}
     renderStaffUnassigned();
-  } else if(tab==='all'){
-    if(cardList){ cardList.style.display=''; }
-    switchTab('home');
+  } else if(tab==='recare'){
+    // 본인 재케어만
+    if(cardList) cardList.style.display='';
+    curTab='recare';
+    document.querySelectorAll('#tabBar .tab').forEach(t=>t.classList.toggle('on',t.dataset.tab==='recare'));
+    const myName=currentUser.name;
+    const list=ALL.filter(c=>c.status==='재케어'&&c.assignedTo===myName);
+    const phoneCount={};
+    ALL.forEach(c=>{if(c.phone){const p=c.phone.replace(/-/g,'');phoneCount[p]=(phoneCount[p]||0)+1;}});
+    const dupPhones=new Set(Object.keys(phoneCount).filter(p=>phoneCount[p]>1));
+    if(!list.length){
+      cardList.innerHTML='<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">재케어 고객이 없습니다</div></div>';
+    } else {
+      cardList.innerHTML=list.map(c=>makeCard(c,dupPhones)).join('');
+    }
+    // 뱃지 업데이트
+    const el=$('stc-recare'); if(el) el.textContent=list.length;
+  } else if(tab==='absence'){
+    // 본인 부재케어만
+    if(cardList) cardList.style.display='';
+    curTab='absence';
+    document.querySelectorAll('#tabBar .tab').forEach(t=>t.classList.toggle('on',t.dataset.tab==='absence'));
+    const myName=currentUser.name;
+    const list=ALL.filter(c=>c.status==='부재케어'&&c.assignedTo===myName);
+    const phoneCount={};
+    ALL.forEach(c=>{if(c.phone){const p=c.phone.replace(/-/g,'');phoneCount[p]=(phoneCount[p]||0)+1;}});
+    const dupPhones=new Set(Object.keys(phoneCount).filter(p=>phoneCount[p]>1));
+    if(!list.length){
+      cardList.innerHTML='<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">부재케어 고객이 없습니다</div></div>';
+    } else {
+      cardList.innerHTML=list.map(c=>makeCard(c,dupPhones)).join('');
+    }
+    const el=$('stc-absence'); if(el) el.textContent=list.length;
   }
 }
 
@@ -2885,9 +2916,13 @@ window.submitPcAssign=async function(){
 };
 
 function updateStaffTabBadge(){
-  const cnt=ALL.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
-  const el=$('stc-unassigned');
-  if(el) el.textContent=cnt;
+  const myName=currentUser.name;
+  const unassignedCnt=ALL.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
+  const recareCnt=ALL.filter(c=>c.status==='재케어'&&c.assignedTo===myName).length;
+  const absenceCnt=ALL.filter(c=>c.status==='부재케어'&&c.assignedTo===myName).length;
+  const el1=$('stc-unassigned'); if(el1) el1.textContent=unassignedCnt;
+  const el2=$('stc-recare'); if(el2) el2.textContent=recareCnt;
+  const el3=$('stc-absence'); if(el3) el3.textContent=absenceCnt;
 }
 
 
@@ -3014,26 +3049,45 @@ function makeCard(c,dupPhones){
   // 액션 버튼
   let actions='';
   const unassigned=!c.assignedTo;
+  const isMyCard=currentUser.type==='admin'||(c.assignedTo&&c.assignedTo===currentUser.name);
   if(unassigned){
-    actions=`
-      <button class="ca-btn outline-blue" onclick="event.stopPropagation();setSelId('${c._id}');openBS('assign')">👤 담당자 배정</button>
-      <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">연락 시작</button>
-      <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    if(currentUser.type==='admin'){
+      actions=`
+        <button class="ca-btn outline-blue" onclick="event.stopPropagation();setSelId('${c._id}');openBS('assign')">👤 담당자 배정</button>
+        <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">연락 시작</button>
+        <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    } else {
+      actions=`
+        <button class="ca-btn outline-blue" onclick="event.stopPropagation();pickupConsult('${c._id}',event)">🙋 내가 맡을게</button>
+        <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    }
   } else if(c.status==='재케어'){
-    actions=`
-      <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">전화</button>
-      <button class="ca-btn outline-purple" onclick="event.stopPropagation();setSelId('${c._id}');openBS('rc')">재케어 연장</button>
-      <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    if(isMyCard){
+      actions=`
+        <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">전화</button>
+        <button class="ca-btn outline-purple" onclick="event.stopPropagation();setSelId('${c._id}');openBS('rc')">재케어 연장</button>
+        <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    } else {
+      actions=`<button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    }
   } else if(c.status==='부재케어'){
-    actions=`
-      <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">전화</button>
-      <button class="ca-btn" onclick="event.stopPropagation();setSelId('${c._id}');openBS('abs')">부재 추가</button>
-      <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    if(isMyCard){
+      actions=`
+        <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">전화</button>
+        <button class="ca-btn" onclick="event.stopPropagation();setSelId('${c._id}');openBS('abs')">부재 추가</button>
+        <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    } else {
+      actions=`<button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    }
   } else {
-    actions=`
-      <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">연락 시작</button>
-      <button class="ca-btn" onclick="event.stopPropagation();setSelId('${c._id}');openBS('abs')">부재</button>
-      <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    if(isMyCard){
+      actions=`
+        <button class="ca-btn primary" onclick="event.stopPropagation();doCall('${c._id}','${(c.phone||'').replace(/-/g,'')}')">연락 시작</button>
+        <button class="ca-btn" onclick="event.stopPropagation();setSelId('${c._id}');openBS('abs')">부재</button>
+        <button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    } else {
+      actions=`<button class="ca-btn" onclick="event.stopPropagation();openDet('${c._id}')">상세</button>`;
+    }
   }
 
   // 예정 시간 표시
