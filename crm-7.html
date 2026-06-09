@@ -1811,9 +1811,9 @@ input,select,textarea{font-family:inherit;outline:none;}
     <button class="menu-action-btn" onclick="openMobileTrash()">🗑️ 휴지통</button>
   </div>
   <div class="menu-btn-row">
-    <button class="menu-action-btn danger" onclick="logout()">🚪 로그아웃</button>
+    <button class="menu-action-btn" style="background:#FEF2F2;color:var(--red);border:1.5px solid #FECACA;width:100%;height:48px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;" onclick="logout()">🚪 로그아웃</button>
   </div>
-  <div style="height:20px;"></div>
+  <div style="height:40px;"></div>
 </div>
 
 <!-- ══ 모바일 휴지통 ══ -->
@@ -2269,11 +2269,28 @@ function applyPermUI(){
     const staffTab=$('staffTabBar');
     if(adminTab) adminTab.style.display='none';
     if(staffTab) staffTab.style.display='flex';
-    // 직원용 첫 화면: 내 고객
     switchStaffTab('my-customers');
   }
-  // 성과분석 - 부사장 이상만
-  if(!canAccessStats()){
+  // ── PC: 직원이면 성과분석 메뉴 전체 숨김 (본인 실적은 대시보드에서만)
+  if(isStaff){
+    // 성과 분석 섹션 타이틀 + 하위 메뉴 전체 숨김
+    document.querySelectorAll('.pc-nav-section,.pc-nav-item.pc-nav-sub').forEach(el=>{
+      const oc=el.getAttribute('onclick')||'';
+      if(el.classList.contains('pc-nav-section')&&el.textContent.includes('성과 분석')){
+        el.style.display='none';
+      }
+      if(oc.includes('stat-')||oc.includes('set-perm')){
+        el.style.display='none';
+      }
+    });
+    // 대시보드 담당자 현황 "실적 전체" 버튼 숨김
+    document.querySelectorAll('[onclick*="stat-staff"]').forEach(el=>el.style.display='none');
+    // 모바일 메뉴 매장별 실적 섹션 숨김
+    const menuStoreSection=document.getElementById('menuStoreRows');
+    if(menuStoreSection&&menuStoreSection.parentElement) menuStoreSection.parentElement.style.display='none';
+  }
+  // 성과분석 - 부사장 이상만 (관리자 중에서도 제한)
+  if(!canAccessStats()&&!isStaff){
     document.querySelectorAll('.pc-nav-item').forEach(el=>{
       if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes('stat-')){
         el.style.display='none';
