@@ -2108,24 +2108,18 @@ async function notifyAssign(consultId, toName, fromName, source){
     const c=ALL.find(x=>x._id===consultId);
     if(!c||!toName)return;
     const label=source==='toss'?'토스':'배정';
-    const msg='📬 <b>새 상담 '+label+' 알림</b>
-━━━━━━━━━━━━
-'
-      +'👤 <b>'+(c.name||'고객')+'</b> ('+(c.phone||'-')+')
-'
-      +'📱 '+(c.device||'-')+' '+(c.storage||'')+'
-'
-      +'📡 '+(c.carrier||'-')+'
-'
-      +'💡 '+(c.plan||'-')+'
-'
-      +'━━━━━━━━━━━━
-'
-      +(source==='toss'
-        ?'🔄 <b>'+fromName+'</b>님이 토스했습니다'
-        :'👑 관리자(<b>'+fromName+'</b>)가 배정했습니다')+'
-'
-      +'🕐 '+new Date().toLocaleString('ko-KR');
+    const lines=[
+      '📬 <b>새 상담 '+label+' 알림</b>',
+      '━━━━━━━━━━━━',
+      '👤 <b>'+(c.name||'고객')+'</b> ('+(c.phone||'-')+')',
+      '📱 '+(c.device||'-')+' '+(c.storage||''),
+      '📡 '+(c.carrier||'-'),
+      '💡 '+(c.plan||'-'),
+      '━━━━━━━━━━━━',
+      source==='toss'?'🔄 <b>'+fromName+'</b>님이 토스했습니다':'👑 관리자(<b>'+fromName+'</b>)가 배정했습니다',
+      '🕐 '+new Date().toLocaleString('ko-KR')
+    ];
+    const msg=lines.join('\n');
     await sendTelegramToStaff(toName, msg);
   }catch(e){console.error('notifyAssign error',e);}
 }
