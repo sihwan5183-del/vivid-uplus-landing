@@ -2767,12 +2767,8 @@ function renderStaffUnassigned(){
   ALL.forEach(c=>{ if(c.phone){ const p=c.phone.replace(/-/g,''); phoneCount[p]=(phoneCount[p]||0)+1; }});
   const dupPhones=new Set(Object.keys(phoneCount).filter(p=>phoneCount[p]>1));
   container.innerHTML=list.map(c=>{
-    const baseCard=makeCard(c,dupPhones);
-    // 카드에 픽업 버튼 삽입
-    const pickupBtn=`<div style="padding:0 14px 12px;"><button onclick="pickupConsult('${c._id}',event)" style="width:100%;height:40px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">🙋 내가 맡을게</button></div>`;
-    return baseCard.replace('</div>
-', pickupBtn+'</div>
-');
+    const pickupBtn='<div style="padding:0 14px 12px;"><button onclick="pickupConsult(\''+c._id+'\',event)" style="width:100%;height:40px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">🙋 내가 맡을게</button></div>';
+    return makeCard(c,dupPhones)+pickupBtn;
   }).join('');
 }
 
