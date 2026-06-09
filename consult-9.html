@@ -851,7 +851,7 @@ const FB={
   appId:"1:560602626704:web:070534ced93a5f86247615"
 };
 const TG_TOKEN="8874240665:AAHSydUcmgrD5Bx25iXjpySEuJB3yNLeiz8";
-const TG_CHAT="8817835631";
+let TG_RECIPIENTS=["8817835631"]; // Firebase 로드 전 기본값 (시환님)
 
 const app=initializeApp(FB);
 const db=getDatabase(app);
@@ -1363,14 +1363,16 @@ document.querySelectorAll('.form-input,.form-textarea').forEach(el=>{
   el.addEventListener('input',checkSubmit);
 });
 
-// 텔레그램 전송
+// 텔레그램 전송 (수신자 전체 병렬 발송)
 async function sendTelegram(text){
   try{
-    await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:'HTML'})
-    });
+    await Promise.all(TG_RECIPIENTS.map(chatId=>
+      fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id:chatId,text,parse_mode:'HTML'})
+      }).catch(e=>console.error('TG error ('+chatId+'):', e))
+    ));
   }catch(e){console.error('TG error',e);}
 }
 
@@ -1573,6 +1575,17 @@ function boot(){
       '공시지원금': data['공시지원금']?.visible!==false,
       '선택약정':   data['선택약정']?.visible!==false,
     };
+  });
+
+  // 텔레그램 수신자 목록 실시간 구독
+  onValue(ref(db,'telegramRecipients'),snap=>{
+    const val=snap.val();
+    if(val){
+      // {id1:{chatId:'xxx',name:'홍길동',active:true}, ...} 구조
+      TG_RECIPIENTS=Object.values(val)
+        .filter(r=>r.active!==false&&r.chatId)
+        .map(r=>String(r.chatId));
+    }
   });
 }
 boot();
