@@ -4904,7 +4904,7 @@ function renderDetTop(c){
     <div class="det-meta">
       <div class="det-meta-item">🏪 <span class="det-meta-val">${c.assignedStore||'미배정'}</span></div>
       <div class="det-meta-item">👤 <span class="det-meta-val">${c.assignedTo||'미지정'}</span>
-        <button class="det-assign-btn" onclick="setSelId('${c._id}');openBS('assign')">변경</button>
+        ${currentUser.type==='admin'?'<button class="det-assign-btn" onclick="setSelId(\''+c._id+'\');openBS(\'assign\')">변경</button>':''}
       </div>
       <div class="det-meta-item">📅 <span class="det-meta-val">${fmt(c.createdAt)}</span></div>
       ${c.nextContactAt?`<div class="det-meta-item">⏰ <span class="det-meta-val${c.nextContactAt<now()?' blink':''}">${fmt(c.nextContactAt)}</span></div>`:''}
@@ -4938,11 +4938,12 @@ function renderDetBody(c,tab){
         <div class="info-row"><div class="info-key">인터넷/TV</div><div class="info-val">${c.internetTV||'아니요'}</div></div>
         ${c.memo?`<div class="info-row"><div class="info-key">고객 메모</div><div class="info-val">${c.memo}</div></div>`:''}
       </div>
+      ${(currentUser.type==='admin'||(c.assignedTo&&c.assignedTo===currentUser.name))?`
       <div style="display:flex;gap:8px;margin-bottom:8px;">
         <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--sub);" onclick="setSelId('${c._id}');openBS('memo')">메모 추가</button>
         <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--purple);background:#F5F3FF;font-size:12px;font-weight:700;color:var(--purple);" onclick="setSelId('${c._id}');openBS('rc')">재케어 예약</button>
         <button style="flex:1;height:38px;border-radius:8px;border:1.5px solid var(--orange);background:#FFF7ED;font-size:12px;font-weight:700;color:var(--orange);" onclick="setSelId('${c._id}');openBS('abs')">부재 기록</button>
-      </div>`;
+      </div>`:''}`;
   } else if(tab==='history'){
     const hist=(c.contactHistory||[]).slice().reverse();
     const icons={전화:'📞',부재:'📵',상담연결:'📞',재케어:'🔄',SMS:'💬'};
