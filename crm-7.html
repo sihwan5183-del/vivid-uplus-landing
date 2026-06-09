@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{overscroll-behavior-y:none;overscroll-behavior:none;}
 :root{
   --blue:#074BF4;--blue-light:#EEF3FF;--blue-mid:#C7D7FD;
   --pink:#E6007E;--pink-light:#FFF0F7;
@@ -2083,6 +2084,52 @@ const app=initializeApp(FB);
 const db=getDatabase(app);
 const auth=getAuth(app);
 
+// ── 텔레그램 설정 ──
+const TG_TOKEN="8874240665:AAHSydUcmgrD5Bx25iXjpySEuJB3yNLeiz8";
+
+// 특정 직원에게 텔레그램 알림 전송
+async function sendTelegramToStaff(staffName, text){
+  try{
+    const snap=await new Promise(res=>onValue(ref(db,'telegramRecipients'),s=>{res(s);},{onlyOnce:true}));
+    const recipients=snap.val()||{};
+    const found=Object.values(recipients).find(r=>r.name===staffName&&r.active!==false&&r.chatId);
+    if(!found){console.warn('TG: chatId 없음 -',staffName);return;}
+    await fetch('https://api.telegram.org/bot'+TG_TOKEN+'/sendMessage',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:String(found.chatId),text,parse_mode:'HTML'})
+    });
+  }catch(e){console.error('TG staff notify error',e);}
+}
+
+// 배정/토스 알림 발송
+async function notifyAssign(consultId, toName, fromName, source){
+  try{
+    const c=ALL.find(x=>x._id===consultId);
+    if(!c||!toName)return;
+    const label=source==='toss'?'토스':'배정';
+    const msg='📬 <b>새 상담 '+label+' 알림</b>
+━━━━━━━━━━━━
+'
+      +'👤 <b>'+(c.name||'고객')+'</b> ('+(c.phone||'-')+')
+'
+      +'📱 '+(c.device||'-')+' '+(c.storage||'')+'
+'
+      +'📡 '+(c.carrier||'-')+'
+'
+      +'💡 '+(c.plan||'-')+'
+'
+      +'━━━━━━━━━━━━
+'
+      +(source==='toss'
+        ?'🔄 <b>'+fromName+'</b>님이 토스했습니다'
+        :'👑 관리자(<b>'+fromName+'</b>)가 배정했습니다')+'
+'
+      +'🕐 '+new Date().toLocaleString('ko-KR');
+    await sendTelegramToStaff(toName, msg);
+  }catch(e){console.error('notifyAssign error',e);}
+}
+
 // ── 상태 ──
 let ALL=[];
 let TRASH=[];
@@ -2809,25 +2856,38 @@ window.pickupConsult=async function(id,e){
 // submitPcAssign 오버라이드 - 직원이 타인에게 넘길 때 assignSource='toss' 기록
 const _origSubmitPcAssign=window.submitPcAssign;
 window.submitPcAssign=async function(){
+  const sel=document.getElementById('pcAssignSelected')?.textContent;
+  if(!sel){alert('담당자를 선택해주세요.');return;}
+  const [name,store]=sel.split('|');
+  if(!selId)return;
+  const c=ALL.find(x=>x._id===selId);
+  if(!c){return;}
+  const canAssignAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+  if(!canAssignAll&&c.assignedTo&&c.assignedTo!==currentUser.name){alert('본인 담당 건만 변경 가능합니다.');return;}
+
+  // assignSource 판별
+  let source='admin';
   if(currentUser.type==='staff'){
-    const sel=document.getElementById('pcAssignSelected')?.textContent;
-    if(!sel){alert('담당자를 선택해주세요.');return;}
-    const [name,store]=sel.split('|');
-    if(!selId)return;
-    const c=ALL.find(x=>x._id===selId);
-    if(!c){return;}
-    if(c.assignedTo&&c.assignedTo!==currentUser.name){alert('본인 담당 건만 변경 가능합니다.');return;}
-    const upd={};
-    upd['consultations/'+selId+'/assignedTo']=name;
-    upd['consultations/'+selId+'/assignedStore']=store;
-    upd['consultations/'+selId+'/assignSource']='toss';
-    await update(ref(db),upd);
-    logAction({customerId:selId,customerName:c.name||'-',customerPhone:c.phone||'-',staffName:currentUser.name,staffRole:currentUser.role||'-',actionType:'assign_change',actionLabel:'담당자 토스',beforeValue:c.assignedTo||'미배정',afterValue:name,memo:''});
-    document.getElementById('pcMiniModal')?.remove();
-    document.getElementById('bsAssign')?.classList.remove('open');
-    return;
+    source=name===currentUser.name?'pickup':'toss';
   }
-  if(_origSubmitPcAssign) await _origSubmitPcAssign();
+
+  const upd={};
+  upd['consultations/'+selId+'/assignedTo']=name;
+  upd['consultations/'+selId+'/assignedStore']=store;
+  upd['consultations/'+selId+'/assignSource']=source;
+  if(c) pushAssignHist(c,name,store,upd);
+  await update(ref(db),upd);
+  logAction({customerId:selId,customerName:c.name||'-',customerPhone:c.phone||'-',staffName:currentUser.name||currentUser.email||'담당자',staffRole:currentUser.role||'-',actionType:'assign_change',actionLabel:source==='toss'?'담당자 토스':source==='pickup'?'픽업':'담당자 배정',beforeValue:c.assignedTo||'미배정',afterValue:name,memo:''});
+
+  // 텔레그램 알림
+  if(name&&(source==='admin'||source==='toss')){
+    try{ await notifyAssign(selId, name, currentUser.name||'관리자', source); }catch(e){}
+  }
+
+  document.getElementById('pcMiniModal')?.remove();
+  document.getElementById('bsAssign')?.classList.remove('open');
+  const fresh=ALL.find(x=>x._id===selId);
+  if(fresh) renderDetTop(fresh);
 };
 
 function updateStaffTabBadge(){
@@ -5158,23 +5218,36 @@ window.submitMemo=async function(){
 window.submitAssign=async function(){
   if(!bsState.assignStaff){alert('담당자를 선택해주세요.');return;}
   if(!selId){alert('선택된 고객이 없습니다.');return;}
-  // 권한 체크: 일반 직원은 본인 담당 건만 변경 가능
   const canAssignAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+  const c2=ALL.find(x=>x._id===selId);
   if(!canAssignAll){
-    const c=ALL.find(x=>x._id===selId);
-    if(c&&c.assignedTo&&c.assignedTo!==currentUser.name){
+    if(c2&&c2.assignedTo&&c2.assignedTo!==currentUser.name){
       alert('본인이 담당한 건만 변경할 수 있습니다.');return;
     }
   }
   const [name,store]=bsState.assignStaff.split('|');
-  const c2=ALL.find(x=>x._id===selId);
+
+  // assignSource 판별
+  // 관리자가 배정 → admin, 직원이 본인한테 → pickup, 직원이 타인한테 → toss
+  let source='admin';
+  if(currentUser.type==='staff'){
+    source=name===currentUser.name?'pickup':'toss';
+  }
+
   const upd2={};
-  upd2[`consultations/${selId}/assignedTo`]=name||'';
-  upd2[`consultations/${selId}/assignedStore`]=store||'';
+  upd2['consultations/'+selId+'/assignedTo']=name||'';
+  upd2['consultations/'+selId+'/assignedStore']=store||'';
+  upd2['consultations/'+selId+'/assignSource']=source;
   if(c2) pushAssignHist(c2,name,store,upd2);
-  const prevAssign=ALL.find(x=>x._id===selId);
+  const prevAssign=c2;
   await update(ref(db),upd2);
-  logAction({customerId:selId,customerName:prevAssign?.name||'-',customerPhone:prevAssign?.phone||'-',staffName:currentUser.name||currentUser.email||'담당자',staffRole:currentUser.role||'-',actionType:'assign_change',actionLabel:'담당자 변경',beforeValue:prevAssign?.assignedTo||'미배정',afterValue:name||'-',memo:''});
+  logAction({customerId:selId,customerName:prevAssign?.name||'-',customerPhone:prevAssign?.phone||'-',staffName:currentUser.name||currentUser.email||'담당자',staffRole:currentUser.role||'-',actionType:'assign_change',actionLabel:source==='toss'?'담당자 토스':source==='pickup'?'픽업':'담당자 배정',beforeValue:prevAssign?.assignedTo||'미배정',afterValue:name||'-',memo:''});
+
+  // 텔레그램 알림 (관리자 배정 or 토스 시 수신자에게)
+  if(name&&(source==='admin'||source==='toss')){
+    try{ await notifyAssign(selId, name, currentUser.name||'관리자', source); }catch(e){}
+  }
+
   closeBS('assign');
   const c=ALL.find(x=>x._id===selId);
   if(c){
