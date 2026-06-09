@@ -1620,7 +1620,7 @@ input,select,textarea{font-family:inherit;outline:none;}
     </div>
   </div>
 
-  <!-- 탭 -->
+  <!-- 탭 (관리자용) -->
   <div class="tabs" id="tabBar">
     <div class="tab on" data-tab="home" onclick="switchTab('home')">전체</div>
     <div class="tab" data-tab="new" onclick="switchTab('new')">신규 <span class="tcnt tcnt-blue" id="tc-new">0</span></div>
@@ -1628,6 +1628,12 @@ input,select,textarea{font-family:inherit;outline:none;}
     <div class="tab" data-tab="absence" onclick="switchTab('absence')">부재케어 <span class="tcnt tcnt-orange" id="tc-absence">0</span></div>
     <div class="tab" data-tab="urgent" onclick="switchTab('urgent')">긴급 <span class="tcnt tcnt-red" id="tc-urgent">0</span></div>
     <div class="tab" data-tab="mine" onclick="switchTab('mine')">내 고객</div>
+  </div>
+  <!-- 탭 (직원용) -->
+  <div class="tabs" id="staffTabBar" style="display:none;">
+    <div class="tab on" data-stab="my-customers" onclick="switchStaffTab('my-customers')">📋 내 고객</div>
+    <div class="tab" data-stab="unassigned" onclick="switchStaffTab('unassigned')">🆓 미배정 <span class="tcnt tcnt-orange" id="stc-unassigned">0</span></div>
+    <div class="tab" data-stab="all" onclick="switchStaffTab('all')">전체현황</div>
   </div>
 
   <!-- 검색/필터 -->
@@ -1655,6 +1661,52 @@ input,select,textarea{font-family:inherit;outline:none;}
 
   <!-- 카드 목록 -->
   <div class="card-list" id="cardList"></div>
+
+  <!-- 직원용 내 고객 화면 -->
+  <div id="staffMyCustomers" style="display:none;flex:1;overflow-y:auto;background:var(--bg);">
+    <!-- 내 고객 서브탭 -->
+    <div style="display:flex;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;flex-shrink:0;">
+      <div class="tab on" id="mct-assigned" onclick="switchMyCustomerTab('assigned')" style="font-size:12px;">📥 배정받음</div>
+      <div class="tab" id="mct-tossed" onclick="switchMyCustomerTab('tossed')" style="font-size:12px;">🔄 토스받음</div>
+      <div class="tab" id="mct-pickup" onclick="switchMyCustomerTab('pickup')" style="font-size:12px;">🙋 내가 픽업</div>
+    </div>
+    <!-- 내 실적 요약 -->
+    <div id="myStatBar" style="background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;overflow-x:auto;">
+      <div style="flex-shrink:0;text-align:center;min-width:54px;">
+        <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">📋 총배정</div>
+        <div style="font-size:18px;font-weight:800;" id="my-stat-total">0</div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;min-width:54px;">
+        <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">✅ 개통</div>
+        <div style="font-size:18px;font-weight:800;color:var(--green);" id="my-stat-done">0</div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;min-width:54px;">
+        <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">📞 연락중</div>
+        <div style="font-size:18px;font-weight:800;color:var(--blue);" id="my-stat-contact">0</div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;min-width:54px;">
+        <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">🔁 재케어</div>
+        <div style="font-size:18px;font-weight:800;color:var(--purple);" id="my-stat-recare">0</div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;min-width:54px;">
+        <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">📵 부재</div>
+        <div style="font-size:18px;font-weight:800;color:var(--orange);" id="my-stat-absent">0</div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;min-width:54px;border-left:1px solid var(--line);padding-left:10px;">
+        <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">📈 개통률</div>
+        <div style="font-size:18px;font-weight:800;color:var(--blue);" id="my-stat-rate">0%</div>
+      </div>
+    </div>
+    <div class="card-list" id="myCustomerList" style="flex:1;"></div>
+  </div>
+
+  <!-- 직원용 미배정 픽업 화면 -->
+  <div id="staffUnassignedScreen" style="display:none;flex:1;overflow-y:auto;background:var(--bg);">
+    <div style="background:#FFF7ED;border-bottom:1px solid #FED7AA;padding:10px 14px;font-size:12px;color:#92400E;font-weight:600;">
+      🆓 미배정 고객 — 아래에서 직접 픽업할 수 있어요
+    </div>
+    <div class="card-list" id="staffUnassignedList"></div>
+  </div>
 
   <!-- 하단 네비 -->
   <div class="btmnav">
@@ -1741,9 +1793,9 @@ input,select,textarea{font-family:inherit;outline:none;}
     </div>
   </div>
 
-  <!-- 직원별 실적 -->
-  <div class="menu-section" style="padding-bottom:0;">
-    <div class="menu-section-title">👤 직원별 실적</div>
+  <!-- 직원별 실적 (관리자: 전체, 직원: 본인만) -->
+  <div class="menu-section" style="padding-bottom:0;" id="menuStaffSection">
+    <div class="menu-section-title" id="menuStaffSectionTitle">👤 직원별 실적</div>
     <div id="menuStaffRows"></div>
   </div>
 
@@ -2210,6 +2262,16 @@ onValue(ref(db,'consultations'),snap=>{
 }
 
 function applyPermUI(){
+  const isStaff=currentUser.type==='staff';
+  // ── 모바일: 직원 전용 UI 전환 ──
+  if(isStaff&&isMobile){
+    const adminTab=$('tabBar');
+    const staffTab=$('staffTabBar');
+    if(adminTab) adminTab.style.display='none';
+    if(staffTab) staffTab.style.display='flex';
+    // 직원용 첫 화면: 내 고객
+    switchStaffTab('my-customers');
+  }
   // 성과분석 - 부사장 이상만
   if(!canAccessStats()){
     document.querySelectorAll('.pc-nav-item').forEach(el=>{
@@ -2601,6 +2663,166 @@ function renderAll(){
   renderRecentEntries();
   renderDbSummary();
   renderUnassigned();
+  // 직원 로그인 상태면 직원 화면도 갱신
+  if(currentUser.type==='staff'&&isMobile){
+    renderMyCustomers();
+    renderStaffUnassigned();
+    updateStaffTabBadge();
+  }
+}
+
+// ── 직원용 탭 전환 ──
+let curStaffTab='my-customers';
+let curMyCustomerTab='assigned';
+
+function switchStaffTab(tab){
+  curStaffTab=tab;
+  // 탭 active 처리
+  document.querySelectorAll('#staffTabBar .tab').forEach(el=>{
+    el.classList.toggle('on', el.dataset.stab===tab);
+  });
+  // 화면 전환
+  const cardList=$('cardList');
+  const myCustomers=$('staffMyCustomers');
+  const unassigned=$('staffUnassignedScreen');
+  if(cardList) cardList.style.display='none';
+  if(myCustomers) myCustomers.style.display='none';
+  if(unassigned) unassigned.style.display='none';
+
+  if(tab==='my-customers'){
+    if(myCustomers) myCustomers.style.display='flex';
+    myCustomers.style.flexDirection='column';
+    renderMyCustomers();
+  } else if(tab==='unassigned'){
+    if(unassigned) unassigned.style.display='flex';
+    unassigned.style.flexDirection='column';
+    renderStaffUnassigned();
+  } else if(tab==='all'){
+    if(cardList){ cardList.style.display=''; }
+    switchTab('home');
+  }
+}
+
+function switchMyCustomerTab(tab){
+  curMyCustomerTab=tab;
+  ['assigned','tossed','pickup'].forEach(t=>{
+    const el=$('mct-'+t);
+    if(el) el.classList.toggle('on', t===tab);
+  });
+  renderMyCustomers();
+}
+
+// ── 직원 내 고객 렌더링 ──
+function renderMyCustomers(){
+  const myName=currentUser.name;
+  if(!myName) return;
+
+  const allMine=ALL.filter(c=>c.assignedTo===myName);
+
+  // 실적 요약
+  const done=allMine.filter(c=>c.status==='개통완료');
+  const contact=allMine.filter(c=>c.status==='연락중');
+  const recare=allMine.filter(c=>c.status==='재케어');
+  const absent=allMine.filter(c=>c.status==='부재케어');
+  const rate=allMine.length?Math.round(done.length/allMine.length*100):0;
+  if($('my-stat-total')) $('my-stat-total').textContent=allMine.length;
+  if($('my-stat-done')) $('my-stat-done').textContent=done.length;
+  if($('my-stat-contact')) $('my-stat-contact').textContent=contact.length;
+  if($('my-stat-recare')) $('my-stat-recare').textContent=recare.length;
+  if($('my-stat-absent')) $('my-stat-absent').textContent=absent.length;
+  if($('my-stat-rate')) $('my-stat-rate').textContent=rate+'%';
+
+  // 서브탭 필터
+  let list;
+  if(curMyCustomerTab==='assigned'){
+    list=allMine.filter(c=>c.assignSource==='admin'||!c.assignSource);
+  } else if(curMyCustomerTab==='tossed'){
+    list=allMine.filter(c=>c.assignSource==='toss');
+  } else {
+    list=allMine.filter(c=>c.assignSource==='pickup');
+  }
+
+  const container=$('myCustomerList');
+  if(!container) return;
+  if(!list.length){
+    container.innerHTML=`<div class="empty"><div class="empty-icon">${curMyCustomerTab==='tossed'?'🔄':curMyCustomerTab==='pickup'?'🙋':'📥'}</div><div class="empty-text">${curMyCustomerTab==='tossed'?'토스받은 고객이 없습니다':curMyCustomerTab==='pickup'?'픽업한 고객이 없습니다':'배정받은 고객이 없습니다'}</div></div>`;
+    return;
+  }
+  const phoneCount={};
+  ALL.forEach(c=>{ if(c.phone){ const p=c.phone.replace(/-/g,''); phoneCount[p]=(phoneCount[p]||0)+1; }});
+  const dupPhones=new Set(Object.keys(phoneCount).filter(p=>phoneCount[p]>1));
+  container.innerHTML=list.map(c=>makeCard(c,dupPhones)).join('');
+}
+
+// ── 직원용 미배정 렌더링 (픽업 버튼 포함) ──
+function renderStaffUnassigned(){
+  const list=ALL.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status));
+  const container=$('staffUnassignedList');
+  if(!container) return;
+  if(!list.length){
+    container.innerHTML=`<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">미배정 고객이 없습니다</div></div>`;
+    return;
+  }
+  const phoneCount={};
+  ALL.forEach(c=>{ if(c.phone){ const p=c.phone.replace(/-/g,''); phoneCount[p]=(phoneCount[p]||0)+1; }});
+  const dupPhones=new Set(Object.keys(phoneCount).filter(p=>phoneCount[p]>1));
+  container.innerHTML=list.map(c=>{
+    const baseCard=makeCard(c,dupPhones);
+    // 카드에 픽업 버튼 삽입
+    const pickupBtn=`<div style="padding:0 14px 12px;"><button onclick="pickupConsult('${c._id}',event)" style="width:100%;height:40px;border-radius:10px;border:none;background:var(--blue);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">🙋 내가 맡을게</button></div>`;
+    return baseCard.replace('</div>
+', pickupBtn+'</div>
+');
+  }).join('');
+}
+
+// ── 픽업 함수 ──
+window.pickupConsult=async function(id,e){
+  if(e) e.stopPropagation();
+  const myName=currentUser.name;
+  const myStore=currentUser.store||'';
+  if(!myName){alert('로그인 정보가 없습니다.');return;}
+  const c=ALL.find(x=>x._id===id);
+  if(!c){return;}
+  if(c.assignedTo){alert('이미 다른 담당자가 배정된 고객입니다.');return;}
+  if(!confirm(`"${c.name||'고객'}"을 내 고객으로 픽업할까요?`)) return;
+  const upd={};
+  upd['consultations/'+id+'/assignedTo']=myName;
+  upd['consultations/'+id+'/assignedStore']=myStore;
+  upd['consultations/'+id+'/assignSource']='pickup';
+  await update(ref(db),upd);
+  logAction({customerId:id,customerName:c.name||'-',customerPhone:c.phone||'-',staffName:myName,staffRole:currentUser.role||'-',actionType:'assign_change',actionLabel:'픽업',beforeValue:'미배정',afterValue:myName,memo:''});
+};
+
+// ── 담당자 변경 시 assignSource 기록 (토스) ──
+// submitPcAssign 오버라이드 - 직원이 타인에게 넘길 때 assignSource='toss' 기록
+const _origSubmitPcAssign=window.submitPcAssign;
+window.submitPcAssign=async function(){
+  if(currentUser.type==='staff'){
+    const sel=document.getElementById('pcAssignSelected')?.textContent;
+    if(!sel){alert('담당자를 선택해주세요.');return;}
+    const [name,store]=sel.split('|');
+    if(!selId)return;
+    const c=ALL.find(x=>x._id===selId);
+    if(!c){return;}
+    if(c.assignedTo&&c.assignedTo!==currentUser.name){alert('본인 담당 건만 변경 가능합니다.');return;}
+    const upd={};
+    upd['consultations/'+selId+'/assignedTo']=name;
+    upd['consultations/'+selId+'/assignedStore']=store;
+    upd['consultations/'+selId+'/assignSource']='toss';
+    await update(ref(db),upd);
+    logAction({customerId:selId,customerName:c.name||'-',customerPhone:c.phone||'-',staffName:currentUser.name,staffRole:currentUser.role||'-',actionType:'assign_change',actionLabel:'담당자 토스',beforeValue:c.assignedTo||'미배정',afterValue:name,memo:''});
+    document.getElementById('pcMiniModal')?.remove();
+    document.getElementById('bsAssign')?.classList.remove('open');
+    return;
+  }
+  if(_origSubmitPcAssign) await _origSubmitPcAssign();
+};
+
+function updateStaffTabBadge(){
+  const cnt=ALL.filter(c=>!c.assignedTo&&!['개통완료','실패'].includes(c.status)).length;
+  const el=$('stc-unassigned');
+  if(el) el.textContent=cnt;
 }
 
 
@@ -2916,7 +3138,9 @@ function renderDashboard(){
 function renderStaffStatus(){
   const tbody=$('dash-staff-tbody');
   if(!tbody)return;
-  const staffNames=Object.values(allStaff).filter(s=>s.active!==false).map(s=>s.name);
+  const allStaffNames=Object.values(allStaff).filter(s=>s.active!==false).map(s=>s.name);
+  // 직원 로그인이면 본인만
+  const staffNames=currentUser.type==='staff'?[currentUser.name]:allStaffNames;
   if(!staffNames.length){
     tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">등록된 직원 없음</td></tr>';
     return;
@@ -4276,10 +4500,15 @@ function renderMenuStats(){
   if($('mk-absent')) $('mk-absent').textContent=absent.length;
   if($('mk-recare')) $('mk-recare').textContent=recare.length;
 
-  // 직원별 카드
+  // 직원별 카드 (직원은 본인만)
   const staffNames=Object.values(allStaff).filter(s=>s.active!==false).map(s=>s.name);
   const defaultStaffs=['여인국','황제필','강용민'];
-  const sList=staffNames.length>0?staffNames:defaultStaffs;
+  const allStaffList=staffNames.length>0?staffNames:defaultStaffs;
+  const isStaffUser=currentUser.type==='staff';
+  const sList=isStaffUser?[currentUser.name]:allStaffList;
+  // 섹션 타이틀 변경
+  const titleEl=$('menuStaffSectionTitle');
+  if(titleEl) titleEl.textContent=isStaffUser?'📊 내 실적':'👤 직원별 실적';
   const staffRows=$('menuStaffRows');
   if(staffRows){
     const maxDone=Math.max(1,...sList.map(n=>list.filter(c=>c.assignedTo===n&&c.status==='개통완료').length));
