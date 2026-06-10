@@ -77,9 +77,32 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 }
 .hero-left { padding-right:20px; }
 .hero-badge {
-  display:inline-block; background:var(--blue-light); color:var(--blue);
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--blue-light); color:var(--blue);
   font-size:12px; font-weight:700; padding:6px 14px; border-radius:50px;
-  margin-bottom:20px; letter-spacing:.5px;
+  margin-bottom:12px; letter-spacing:.5px;
+}
+.hero-stores {
+  display:flex; flex-wrap:nowrap; gap:8px; margin-bottom:20px;
+}
+.store-link {
+  display:inline-flex; align-items:center; gap:6px;
+  background:#fff; color:#333;
+  font-size:12px; font-weight:700; padding:7px 14px; border-radius:50px;
+  text-decoration:none;
+  border:1.5px solid #e0e0e0;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+  transition:all .2s; white-space:nowrap;
+}
+.store-link .short-name { display:none; }
+.hero-badge .badge-mobile { display:none; }
+.hero-badge .badge-pc { display:inline; }
+}
+.store-link:hover {
+  background:#f0f4ff;
+  border-color:var(--blue);
+  color:var(--blue);
+  box-shadow:0 4px 12px rgba(0,0,0,0.12);
 }
 .hero-title {
   font-size:48px; font-weight:900; line-height:1.15; margin-bottom:16px;
@@ -384,6 +407,11 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
   .hero-tag { font-size:12px; padding:6px 12px; }
   .hero-tags { justify-content:center; }
   .hero-uplus { display:none !important; }
+  .hero-stores { flex-wrap:wrap; flex-direction:column; align-items:flex-start; }
+  .store-link .full-name { display:none; }
+  .store-link .short-name { display:inline; }
+  .hero-badge .badge-pc { display:none; }
+  .hero-badge .badge-mobile { display:inline; }
   .hero-right { max-width:280px; margin:0 auto; width:100%; }
   .hero-cta { display:none; }
 
@@ -462,8 +490,12 @@ body { font-family:'Pretendard',sans-serif; background:#fff; color:var(--dark); 
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-left">
-      <div class="hero-uplus" style="margin-bottom:8px;"><span style="color:var(--pink);font-weight:900;font-size:36px;line-height:1;">U⁺</span></div>
-      <span class="hero-badge">⚡ 어디까지나 이해를 돕기 위한 예시입니다.</span>
+      <span class="hero-badge"><span class="badge-pc">🏪 서울·경기 오프라인 매장 운영 &nbsp;|&nbsp; 카카오톡 · 전화 · 방문 상담 가능</span><span class="badge-mobile">🏪 서울·경기 오프라인 매장 운영</span></span>
+      <div class="hero-stores">
+        <a href="https://place.uplus.co.kr/shop/U2449153?utm_source=uplushome&utm_medium=findstore" target="_blank" class="store-link"><span class="full-name">📍 유플러스 중곡독 골목시장점</span><span class="short-name">유플러스 중곡점</span></a>
+        <a href="https://place.uplus.co.kr/shop/U2558493?utm_source=uplushome&utm_medium=findstore" target="_blank" class="store-link"><span class="full-name">📍 유플러스 남양시장점</span><span class="short-name">유플러스 남양시장점</span></a>
+        <a href="https://place.uplus.co.kr/shop/U5305421?utm_source=uplushome&utm_medium=findstore" target="_blank" class="store-link"><span class="full-name">📍 유플러스 미사상업지구점</span><span class="short-name">유플러스 미사점</span></a>
+      </div>
       <h1 class="hero-title">
         본인의 조건을<br>
         <span class="blue">선택하여 확인</span>해주세요!
