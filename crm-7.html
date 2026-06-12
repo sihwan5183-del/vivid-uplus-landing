@@ -2146,10 +2146,12 @@ let currentUser={
 let allStaff={};
 
 // 권한 체크
-const canDeletePermanent=()=>['대표','대표관리자'].includes(currentUser.role)||currentUser.type==='admin';
-const canAccessStats=()=>['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
+const isHeadAdmin=()=>currentUser.role==='대표관리자'||currentUser.email==='ssgvivid2026@gmail.com';
+const canDeletePermanent=()=>isHeadAdmin();
+const canAccessStats=()=>isHeadAdmin();
 const canAddStaff=()=>['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
-const canManagePerm=()=>['대표','대표관리자'].includes(currentUser.role)||currentUser.type==='admin';
+const canManagePerm=()=>isHeadAdmin();
+const canDownloadCSV=()=>isHeadAdmin();
 
 const $=id=>document.getElementById(id);
 
@@ -2309,33 +2311,23 @@ function applyPermUI(){
     if(staffTab) staffTab.style.display='flex';
     switchStaffTab('all');
   }
-  // ── PC: 직원이면 성과분석 메뉴 전체 숨김 (본인 실적은 대시보드에서만)
-  if(isStaff){
-    // 성과 분석 섹션 타이틀 + 하위 메뉴 전체 숨김
-    document.querySelectorAll('.pc-nav-section,.pc-nav-item.pc-nav-sub').forEach(el=>{
+  // ── 성과분석 메뉴: 대표관리자가 아니면 모두 숨김 (staff 포함)
+  // 단, 모바일 내 실적 요약(my-stat-*)은 staff도 볼 수 있음
+  if(!canAccessStats()){
+    document.querySelectorAll('.pc-nav-section,.pc-nav-item,.pc-nav-item.pc-nav-sub').forEach(el=>{
       const oc=el.getAttribute('onclick')||'';
       if(el.classList.contains('pc-nav-section')&&el.textContent.includes('성과 분석')){
         el.style.display='none';
       }
-      if(oc.includes('stat-')||oc.includes('set-perm')){
+      if(oc.includes('stat-')){
         el.style.display='none';
       }
     });
-    // 대시보드 담당자 현황 "실적 전체" 버튼 숨김
     document.querySelectorAll('[onclick*="stat-staff"]').forEach(el=>el.style.display='none');
-    // 모바일 메뉴 매장별 실적 섹션 숨김
     const menuStoreSection=document.getElementById('menuStoreRows');
     if(menuStoreSection&&menuStoreSection.parentElement) menuStoreSection.parentElement.style.display='none';
   }
-  // 성과분석 - 부사장 이상만 (관리자 중에서도 제한)
-  if(!canAccessStats()&&!isStaff){
-    document.querySelectorAll('.pc-nav-item').forEach(el=>{
-      if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes('stat-')){
-        el.style.display='none';
-      }
-    });
-  }
-  // 권한관리 - 대표/대표관리자만
+  // ── 권한관리 - 대표관리자만
   if(!canManagePerm()){
     document.querySelectorAll('.pc-nav-item').forEach(el=>{
       if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes('set-perm')){
@@ -2343,10 +2335,14 @@ function applyPermUI(){
       }
     });
   }
-  // 삭제 버튼 - 대표/대표관리자만 완전삭제 표시
+  // ── 삭제 버튼 - 대표관리자만 완전삭제
   const delBtn=document.querySelector('[onclick="deleteConsult()"]');
   if(delBtn){
     if(!canDeletePermanent()) delBtn.textContent='🗑️ 휴지통';
+  }
+  // ── CSV 버튼 - 대표관리자가 아니면 숨김
+  if(!canDownloadCSV()){
+    document.querySelectorAll('[onclick*="downloadCSV"],[onclick*="downloadTabCSV"]').forEach(el=>el.style.display='none');
   }
 }
 
@@ -2566,7 +2562,16 @@ window.resetTabFilter=function(pageId){
 };
 
 window.downloadTabCSV=function(pageId){
+  if(!canDownloadCSV()){alert('CSV 다운로드는 대표관리자만 가능합니다.');return;}
   const list=getTabList(pageId);
+  // Firebase 로그 기록
+  fbPush(ref(db,'csvLogs'),{
+    at:Date.now(),
+    by:currentUser.name||currentUser.email||'관리자',
+    role:currentUser.role||'-',
+    count:list.length,
+    type:pageId
+  }).catch(()=>{});
   const headers=['접수시간','경과','고객명','전화번호','상태','기기','요금제','담당자'];
   const rows=list.map(c=>[
     fmtDate(c.createdAt),elapsedLabel(elapsedMs(c.createdAt)),
@@ -2887,9 +2892,6 @@ window.submitPcAssign=async function(){
   if(!selId)return;
   const c=ALL.find(x=>x._id===selId);
   if(!c){return;}
-  const canAssignAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
-  if(!canAssignAll&&c.assignedTo&&c.assignedTo!==currentUser.name){alert('본인 담당 건만 변경 가능합니다.');return;}
-
   // assignSource 판별
   let source='admin';
   if(currentUser.type==='staff'){
@@ -4031,16 +4033,13 @@ window.pcGoBack=function(){
 };
 
 function pcNav(page){
-  // 성과분석: 부사장 이상은 바로 접근, 팀장/플래너는 비밀번호
+  // 성과분석: 대표관리자만 접근
   if(STAT_PAGES.includes(page)){
-    if(!canAccessStats()&&!analyticsUnlocked){
-      const input=prompt('성과 분석 페이지 접근 비밀번호를 입력하세요:');
-      if(input===null)return;
-      if(input!==String(analyticsPassword)){alert('비밀번호가 올바르지 않습니다.');return;}
-      analyticsUnlocked=true;
+    if(!canAccessStats()){
+      alert('성과 분석은 대표관리자만 접근 가능합니다.');return;
     }
   }
-  // 권한관리: 대표/대표관리자만
+  // 권한관리: 대표관리자만
   if(page==='set-perm'&&!canManagePerm()){
     alert('접근 권한이 없습니다.');return;
   }
@@ -4326,6 +4325,15 @@ window.clearBell=function(){const b=$('bellBadge');if(b){b.textContent='0';b.sty
 
 // ── CSV 다운로드 ──
 function downloadCSV(){
+  if(!canDownloadCSV()){alert('CSV 다운로드는 대표관리자만 가능합니다.');return;}
+  // Firebase 로그 기록
+  fbPush(ref(db,'csvLogs'),{
+    at:Date.now(),
+    by:currentUser.name||currentUser.email||'관리자',
+    role:currentUser.role||'-',
+    count:ALL.length,
+    type:'전체'
+  }).catch(()=>{});
   const headers=['접수시간','경과','고객명','전화번호','생년월일','현재통신사','가입유형','기기','용량','색상','요금제','할인방식','상담희망시간','인터넷TV','상태','매장','담당자','메모'];
   const rows=ALL.map(c=>[
     fmtDate(c.createdAt),elapsedLabel(elapsedMs(c.createdAt)),
@@ -4460,9 +4468,7 @@ window.submitPcAssign=async function(){
   if(!sel){alert('담당자를 선택해주세요.');return;}
   const [name,store]=sel.split('|');
   if(!selId)return;
-  const canAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
   const c=ALL.find(x=>x._id===selId);
-  if(!canAll&&c?.assignedTo&&c.assignedTo!==currentUser.name){alert('본인 담당 건만 변경 가능합니다.');return;}
   const upd={};
   upd['consultations/'+selId+'/assignedTo']=name;
   upd['consultations/'+selId+'/assignedStore']=store;
@@ -4904,7 +4910,7 @@ function renderDetTop(c){
     <div class="det-meta">
       <div class="det-meta-item">🏪 <span class="det-meta-val">${c.assignedStore||'미배정'}</span></div>
       <div class="det-meta-item">👤 <span class="det-meta-val">${c.assignedTo||'미지정'}</span>
-        ${currentUser.type==='admin'?'<button class="det-assign-btn" onclick="setSelId(\''+c._id+'\');openBS(\'assign\')">변경</button>':''}
+        ${(currentUser.type==='admin'||currentUser.type==='staff')?'<button class="det-assign-btn" onclick="setSelId(\''+c._id+'\');openBS(\'assign\')">변경</button>':''}
       </div>
       <div class="det-meta-item">📅 <span class="det-meta-val">${fmt(c.createdAt)}</span></div>
       ${c.nextContactAt?`<div class="det-meta-item">⏰ <span class="det-meta-val${c.nextContactAt<now()?' blink':''}">${fmt(c.nextContactAt)}</span></div>`:''}
@@ -5260,13 +5266,7 @@ window.submitMemo=async function(){
 window.submitAssign=async function(){
   if(!bsState.assignStaff){alert('담당자를 선택해주세요.');return;}
   if(!selId){alert('선택된 고객이 없습니다.');return;}
-  const canAssignAll=['대표','대표관리자','부사장'].includes(currentUser.role)||currentUser.type==='admin';
   const c2=ALL.find(x=>x._id===selId);
-  if(!canAssignAll){
-    if(c2&&c2.assignedTo&&c2.assignedTo!==currentUser.name){
-      alert('본인이 담당한 건만 변경할 수 있습니다.');return;
-    }
-  }
   const [name,store]=bsState.assignStaff.split('|');
 
   // assignSource 판별
